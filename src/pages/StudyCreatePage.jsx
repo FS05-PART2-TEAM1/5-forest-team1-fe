@@ -1,13 +1,13 @@
-import { useEffect, useRef } from "react";
-
+import React, { useState } from "react";
+import visible_btn from "../assets/icons/ic_btn_visibility_on.png";
+import btn_visible_on from "../assets/icons/btn_visibility_on.svg";
+import btn_visible_off from "../assets/icons/btn_visibility_off.svg";
 function StudyCreatePage() {
-  const inputRef = useRef(null);
-  useEffect(() => {
-    // 커서를 시작 위치로 이동 (예: 처음에 커서를 첫 번째 글자 위치로 설정)
-    if (inputRef.current) {
-      inputRef.current.setSelectionRange(0, 3); // 3번째 위치로 커서 이동
-    }
-  }, []);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleClick = () => {
+    setIsVisible(!isVisible);
+  };
   return (
     <div className="flex justify-center items-center bg-[#F6F4EF]">
       <div className=" rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px]  bg-white  p-4">
@@ -53,20 +53,50 @@ function StudyCreatePage() {
               <label className="text-lg font-semibold" htmlFor="">
                 비밀번호
               </label>
-              <input
-                className="border border-gray-300 p-3 h-12 rounded-xl"
-                placeholder="비밀번호를 입력해 주세요"
-              ></input>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={isVisible ? "text" : "password"}
+                  className="border border-gray-300 p-3 h-12 rounded-xl w-full"
+                  placeholder="비밀번호를 입력해 주세요"
+                />
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  className="absolute inset-y-0 right-3 flex items-center"
+                >
+                  <img
+                    src={isVisible ? btn_visible_on : btn_visible_off}
+                    alt="Toggle visibility"
+                    className="w-5 h-5"
+                  />
+                </button>
+              </div>
             </form>
 
             <form className="flex flex-col mb-4 gap-2">
-              <label className="text-lg font-semibold" htmlFor="">
+              <label className="text-lg font-semibold" htmlFor="password">
                 비밀번호 확인
               </label>
-              <input
-                className="border border-gray-300 p-3 h-12 rounded-xl"
-                placeholder="비밀번호를 다시 입력해 주세요"
-              ></input>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={isVisible ? "text" : "password"}
+                  className="border border-gray-300 p-3 h-12 rounded-xl w-full"
+                  placeholder="비밀번호를 다시 입력해 주세요"
+                />
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  className="absolute inset-y-0 right-3 flex items-center"
+                >
+                  <img
+                    src={isVisible ? btn_visible_on : btn_visible_off}
+                    alt="Toggle visibility"
+                    className="w-5 h-5"
+                  />
+                </button>
+              </div>
             </form>
           </div>
           <button>만들기</button>
