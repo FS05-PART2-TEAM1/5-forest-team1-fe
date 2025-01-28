@@ -22,7 +22,7 @@ function StudyCreatePage() {
                   닉네임
                 </label>
                 <input
-                  className="border border-gray-300 p-3 h-12 rounded-lg"
+                  className="border border-gray-300 p-3 h-12 rounded-xl"
                   placeholder="닉네임을 입력해 주세요"
                 ></input>
               </form>
@@ -31,7 +31,7 @@ function StudyCreatePage() {
                   스터디 이름
                 </label>
                 <input
-                  className="border border-gray-300 p-3 h-12 rounded-lg"
+                  className="border border-gray-300 p-3 h-12 rounded-xl"
                   placeholder="스터디 이름을 입력해주세요"
                 ></input>
               </form>
@@ -40,7 +40,7 @@ function StudyCreatePage() {
                   소개
                 </label>
                 <textarea
-                  className="border border-gray-300 p-3 h-24 rounded-lg  leading-7"
+                  className="border border-gray-300 p-3 h-24 rounded-xl  leading-7"
                   placeholder="소개 멘트를 작성해 주세요"
                 />
               </form>
@@ -54,7 +54,7 @@ function StudyCreatePage() {
                 비밀번호
               </label>
               <input
-                className="border border-gray-300 p-3 h-12 rounded-lg"
+                className="border border-gray-300 p-3 h-12 rounded-xl"
                 placeholder="비밀번호를 입력해 주세요"
               ></input>
             </form>
@@ -64,7 +64,7 @@ function StudyCreatePage() {
                 비밀번호 확인
               </label>
               <input
-                className="border border-gray-300 p-3 h-12 rounded-lg"
+                className="border border-gray-300 p-3 h-12 rounded-xl"
                 placeholder="비밀번호를 다시 입력해 주세요"
               ></input>
             </form>
