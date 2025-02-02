@@ -1,3 +1,5 @@
+import EarnedPointsBox from "@/common/EarnedPointsBox";
+
 function StudyListPage() {
   return (
     <div>
