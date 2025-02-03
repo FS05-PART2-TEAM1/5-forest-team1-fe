@@ -23,20 +23,20 @@ const HabitListModal = ({ isOpen, onClose, onSave }) => {
           습관 목록
         </h2>
 
-        <div className="flex flex-col gap-[20px] px-[124px] mt-6 overflow-y-auto max-h-[60vh]">
-          <ul className="flex flex-col gap-[20px]">
+        <div className="flex flex-col gap-[20px] px-[100px] mt-6 overflow-y-auto max-h-[60vh]">
+          <ul className="relative flex flex-col gap-[20px]">
             {habits.map((habit, index) => (
               <li
                 key={index}
-                className="flex justify-between items-center bg-[#EEEEEE] rounded-[20px] px-4 py-3"
+                className="relative flex items-center justify-center bg-[#EEEEEE] rounded-[20px] h-[54px]"
               >
-                <span className="flex-1 flex items-center justify-center text-[16px] text-[#818181] underline">
+                <span className="text-[16px] text-[#818181] underline">
                   {habit}
                 </span>
 
                 <button
                   onClick={() => removeHabit(index)}
-                  className="w-12 h-12 flex items-center justify-center bg-[#FDE0E9] rounded-full"
+                  className="absolute -right-[56px] top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-[#FDE0E9] rounded-full"
                 >
                   <img src={deleteHabitImg} alt="삭제" className="w-6 h-6" />
                 </button>
@@ -46,7 +46,7 @@ const HabitListModal = ({ isOpen, onClose, onSave }) => {
 
           <button
             onClick={addHabit}
-            className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[48px]"
+            className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
           >
             <img src={addHabitImg} alt="추가" className="w-6 h-6" />
           </button>
@@ -55,7 +55,7 @@ const HabitListModal = ({ isOpen, onClose, onSave }) => {
         <div className="flex justify-between gap-6 mt-6">
           <button
             onClick={onClose}
-            className="px-5 py-3 bg-[#DDDDDD] rounded-lg w-1/2"
+            className="px-5 py-3 bg-[#DDDDDD] text-white  rounded-lg w-1/2"
           >
             닫기
           </button>
