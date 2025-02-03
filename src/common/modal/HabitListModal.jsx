@@ -3,7 +3,7 @@ import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
 
 const HabitListModal = ({ isOpen, onClose, onSave }) => {
-  const [habits, setHabits] = useState(["운동하기", "책 읽기"]);
+  const [habits, setHabits] = useState([]);
 
   if (!isOpen) return null;
 
