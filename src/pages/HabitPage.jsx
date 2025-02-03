@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "../common/Modal";
+import HabitListModal from "@/common/modal/HabitListModal";
 
 function HabitPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,14 +16,14 @@ function HabitPage() {
         </button>
 
         {/* 모달 컴포넌트 */}
-        <Modal
+        <HabitListModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           showCloseIcon={true}
           showCloseButton={false}
         >
           <p>이 모달은 확인 버튼만 있습니다.</p>
-        </Modal>
+        </HabitListModal>
       </div>
     </div>
   );
