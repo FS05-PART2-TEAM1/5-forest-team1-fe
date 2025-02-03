@@ -22,6 +22,16 @@ export default {
         "f-green": "#578246",
         "f-yellow": "#c18e1b",
       },
+      fontSize: {
+        "16pt": ["1rem", { lineHeight: "1" }], // 16pt = 1rem
+        "18pt": ["1.125rem", { lineHeight: "1" }], // 18pt = 1.125rem
+        "20pt": ["1.25rem", { lineHeight: "1" }], // 20pt = 1.25rem
+        "24pt": ["1.5rem", { lineHeight: "1" }], // 24pt = 1.5rem
+        "32pt": ["2rem", { lineHeight: "1" }], // 32pt = 2rem
+        "80pt": ["5rem", { lineHeight: "1" }], // 80pt = 5rem
+        "120pt": ["7.5rem", { lineHeight: "1" }], // 120pt = 7.5rem
+        "150pt": ["9.375rem", { lineHeight: "1" }], // 150pt = 9.375rem
+      },
     },
   },
   plugins: [],
