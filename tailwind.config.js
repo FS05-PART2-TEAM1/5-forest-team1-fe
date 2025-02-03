@@ -13,14 +13,14 @@ export default {
         "f-error": "#c41013",
         "f-red": "#f50e0e",
         "f-error-bg": "#ffa3a5",
-        "f-green": "#e1edde",
-        "f-yellow": "#fff1cc",
+        "f-green-100": "#e1edde",
+        "f-green-600": "#578246",
+        "f-yellow-100": "#fff1cc",
+        "f-yellow-700": "#c18e1b",
         "f-blue-100": "#e0f1f5",
         "f-blue-400": "#418099",
         "f-pink-100": "#fde0e9",
         "f-pink-600": "#bc3c6a",
-        "f-green": "#578246",
-        "f-yellow": "#c18e1b",
       },
       fontSize: {
         "16pt": ["1rem", { lineHeight: "1" }], // 16pt = 1rem
