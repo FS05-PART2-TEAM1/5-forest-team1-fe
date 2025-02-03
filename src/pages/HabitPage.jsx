@@ -19,12 +19,10 @@ function HabitPage() {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="공통 모달"
-          onConfirm={() => {
-            setIsModalOpen(false);
-          }}
+          showCloseIcon={true}
+          showCloseButton={false}
         >
-          <p>이것은 공통 모달입니다. 필요한 내용을 여기에 입력하세요.</p>
+          <p>이 모달은 확인 버튼만 있습니다.</p>
         </Modal>
       </div>
     </div>
