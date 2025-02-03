@@ -6,7 +6,7 @@ import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
 
-function AppRouter() {
+function AppRouter({userEnv}) {
   return (
     <BrowserRouter>
       <Routes>
