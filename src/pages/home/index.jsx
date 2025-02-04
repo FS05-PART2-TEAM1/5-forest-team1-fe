@@ -1,4 +1,4 @@
-function StudyListPage() {
+function Home() {
   return (
     <div>
       <h1 className="text-3xl font-bold">스터디 목록 - 정한샘</h1>
@@ -6,4 +6,4 @@ function StudyListPage() {
   );
 }
 
-export default StudyListPage;
+export default Home;
