@@ -17,14 +17,14 @@ const PasswordModal = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-      <div className="bg-white rounded-[20px] shadow-xl p-6 w-[648px] h-[369px] font-sans relative flex flex-col">
+      <div className="bg-white rounded-[20px] shadow-xl p-6 w-full max-w-[648px] h-[369px] font-sans relative flex flex-col mx-[19px]">
         <div className="flex items-center justify-center relative mb-6">
-          <h2 className="text-[24px] font-extrabold text-center flex-1">
+          <h2 className="text-[24px] max-[743px]:text-[18px] font-extrabold text-center flex-1">
             {title || "비밀번호 확인"}
           </h2>
           <button
             onClick={onClose}
-            className="absolute right-0 text-[#578246] hover:text-green-700 text-[16px] font-weight-500"
+            className="absolute right-0 text-[#578246] hover:text-green-700 text-[16px] font-weight-500 max-[743px]:hidden"
           >
             나가기
           </button>
@@ -64,6 +64,13 @@ const PasswordModal = ({
           className="w-full px-5 py-3 bg-[#99C08E] text-white rounded-lg hover:bg-green-600 mt-auto"
         >
           수정하러 가기
+        </button>
+
+        <button
+          onClick={onClose}
+          className="hidden max-[743px]:block mt-4 text-[#578246] hover:text-green-700 text-[16px] font-weight-500 mx-auto"
+        >
+          나가기
         </button>
       </div>
     </div>
