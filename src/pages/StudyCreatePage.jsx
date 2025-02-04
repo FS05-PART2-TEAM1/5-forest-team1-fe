@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
 import btn_visible_on from "../assets/icons/btn_visibility_on.svg";
 import btn_visible_off from "../assets/icons/btn_visibility_off.svg";
 import bg1 from "../assets/mock_bg_images/bg_color_orange.jpg";
@@ -21,10 +21,10 @@ function StudyCreatePage() {
   };
   return (
     <div className="flex justify-center items-center bg-[#F6F4EF]">
-      <div className=" rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px]  bg-white  p-4">
+      <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px]  bg-white  p-4">
         <div className="mt-2">
           <div>
-            <div className="">
+            <div className=" md:w-[648px] ">
               <div className="mb-6">
                 <h1 className="text-2xl font-bold">스터디 만들기</h1>
               </div>
@@ -100,7 +100,7 @@ function StudyCreatePage() {
               </div>
             </form>
 
-            <form className="flex flex-col mb-4 gap-2">
+            <form className="flex flex-col mb-[30px] md:mb-10 gap-2">
               <label className="text-lg font-semibold" htmlFor="password">
                 비밀번호 확인
               </label>
@@ -125,7 +125,7 @@ function StudyCreatePage() {
               </div>
             </form>
           </div>
-          <button>만들기</button>
+          <PrimaryButton>만들기</PrimaryButton>
         </div>
       </div>
     </div>
