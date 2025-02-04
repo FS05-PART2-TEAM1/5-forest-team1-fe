@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { EarnedPointsBoxMd } from "../common/EarnedPointsBox";
 
 function FocusPage() {
   const [timeLeft, setTimeLeft] = useState(25 * 60); // 25분을 초로 변환
@@ -55,9 +56,7 @@ function FocusPage() {
           <p className="text-[#818181] text-[16px] md:text-[18px] font-normal">
             현재까지 획득한 포인트
           </p>
-          <p className="text-[14px] md:text-[16px] flex items-center">
-            <span className="text-green-600">🌱</span> 310P 획득
-          </p>
+          <EarnedPointsBoxMd points={310} />
         </div>
 
         <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
