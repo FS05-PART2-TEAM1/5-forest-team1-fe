@@ -1,3 +1,4 @@
+// HabitListModal.jsx
 import React from "react";
 import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
@@ -9,6 +10,7 @@ const HabitListModal = ({
   habits = [],
   onAddHabit,
   onRemoveHabit,
+  maxHabitCount,
 }) => {
   if (!isOpen) return null;
 
@@ -18,6 +20,7 @@ const HabitListModal = ({
         <h2 className="text-[24px] font-bold text-[#414141] text-center">
           습관 목록
         </h2>
+
         <div className="flex flex-col gap-[20px] px-[100px] mt-6 overflow-y-auto max-h-[60vh] max-[763px]:px-0 max-[763px]:gap-[8px]">
           <ul className="relative flex flex-col gap-[20px] max-[763px]:gap-[8px] max-[763px]:pr-[56px]">
             {habits.length > 0 ? (
@@ -48,14 +51,16 @@ const HabitListModal = ({
             )}
           </ul>
 
-          {onAddHabit && (
-            <button
-              onClick={onAddHabit}
-              className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
-            >
-              <img src={addHabitImg} alt="추가" className="w-6 h-6" />
-            </button>
-          )}
+          {onAddHabit &&
+            (typeof maxHabitCount === "undefined" ||
+              habits.length < maxHabitCount) && (
+              <button
+                onClick={onAddHabit}
+                className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
+              >
+                <img src={addHabitImg} alt="추가" className="w-6 h-6" />
+              </button>
+            )}
         </div>
 
         <div className="flex justify-between gap-6 mt-6">
