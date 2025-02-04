@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+// PasswordModal.jsx
+import React from "react";
 import hideIcon from "./img/hideEyes.png";
 import openIcon from "./img/openEyes.png";
 
-const PasswordModal = ({ isOpen, onClose, onVerify, title }) => {
-  const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+const PasswordModal = ({
+  isOpen,
+  onClose,
+  onVerify,
+  title,
+  password,
+  onPasswordChange,
+  isPasswordVisible,
+  onTogglePasswordVisibility,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -36,12 +43,12 @@ const PasswordModal = ({ isOpen, onClose, onVerify, title }) => {
             className="w-full p-3 border rounded-lg pr-12"
             placeholder="비밀번호를 입력해 주세요"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={onPasswordChange}
           />
 
           <button
             type="button"
-            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            onClick={onTogglePasswordVisibility}
             className="absolute right-4 top-1/2 transform -translate-y-1/2"
           >
             <img
