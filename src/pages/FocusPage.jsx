@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { EarnedPointsBoxMd } from "../common/EarnedPointsBox";
 import TimerButton from "../common/buttons/TimerButton";
 import TimerCircleButton from "../common/buttons/TimerCircleButton";
+import ErrorMessage from "../common/MessageBox";
 import playIcon from "../assets/icons/ic_play.png";
 import pauseIcon from "../assets/icons/ic_pause.png";
 import resetIcon from "../assets/icons/ic_restart.png";
@@ -43,8 +44,8 @@ function FocusPage() {
   };
 
   return (
-    <div className="w-screen h-screen bg-[#F6F4EF] py-[153px]">
-      <div className="w-[95%] min-w-[380px] mx-auto bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
+    <div className="h-screen bg-[#F6F4EF] py-10 md:py-20">
+      <div className="w-[95%] min-w-[380px] mx-auto mb-[65.5px] bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
         <div className="flex flex-col items-start justify-between mb-[21px] md:flex-row md:items-center">
           <h1 className="text-[24px] md:text-[32px] font-extrabold text-[#414141] mb-4 md:mb-0">
             연우의 개발공장
@@ -98,6 +99,7 @@ function FocusPage() {
                     onClick={pauseTimer}
                     img={pauseIcon}
                   ></TimerCircleButton>
+
                   <TimerButton
                     onClick={startTimer}
                     img={playIcon}
@@ -116,6 +118,7 @@ function FocusPage() {
           </div>
         </div>
       </div>
+      <ErrorMessage message="집중이 중단되었습니다." />
     </div>
   );
 }
