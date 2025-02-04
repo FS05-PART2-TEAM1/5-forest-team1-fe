@@ -6,21 +6,22 @@ import ErrorMessage from "../common/MessageBox";
 import playIcon from "../assets/icons/ic_play.png";
 import pauseIcon from "../assets/icons/ic_pause.png";
 import resetIcon from "../assets/icons/ic_restart.png";
+import stopIcon from "../assets/icons/ic_stop.png";
 import bracketIcon from "../assets/icons/ic_bracket.png";
 
 function FocusPage() {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25분을 초로 변환
+  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 25분을 초로 변환
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     let timer;
-    if (isRunning && timeLeft > 0) {
+    if (isRunning) {
       timer = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isRunning, timeLeft]);
+  }, [isRunning]);
 
   const startTimer = () => {
     setIsRunning(true);
@@ -35,12 +36,20 @@ function FocusPage() {
     setTimeLeft(25 * 60);
   };
 
+  const finishTimer = () => {
+    setIsRunning(false);
+    setTimeLeft(0);
+  };
+
   const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+    const isNegative = seconds < 0;
+    const absoluteSeconds = Math.abs(seconds);
+    const minutes = Math.floor(absoluteSeconds / 60);
+    const remainingSeconds = absoluteSeconds % 60;
+
+    return `${isNegative ? "-" : ""}${minutes
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -77,13 +86,15 @@ function FocusPage() {
         </div>
 
         <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
-          <h2 className="text-center text-[24px] font-extrabold text-[#414141] mb-[50px] md:mb-[100px]">
+          <h2 className="text-center text-[24px] font-extrabold text-f-black mb-[50px] md:mb-[100px]">
             오늘의 집중
           </h2>
           <div className="text-center">
             <div
               className={`text-[80px] md:text-[120px] font-extrabold mb-[50px] md:mb-[94px] ${
-                isRunning ? "text-red-500" : "text-[#414141]"
+                timeLeft < 25 * 60 && timeLeft >= 0
+                  ? "text-red-500"
+                  : "text-f-gray-500"
               }`}
             >
               {formatTime(timeLeft)}
@@ -94,24 +105,32 @@ function FocusPage() {
                   Start!
                 </TimerButton>
               ) : (
-                <div className="  flex justify-center  gap-2 md:gap-6">
-                  <TimerCircleButton
-                    onClick={pauseTimer}
-                    img={pauseIcon}
-                  ></TimerCircleButton>
+                <div className="flex justify-center gap-2 md:gap-6">
+                  {timeLeft >= 0 ? (
+                    <>
+                      <TimerCircleButton
+                        onClick={pauseTimer}
+                        img={pauseIcon}
+                      ></TimerCircleButton>
 
-                  <TimerButton
-                    onClick={startTimer}
-                    img={playIcon}
-                    disabled={isRunning}
-                  >
-                    Start!
-                  </TimerButton>
+                      <TimerButton
+                        onClick={startTimer}
+                        img={playIcon}
+                        disabled={isRunning}
+                      >
+                        Start!
+                      </TimerButton>
 
-                  <TimerCircleButton
-                    onClick={resetTimer}
-                    img={resetIcon}
-                  ></TimerCircleButton>
+                      <TimerCircleButton
+                        onClick={resetTimer}
+                        img={resetIcon}
+                      ></TimerCircleButton>
+                    </>
+                  ) : (
+                    <TimerButton onClick={finishTimer} img={stopIcon}>
+                      Stop!
+                    </TimerButton>
+                  )}
                 </div>
               )}
             </div>
