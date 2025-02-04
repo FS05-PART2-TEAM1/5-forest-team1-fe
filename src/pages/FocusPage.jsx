@@ -118,7 +118,9 @@ function FocusPage() {
           </div>
         </div>
       </div>
-      <ErrorMessage message="집중이 중단되었습니다." />
+      {!isRunning && timeLeft !== 25 * 60 && (
+        <ErrorMessage message="집중이 중단되었습니다." />
+      )}
     </div>
   );
 }
