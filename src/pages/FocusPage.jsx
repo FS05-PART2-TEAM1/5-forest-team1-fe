@@ -10,9 +10,10 @@ import stopIcon from "../assets/icons/ic_stop.png";
 import bracketIcon from "../assets/icons/ic_bracket.png";
 
 function FocusPage() {
-  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 25분을 초로 변환
+  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25분을 초로 변환
   const [isRunning, setIsRunning] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [earnedPoints, setEarnedPoints] = useState(0);
 
   useEffect(() => {
     let timer;
@@ -35,13 +36,20 @@ function FocusPage() {
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(25 * 60);
-    setIsCompleted(false);
   };
 
   const finishTimer = () => {
+    const extraMinutes = Math.abs(timeLeft) / 60; // 25분 이후 추가 시간(분)
     setIsRunning(false);
     setTimeLeft(25 * 60);
     setIsCompleted(true);
+    setEarnedPoints(calculatePoints(extraMinutes));
+  };
+
+  const calculatePoints = (extraMinutes) => {
+    const basePoints = 3; // 기본 3포인트 (25분 완료)
+    const additionalPoints = Math.floor(extraMinutes / 10); // 추가 시간 10분당 1포인트
+    return basePoints + additionalPoints;
   };
 
   const formatTime = (seconds) => {
@@ -85,7 +93,7 @@ function FocusPage() {
           <p className="text-[#818181] text-[16px] md:text-[18px] font-normal">
             현재까지 획득한 포인트
           </p>
-          <EarnedPointsBoxMd points={310} />
+          <EarnedPointsBoxMd points={9999} />
         </div>
 
         <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
@@ -145,7 +153,10 @@ function FocusPage() {
       {!isRunning && timeLeft !== 25 * 60 && !isCompleted ? (
         <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
       ) : isCompleted ? (
-        <ErrorMessage message="50포인트를 획득했습니다!" isCompleted={true} />
+        <ErrorMessage
+          message={`${earnedPoints}포인트를 획득했습니다!`}
+          isCompleted={true}
+        />
       ) : null}
     </div>
   );
