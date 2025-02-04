@@ -25,7 +25,7 @@ export const EarnedPointsBoxSmBlack = ({ points }) => {
 // 오늘의 집중 포인트 박스
 export const EarnedPointsBoxMd = ({ points }) => {
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-[#E0E0E0] rounded-full ">
+    <div className="inline-flex items-center gap-2 px-3 py-1 w-fit bg-white border border-[#E0E0E0] rounded-full ">
       <span className="text-xl">🌱</span>
       <span className="text-base font-medium text-f-black">{points}P 획득</span>
     </div>
