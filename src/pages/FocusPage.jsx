@@ -12,6 +12,7 @@ import bracketIcon from "../assets/icons/ic_bracket.png";
 function FocusPage() {
   const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 25분을 초로 변환
   const [isRunning, setIsRunning] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -34,11 +35,13 @@ function FocusPage() {
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(25 * 60);
+    setIsCompleted(false);
   };
 
   const finishTimer = () => {
     setIsRunning(false);
-    setTimeLeft(0);
+    setTimeLeft(25 * 60);
+    setIsCompleted(true);
   };
 
   const formatTime = (seconds) => {
@@ -92,7 +95,9 @@ function FocusPage() {
           <div className="text-center">
             <div
               className={`text-[80px] md:text-[120px] font-extrabold mb-[50px] md:mb-[94px] ${
-                timeLeft < 25 * 60 && timeLeft >= 0
+                timeLeft === 25 * 60
+                  ? "text-f-black"
+                  : timeLeft >= 0
                   ? "text-red-500"
                   : "text-f-gray-500"
               }`}
@@ -137,9 +142,11 @@ function FocusPage() {
           </div>
         </div>
       </div>
-      {!isRunning && timeLeft !== 25 * 60 && (
-        <ErrorMessage message="집중이 중단되었습니다." />
-      )}
+      {!isRunning && timeLeft !== 25 * 60 && !isCompleted ? (
+        <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
+      ) : isCompleted ? (
+        <ErrorMessage message="50포인트를 획득했습니다!" isCompleted={true} />
+      ) : null}
     </div>
   );
 }
