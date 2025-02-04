@@ -125,7 +125,7 @@ function StudyCreatePage() {
               </div>
             </form>
           </div>
-          <PrimaryButton>수정 완료료</PrimaryButton>
+          <PrimaryButton>수정 완료</PrimaryButton>
         </div>
       </div>
     </div>
