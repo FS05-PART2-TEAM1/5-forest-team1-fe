@@ -18,9 +18,8 @@ const HabitListModal = ({
         <h2 className="text-[24px] font-bold text-[#414141] text-center">
           습관 목록
         </h2>
-
-        <div className="flex flex-col gap-[20px] px-[100px] mt-6 overflow-y-auto max-h-[60vh]">
-          <ul className="relative flex flex-col gap-[20px]">
+        <div className="flex flex-col gap-[20px] px-[100px] mt-6 overflow-y-auto max-h-[60vh] max-[763px]:px-0 max-[763px]:gap-[8px]">
+          <ul className="relative flex flex-col gap-[20px] max-[763px]:gap-[8px] max-[763px]:pr-[56px]">
             {habits.length > 0 ? (
               habits.map((habit, index) => (
                 <li
