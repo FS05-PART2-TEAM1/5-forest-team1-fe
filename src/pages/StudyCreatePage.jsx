@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
+import selectBtn from "../assets/icons/ic_selected.png";
 import btn_visible_on from "../assets/icons/btn_visibility_on.svg";
 import btn_visible_off from "../assets/icons/btn_visibility_off.svg";
 import bg1 from "../assets/mock_bg_images/bg_color_orange.jpg";
@@ -15,10 +16,16 @@ const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8];
 
 function StudyCreatePage() {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasSelected, setHasSelected] = useState(null);
 
   const handleClick = () => {
     setIsVisible(!isVisible);
   };
+
+  const handleImageClick = (index) => {
+    setHasSelected(index);
+  };
+
   return (
     <div className="flex justify-center items-center bg-[#F6F4EF]">
       <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px]  bg-white  p-4">
@@ -63,13 +70,21 @@ function StudyCreatePage() {
                   {images.map((image, index) => (
                     <div
                       key={index}
-                      className="w-[150px] h-[150px] rounded-xl overflow-hidden"
+                      className="w-[150px] h-[150px] rounded-xl overflow-hidden relative cursor-pointer"
+                      onClick={() => handleImageClick(index)}
                     >
                       <img
                         src={image}
                         alt={`Image ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
+                      {hasSelected === index && (
+                        <img
+                          src={selectBtn}
+                          alt="Selected Icon"
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8"
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
