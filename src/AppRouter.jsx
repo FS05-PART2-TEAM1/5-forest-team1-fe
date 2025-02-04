@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StudyListPage from "./pages/StudyListPage";
 import StudyDetailPage from "./pages/StudyDetailPage";
 import StudyCreatePage from "./pages/StudyCreatePage";
+import StudyModifyPage from "./pages/StudyModifyPage";
 import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
@@ -13,6 +14,7 @@ function AppRouter() {
         <Route path="/" element={<StudyListPage />} />
         <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
+          <Route path="modify" element={<StudyModifyPage />} />
           <Route path=":studyId" element={<StudyDetailPage />} />
         </Route>
         <Route path="/focus" element={<FocusPage />} />
