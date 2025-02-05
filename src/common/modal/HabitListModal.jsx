@@ -2,6 +2,7 @@
 import React from "react";
 import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
+import ModalButton from "../buttons/ModalButton";
 
 const HabitListModal = ({
   isOpen,
@@ -16,7 +17,7 @@ const HabitListModal = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
-      <div className="bg-white rounded-[20px] shadow-xl p-6 w-[648px] max-h-[90vh] font-sans flex flex-col">
+      <div className="bg-white rounded-[20px] shadow-xl p-6 w-[698px] max-h-[90vh] font-sans flex flex-col">
         <h2 className="text-[24px] font-bold text-[#414141] text-center">
           습관 목록
         </h2>
@@ -64,18 +65,18 @@ const HabitListModal = ({
         </div>
 
         <div className="flex justify-between gap-6 mt-6">
-          <button
-            onClick={onClose}
+          <ModalButton
+            isCancel={onClose}
             className="px-5 py-3 bg-[#DDDDDD] text-white rounded-lg w-1/2"
           >
             닫기
-          </button>
-          <button
+          </ModalButton>
+          <ModalButton
             onClick={onSave}
             className="px-5 py-3 bg-[#99C08E] text-white rounded-lg w-1/2"
           >
             수정완료
-          </button>
+          </ModalButton>
         </div>
       </div>
     </div>
