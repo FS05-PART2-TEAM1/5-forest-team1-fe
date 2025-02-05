@@ -6,7 +6,7 @@ function StudyDetailPage() {
 
   return (
     <div>
-      <Header isCreateButton={true}></Header>
+      <Header></Header>
       <h1 className="text-3xl font-bold">스터디 상세 페이지</h1>
       <p>스터디 ID: {studyId}</p>
     </div>
