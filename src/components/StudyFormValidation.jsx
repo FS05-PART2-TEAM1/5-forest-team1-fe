@@ -1,11 +1,19 @@
 import { useState } from "react";
 
-const StudyFormValidation = ({ id, label, placeholder, validateFn }) => {
-  const [value, setValue] = useState("");
+const StudyFormValidation = ({
+  id,
+  type = "password",
+  label,
+  placeholder,
+  validateFn,
+  value,
+  setValue,
+  confirmPassword,
+}) => {
   const [error, setError] = useState("");
 
   const handleBlur = () => {
-    const validationError = validateFn(value);
+    const validationError = validateFn(value, confirmPassword);
     setError(validationError);
   };
 
@@ -13,6 +21,7 @@ const StudyFormValidation = ({ id, label, placeholder, validateFn }) => {
     setValue(e.target.value);
     if (error) setError("");
   };
+
   return (
     <div className="flex flex-col mb-4 gap-2">
       <label className="text-lg font-semibold" htmlFor={id}>
@@ -20,13 +29,13 @@ const StudyFormValidation = ({ id, label, placeholder, validateFn }) => {
       </label>
       <input
         id={id}
-        type="text"
+        type={type}
         value={value}
         placeholder={placeholder}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`border p-3 h-12 rounded-lg ${
-          error ? "border-f-error" : "border-gray-300"
+        className={`border h-12 rounded-xl p-3 ${
+          error ? "border-f-error" : "border-gray-200"
         }`}
       />
       {error && <span className="text-f-error text-sm">{error}</span>}
