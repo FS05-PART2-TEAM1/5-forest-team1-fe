@@ -15,7 +15,7 @@ const TimeBox = () => {
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const ampm = hours >= 12 ? "오후" : "오전";
 
-    hours = hours % 12 || 12; // 12시간 형식 변환
+    hours = hours % 12 || 12;
 
     return `${year}-${month}-${day} ${ampm} ${hours}:${minutes}`;
   }
@@ -23,13 +23,13 @@ const TimeBox = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(getFormattedTime());
-    }, 60000); // 1분마다 갱신
+    }, 60000);
 
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="border border-gray-400 px-4 py-2 rounded-md text-[#818181] text-sm text-center w-[140px]">
+    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[184px] font-pretendard font-medium shadow-xl mt-2">
       {currentTime}
     </div>
   );
@@ -40,7 +40,6 @@ function HabitPage() {
     <>
       <div className="min-h-screen bg-[#F6F4EF] pt-4">
         <Header />
-        {/* Main Content */}
         <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
           <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
             <div className="flex justify-between items-center mb-6">
@@ -56,12 +55,13 @@ function HabitPage() {
                     홈 <span>&gt;</span>
                   </button>
                 </Link>
-                {/* ✅ 현재 날짜 및 시간 표시 박스 */}
               </div>
             </div>
+            <div className="text-[#818181] font[18px] font-pretendard font-normal">
+              현재시간
+            </div>
             <TimeBox />
-            <p>여기에 스터디 관련 내용</p>
-            {/* 추가적인 스터디 관련 컴포넌트나 UI 요소를 이곳에 추가하세요 */}
+            <div className="rounded-lg mt-8">123</div>
           </div>
         </main>
       </div>
