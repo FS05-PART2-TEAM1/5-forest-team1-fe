@@ -1,7 +1,7 @@
-// PasswordModal.jsx
 import React from "react";
 import hideIcon from "./img/hideEyes.png";
 import openIcon from "./img/openEyes.png";
+import ModalButton from "../buttons/ModalButton";
 
 const PasswordModal = ({
   isOpen,
@@ -22,21 +22,20 @@ const PasswordModal = ({
           <h2 className="text-[24px] max-[743px]:text-[18px] font-extrabold text-center flex-1">
             {title || "비밀번호 확인"}
           </h2>
-          <button
-            onClick={onClose}
-            className="absolute right-0 text-[#578246] hover:text-green-700 text-[16px] font-weight-500 max-[743px]:hidden"
-          >
-            나가기
-          </button>
+          <div className="hidden min-[744px]:block absolute right-0  mt-4 text-[#578246] hover:text-green-700 ">
+            <button onClick={onClose} isCancel>
+              나가기
+            </button>
+          </div>
         </div>
 
         <p className="text-[18px] font-medium text-[#818181] text-center mb-6">
           권한이 필요해요!
         </p>
+
         <label className="text-[18px] font-medium text-black block mb-2">
           비밀번호
         </label>
-
         <div className="relative">
           <input
             type={isPasswordVisible ? "text" : "password"}
@@ -45,7 +44,6 @@ const PasswordModal = ({
             value={password}
             onChange={onPasswordChange}
           />
-
           <button
             type="button"
             onClick={onTogglePasswordVisibility}
@@ -59,19 +57,17 @@ const PasswordModal = ({
           </button>
         </div>
 
-        <button
-          onClick={() => onVerify(password)}
-          className="w-full px-5 py-3 bg-[#99C08E] text-white rounded-lg hover:bg-green-600 mt-auto"
-        >
-          수정하러 가기
-        </button>
+        <div className="flex flex-col-reverse max-[743px]:flex-col-reverse gap-4 mt-[30px]">
+          <div className="hidden max-[743px]:block mt-4 text-[#578246] hover:text-green-700 text-[16px] font-weight-500 mx-auto">
+            <button onClick={onClose} isCancel className="w-full">
+              나가기
+            </button>
+          </div>
 
-        <button
-          onClick={onClose}
-          className="hidden max-[743px]:block mt-4 text-[#578246] hover:text-green-700 text-[16px] font-weight-500 mx-auto"
-        >
-          나가기
-        </button>
+          <ModalButton onClick={() => onVerify(password)} className="w-full">
+            수정하러 가기
+          </ModalButton>
+        </div>
       </div>
     </div>
   );
