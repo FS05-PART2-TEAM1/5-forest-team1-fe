@@ -11,6 +11,7 @@ import bg5 from "../assets/mock_bg_images/bg_flight.jpg";
 import bg6 from "../assets/mock_bg_images/bg_flower.jpg";
 import bg7 from "../assets/mock_bg_images/bg_sea.jpg";
 import bg8 from "../assets/mock_bg_images/bg_loveblue.jpg";
+import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 
 const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8];
 
@@ -26,6 +27,23 @@ function StudyCreatePage() {
     setHasSelected(index);
   };
 
+  const validateNickname = (value) => {
+    if (!value) return "*닉네임을 입력해주세요.";
+    if (value.length < 3) return "닉네임은 3글자 이상이어야 합니다.";
+    return null;
+  };
+
+  const validateStudyName = (value) => {
+    if (!value) return "*스터디 이름을 입력해주세요.";
+    return null;
+  };
+
+  const validatePassword = (value) => {
+    if (!value) return "비밀번호를 입력해주세요.";
+    if (value.length < 6) return "비밀번호는 6자 이상이어야 합니다.";
+    return null;
+  };
+
   return (
     <div className="flex justify-center items-center bg-f-bg">
       <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px] mb-  bg-white  p-4">
@@ -36,22 +54,22 @@ function StudyCreatePage() {
                 <h1 className="text-2xl font-bold">스터디 만들기</h1>
               </div>
               <form className="flex flex-col mb-4 gap-2">
-                <label className="text-lg font-semibold" htmlFor="">
-                  닉네임
-                </label>
-                <input
+                <StudyFormValidation
+                  id="nickname"
+                  label="닉네임"
                   className="border border-gray-300 p-3 h-12 rounded-xl"
                   placeholder="닉네임을 입력해 주세요"
-                ></input>
+                  validateFn={validateNickname}
+                ></StudyFormValidation>
               </form>
               <form className="flex flex-col mb-4 gap-2">
-                <label className="text-lg font-semibold" htmlFor="">
-                  스터디 이름
-                </label>
-                <input
+                <StudyFormValidation
+                  id="studyName"
+                  label="스터디 이름"
                   className="border border-gray-300 p-3 h-12 rounded-xl"
                   placeholder="스터디 이름을 입력해주세요"
-                ></input>
+                  validateFn={validateStudyName}
+                ></StudyFormValidation>
               </form>
               <form className="flex flex-col mb-6 gap-2">
                 <label className="text-lg font-semibold" htmlFor="">
@@ -91,20 +109,22 @@ function StudyCreatePage() {
               </div>
             </div>
             <form className="flex flex-col mb-4 gap-2">
-              <label className="text-lg font-semibold" htmlFor="">
+              {/* <label className="text-lg font-semibold" htmlFor="">
                 비밀번호
-              </label>
+              </label> */}
               <div className="relative">
-                <input
+                <StudyFormValidation
                   id="password"
                   type={isVisible ? "text" : "password"}
                   className="border border-gray-300 p-3 h-12 rounded-xl w-full"
+                  label="비밀번호"
                   placeholder="비밀번호를 입력해 주세요"
+                  validateFn={validatePassword}
                 />
                 <button
                   type="button"
                   onClick={handleClick}
-                  className="absolute inset-y-0 right-3 flex items-center"
+                  className="absolute inset-y-0 right-3 flex items-center justify-center h-full"
                 >
                   <img
                     src={isVisible ? btn_visible_on : btn_visible_off}
@@ -116,20 +136,26 @@ function StudyCreatePage() {
             </form>
 
             <form className="flex flex-col mb-[30px] md:mb-10 gap-2">
-              <label className="text-lg font-semibold" htmlFor="password">
+              {/* <label className="text-lg font-semibold" htmlFor="password">
                 비밀번호 확인
-              </label>
+              </label> */}
               <div className="relative">
-                <input
-                  id="password"
+                <StudyFormValidation
                   type={isVisible ? "text" : "password"}
                   className="border border-gray-300 p-3 h-12 rounded-xl w-full"
+                  id="confirmPassword"
+                  label="비밀번호 확인"
                   placeholder="비밀번호를 다시 입력해 주세요"
+                  validateFn={(value) => {
+                    if (!value) return "*비밀번호가 일치하지 않습니다.";
+                    // 비밀번호 확인 로직 추가 가능 ?
+                    return null;
+                  }}
                 />
                 <button
                   type="button"
                   onClick={handleClick}
-                  className="absolute inset-y-0 right-3 flex items-center"
+                  className="absolute inset-y-0 right-3 flex items-center justify-center h-full"
                 >
                   <img
                     src={isVisible ? btn_visible_on : btn_visible_off}
