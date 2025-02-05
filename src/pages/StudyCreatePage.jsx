@@ -27,15 +27,15 @@ function StudyCreatePage() {
   };
 
   return (
-    <div className="flex justify-center items-center bg-[#F6F4EF]">
-      <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px]  bg-white  p-4">
-        <div className="mt-2">
+    <div className="flex justify-center items-center bg-f-bg">
+      <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px] mb-  bg-white  p-4">
+        <div className="mt-1">
           <div>
             <div className=" md:w-[648px] ">
-              <div className="mb-6">
+              <div className="mb-4">
                 <h1 className="text-2xl font-bold">스터디 만들기</h1>
               </div>
-              <form className="flex flex-col mb-6 gap-2">
+              <form className="flex flex-col mb-4 gap-2">
                 <label className="text-lg font-semibold" htmlFor="">
                   닉네임
                 </label>
@@ -44,7 +44,7 @@ function StudyCreatePage() {
                   placeholder="닉네임을 입력해 주세요"
                 ></input>
               </form>
-              <form className="flex flex-col mb-6 gap-2">
+              <form className="flex flex-col mb-4 gap-2">
                 <label className="text-lg font-semibold" htmlFor="">
                   스터디 이름
                 </label>
@@ -53,7 +53,7 @@ function StudyCreatePage() {
                   placeholder="스터디 이름을 입력해주세요"
                 ></input>
               </form>
-              <form className="flex flex-col mb-6 gap-4">
+              <form className="flex flex-col mb-6 gap-2">
                 <label className="text-lg font-semibold" htmlFor="">
                   소개
                 </label>
@@ -62,15 +62,15 @@ function StudyCreatePage() {
                   placeholder="소개 멘트를 작성해 주세요"
                 />
               </form>
-              <div className=" mb-6 ">
-                <h3 className="text-lg font-semibold mb-6">
+              <div className=" mb-4 ">
+                <h3 className="text-lg font-semibold mb-3">
                   배경을 선택해주세요
                 </h3>
                 <div className="grid grid-cols-2  md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {images.map((image, index) => (
                     <div
                       key={index}
-                      className="w-[150px] h-[150px] rounded-xl overflow-hidden relative cursor-pointer"
+                      className="w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer"
                       onClick={() => handleImageClick(index)}
                     >
                       <img
@@ -90,7 +90,7 @@ function StudyCreatePage() {
                 </div>
               </div>
             </div>
-            <form className="flex flex-col mb-6 gap-2">
+            <form className="flex flex-col mb-4 gap-2">
               <label className="text-lg font-semibold" htmlFor="">
                 비밀번호
               </label>
