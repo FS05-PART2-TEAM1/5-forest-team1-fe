@@ -11,6 +11,12 @@ const backgroundColors = {
   blue: "bg-f-blue-blue",
   pink: "bg-f-pink-bg",
 };
+const textColors = {
+  green: "text-f-green-text",
+  yellow: "text-f-yellow-text",
+  blue: "text-f-blue-text",
+  pink: "text-f-pink-text",
+};
 
 const StudyCard = ({ study, type = "browse" }) => {
   const isImage = study.backgroundType === "image";
@@ -34,7 +40,7 @@ const StudyCard = ({ study, type = "browse" }) => {
   // 텍스트 색상 설정 (이미지 배경이면 흰색, 아니면 지정된 색상)
   const nameTextColor = isImage
     ? "text-[#ffffff]"
-    : `text-f-${study.backgroundContent}-text`;
+    : `${textColors[study.backgroundContent]}`;
   const titleTextColor = isImage ? "text-[#ffffff]" : "text-f-black";
   const infoTextColor = isImage ? "text-f-gray-100" : "text-f-black";
   const descriptionTextColor = isImage ? "text-[#ffffff]" : "text-f-black";
