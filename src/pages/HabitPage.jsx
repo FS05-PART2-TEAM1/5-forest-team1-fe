@@ -29,7 +29,7 @@ const TimeBox = () => {
   }, []);
 
   return (
-    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[184px] font-pretendard font-medium shadow-xl mt-2">
+    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[200px] font-pretendard font-medium shadow-xl mt-2">
       {currentTime}
     </div>
   );
@@ -61,7 +61,12 @@ function HabitPage() {
               현재시간
             </div>
             <TimeBox />
-            <div className="rounded-lg mt-8">123</div>
+            <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6">
+              <div>
+                <div>오늘의 습관</div>
+              </div>
+              <div className="h-[498px]">습관 목록</div>
+            </div>
           </div>
         </main>
       </div>
