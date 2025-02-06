@@ -66,7 +66,8 @@ const HabitListModal = ({
 
         <div className="flex justify-between gap-6 mt-6">
           <ModalButton
-            isCancel={onClose}
+            isCancel={true}
+            onClick={onClose}
             className="px-5 py-3 bg-[#DDDDDD] text-white rounded-lg w-1/2"
           >
             닫기
