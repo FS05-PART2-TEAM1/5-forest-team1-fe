@@ -166,7 +166,7 @@ function StudyCreatePage() {
                     alt="Toggle visibility"
                     type="button"
                     onClick={handleClick}
-                    className="w-5 absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full z-10"
+                    className="w-5 absolute inset-y-0 top-4 right-3 flex items-center justify-center h-full z-10"
                   />
                 </div>
               </form>
@@ -188,7 +188,7 @@ function StudyCreatePage() {
                     alt="Toggle visibility"
                     type="button"
                     onClick={handleClick}
-                    className=" w-5 absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full z-10"
+                    className=" w-5 absolute inset-y-0 top-4 right-3 flex items-center justify-center h-full z-10"
                   />
                 </div>
               </div>
