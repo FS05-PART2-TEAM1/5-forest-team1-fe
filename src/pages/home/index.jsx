@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
- * @todo: 상세 페이지 렌더링 추가
  * @todo: 검색 및 정렬 추가
  * @todo: 페이지네이션 추가
  * @todo: ui 디자인 및 컴포넌트 분리

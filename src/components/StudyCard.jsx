@@ -63,9 +63,9 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
     >
       <div className="md:absolute md:right-[30px] mb-[6px]">
         {isImage ? (
-          <EarnedPointsBoxSmBlack points={study.points} />
+          <EarnedPointsBoxSmBlack points={study.totalPoints} />
         ) : (
-          <EarnedPointsBoxSm points={study.points} />
+          <EarnedPointsBoxSm points={study.totalPoints} />
         )}
       </div>
 
