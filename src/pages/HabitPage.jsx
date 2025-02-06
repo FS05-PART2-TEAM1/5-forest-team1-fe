@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link } from "react-router-dom";
-import HabitListModal from "../common/modal/HabitListModal"; // 모달 import
+import HabitListModal from "../common/modal/HabitListModal";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -39,6 +39,7 @@ const TimeBox = () => {
 function HabitPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [habits, setHabits] = useState([]);
+  const [selectedHabits, setSelectedHabits] = useState([]);
   const maxHabitCount = 5;
 
   const onAddHabit = () => {
@@ -48,17 +49,27 @@ function HabitPage() {
         setHabits([...habits, newHabit]);
       }
     } else {
-      alert("최대 5개의 습관만 추가할 수 있습니다.");
+      alert("습관은 최대 n개까지만 추가할 수 있습니다.");
     }
   };
 
   const onRemoveHabit = (index) => {
     const updatedHabits = habits.filter((_, i) => i !== index);
     setHabits(updatedHabits);
+
+    setSelectedHabits(selectedHabits.filter((_, i) => i !== index));
   };
 
   const onSave = () => {
     setIsModalOpen(false);
+  };
+
+  const onToggleHabit = (index) => {
+    if (selectedHabits.includes(index)) {
+      setSelectedHabits(selectedHabits.filter((i) => i !== index));
+    } else {
+      setSelectedHabits([...selectedHabits, index]);
+    }
   };
 
   return (
@@ -71,12 +82,12 @@ function HabitPage() {
               <h2 className="text-2xl font-semibold mb-4">스터디 이름</h2>
               <div className="flex gap-4 items-center">
                 <Link to="/focus">
-                  <button className="border py-3 pl-6 pr-4 rounded-xl text-[#818181]">
+                  <button className="border py-2 pl-[10px] pr-[6px] md:py-3 md:pl-6 md:pr-[16px] rounded-xl text-[#818181] md:w-[144px] md:h-[48px] w-[120px] h-[40px] ">
                     오늘의 집중 <span>&gt;</span>
                   </button>
                 </Link>
                 <Link to="/">
-                  <button className="border py-3 pl-6 pr-4 rounded-xl text-[#818181]">
+                  <button className="border py-2 pl-[16px] pr-[10px] rounded-xl text-[#818181] w-[58px] h-[40px] md:w-[82px] md:h-[48px] md:py-3 md:pl-6 md:pr-[16px]">
                     홈 <span>&gt;</span>
                   </button>
                 </Link>
@@ -104,7 +115,16 @@ function HabitPage() {
                 {habits.length > 0 ? (
                   <ul className="flex flex-col gap-3 text-center">
                     {habits.map((habit, index) => (
-                      <li key={index} className="text-[#414141] text-[20px]">
+                      <li
+                        key={index}
+                        className={` text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] rounded-[20px] flex items-center justify-center cursor-pointer
+                          ${
+                            selectedHabits.includes(index)
+                              ? "bg-[#99C08E] text-white"
+                              : "bg-[#EEEEEE]"
+                          }`}
+                        onClick={() => onToggleHabit(index)}
+                      >
                         {habit}
                       </li>
                     ))}
