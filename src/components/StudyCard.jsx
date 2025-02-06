@@ -80,7 +80,7 @@ const StudyCard = ({ study, type = "browse" }) => {
       </span>
 
       <span
-        className={`text-[14px] ${descriptionTextColor} md:text-16pt font-normal max-w-[208px] md:max-w-none leading-tight md:leading-snug lg:leading-normal block`}
+        className={`text-[14px] ${descriptionTextColor} md:text-16pt font-normal max-w-[208px] md:max-w-none leading-tight md:leading-snug lg:leading-normal line-clamp-2`}
       >
         {study.description}
       </span>
