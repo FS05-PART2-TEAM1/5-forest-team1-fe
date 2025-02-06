@@ -1,8 +1,10 @@
 import axiosClient from "@/api/axios";
+import { Header } from "@/common/layout/Header";
 import StudyCard from "@/components/StudyCard";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /**
  * @todo: 상세 페이지 렌더링 추가
@@ -11,6 +13,7 @@ import { useEffect, useState } from "react";
  * @todo: ui 디자인 및 컴포넌트 분리
  */
 function Home() {
+  const navigate = useNavigate();
   const [viewedStudyIds, setViewedStudyIds] = useLocalStorage(
     "viewed_study_ids",
     []
@@ -59,12 +62,13 @@ function Home() {
       const filteredStudies = prevViewedStudies.filter((id) => id !== studyId);
       return [studyId, ...filteredStudies].slice(0, 3);
     });
-    //todo : 상세 페이지 렌더링 추가
+
+    navigate(`studies/${studyId}`);
   };
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">스터디 목록 - 정한샘</h1>
+      <Header isCreateButton={true} />
       <div
         className={clsx(
           "relative max-w-[1200px] min-h-[247px] md:min-h-[338px] lg:min-h-[382px] p-[16px] md:p-[24px] lg:p-[40px]",
