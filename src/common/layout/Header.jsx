@@ -6,7 +6,7 @@ export function Header({ isCreateButton = false }) {
   return (
     <>
       {isCreateButton ? (
-        <div className="flex lg:ml-48 md:ml-8 ml-2 lg:mr-48 md:mr-8 mr-2 mt-4 lg:mb-8 mb-4 justify-between items-center">
+        <div className="flex lg:ml-48 md:ml-8 ml-2 pt-4 lg:mr-48 md:mr-8 mr-2 lg:mb-8 mb-4 justify-between items-center">
           <Link to="/">
             <img
               className="md:w-[182px] w-[106px] md:h-[60px] h-[35px]"
@@ -18,7 +18,7 @@ export function Header({ isCreateButton = false }) {
           </Link>
         </div>
       ) : (
-        <div className="lg:ml-48 md:ml-8 ml-2 mt-4 mb-8 md:w-[182px] w-[106px] md:h-[60px] h-[35px]">
+        <div className="lg:ml-48 md:ml-8 ml-2 pt-4 mb-8 md:w-[182px] w-[106px] md:h-[60px] h-[35px]">
           <Link to="/">
             <img className="md:w-[182px] w-[106px] md:h-[60px] h-[35px]" src={logoImg} />
           </Link>
