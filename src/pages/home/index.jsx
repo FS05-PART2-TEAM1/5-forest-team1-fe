@@ -5,6 +5,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useWheelScroll from "@/hooks/useWheelScroll";
 
 /**
  * @todo: 검색 및 정렬 추가
@@ -29,6 +30,8 @@ function Home() {
   });
   const hasBrowseStudy = studies?.studies?.length > 0;
   const hasViewedStudy = viewedStudyIds?.length > 0;
+
+  const { scrollRef } = useWheelScroll();
 
   useEffect(() => {
     if (!hasViewedStudy) return;
@@ -84,7 +87,10 @@ function Home() {
         >
           최근 조회한 스터디
         </span>
-        <div className="flex gap-[16px] md:gap-[24px] overflow-x-auto [&::-webkit-scrollbar]:hidden">
+        <div
+          ref={scrollRef}
+          className="flex gap-[16px] md:gap-[24px] overflow-x-auto [&::-webkit-scrollbar]:hidden"
+        >
           {hasViewedStudy ? (
             viewedStudies.studies.map((item) => (
               <StudyCard
