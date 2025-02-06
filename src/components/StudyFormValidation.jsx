@@ -2,28 +2,27 @@ import { useState } from "react";
 
 const StudyFormValidation = ({
   id,
-  type = "password",
   label,
   placeholder,
   validateFn,
-  value,
-  setValue,
-  confirmPassword,
+  type = "text",
+  onChange,
 }) => {
+  const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
   const handleBlur = () => {
-    const validationError = validateFn(value, confirmPassword);
+    const validationError = validateFn(value);
     setError(validationError);
   };
-
   const handleChange = (e) => {
     setValue(e.target.value);
     if (error) setError("");
+    if (onChange) onChange(e);
   };
 
   return (
-    <div className="flex flex-col mb-4 gap-2">
+    <div className="flex flex-col gap-2">
       <label className="text-lg font-semibold" htmlFor={id}>
         {label}
       </label>

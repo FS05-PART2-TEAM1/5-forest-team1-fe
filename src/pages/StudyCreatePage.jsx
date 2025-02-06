@@ -6,9 +6,10 @@ import btn_visible_off from "../assets/icons/btn_visibility_off.svg";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 
-//TO DO: 컴포넌트 분리,
+//TO DO: 수정페이지 작업, 컴포넌트 분리,
 //       비밀번호 visible 토글 버튼 에러메시지 출력시 위치 변경되는것 해결,
 //       POST API 작업
+//       소개 입력 textarea 검증?
 
 const backgrounds = [
   { type: "color", content: "#EED3D9" },
@@ -58,26 +59,25 @@ function StudyCreatePage() {
 
   const validateStudyName = (value) => {
     if (!value) return "*스터디 이름을 입력해주세요.";
+    if ((value.length < 3) | (value.length > 10))
+      return "스터디 이름은 3글자 이상 10글자 이하로 설정해주세요.";
     return null;
   };
-
   const validatePassword = (value) => {
     if (!value) return "비밀번호를 입력해주세요.";
     if (value.length < 6) return "비밀번호는 6자 이상이어야 합니다.";
     return null;
   };
-
   const validateConfirmPassword = (value, password) => {
     if (!value) return "*비밀번호를 다시 입력해주세요.";
     if (value !== password) return "*비밀번호가 일치하지 않습니다.";
     return null;
   };
-
   return (
     <>
       <Header isCreateButton={true} />
       <div className="flex justify-center items-center bg-f-bg">
-        <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:h-[1171px] w-[344px] h-[1423px] mb-  bg-white  p-4">
+        <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:min-h-[1171px] w-[344px] min-h-[1423px] bg-white  p-4">
           <div className="mt-1">
             <div>
               <div className=" md:w-[648px] ">
@@ -157,52 +157,41 @@ function StudyCreatePage() {
                     type={isVisible ? "text" : "password"}
                     label="비밀번호"
                     placeholder="비밀번호를 입력해 주세요"
-                    value={password}
-                    setValue={setPassword}
                     validateFn={validatePassword}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
-                  <button
+
+                  <img
+                    src={isVisible ? btn_visible_on : btn_visible_off}
+                    alt="Toggle visibility"
                     type="button"
                     onClick={handleClick}
-                    className="absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full z-10"
-                  >
-                    <img
-                      src={isVisible ? btn_visible_on : btn_visible_off}
-                      alt="Toggle visibility"
-                      className="w-5 h-5"
-                    />
-                  </button>
+                    className="w-5 absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full z-10"
+                  />
                 </div>
               </form>
 
-              <form className="flex flex-col mb-[30px] md:mb-10 gap-2">
-                {/* <label className="text-lg font-semibold" htmlFor="password">
-      비밀번호 확인
-    </label> */}
+              <div className="flex flex-col mb-2 md:mb-6 gap-2">
                 <div className="relative">
                   <StudyFormValidation
                     type={isVisible ? "text" : "password"}
                     id="confirmPassword"
                     label="비밀번호 확인"
                     placeholder="비밀번호를 다시 입력해 주세요"
-                    value={confirmPassword}
-                    setValue={setConfirmPassword}
-                    validateFn={validateConfirmPassword}
-                    confirmPassword={password}
+                    validateFn={(value) =>
+                      validateConfirmPassword(value, password)
+                    }
                   />
-                  <button
+
+                  <img
+                    src={isVisible ? btn_visible_on : btn_visible_off}
+                    alt="Toggle visibility"
                     type="button"
                     onClick={handleClick}
-                    className="absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full"
-                  >
-                    <img
-                      src={isVisible ? btn_visible_on : btn_visible_off}
-                      alt="Toggle visibility"
-                      className="w-5 h-5"
-                    />
-                  </button>
+                    className=" w-5 absolute inset-y-0 top-2 right-3 flex items-center justify-center h-full z-10"
+                  />
                 </div>
-              </form>
+              </div>
             </div>
             <PrimaryButton>만들기</PrimaryButton>
           </div>
