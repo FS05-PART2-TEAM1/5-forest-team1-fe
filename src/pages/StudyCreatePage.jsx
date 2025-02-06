@@ -171,7 +171,7 @@ function StudyCreatePage() {
                 </div>
               </form>
 
-              <div className="flex flex-col mb-2 md:mb-6 gap-2">
+              <div className="flex flex-col mb-5 md:mb-6 gap-2">
                 <div className="relative">
                   <StudyFormValidation
                     type={isVisible ? "text" : "password"}
