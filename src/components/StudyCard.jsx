@@ -18,7 +18,7 @@ const textColors = {
   pink: "text-f-pink-text",
 };
 
-const StudyCard = ({ study, type = "browse" }) => {
+const StudyCard = ({ study, type = "browse", onClick }) => {
   const isImage = study.backgroundType === "image";
   const hasReactions = study.reactions && study.reactions.length > 0;
 
@@ -59,6 +59,7 @@ const StudyCard = ({ study, type = "browse" }) => {
         backgroundColors[study.backgroundContent] // 배경 색상 적용
       )}
       style={backgroundStyle}
+      onClick={onClick}
     >
       <div className="md:absolute md:right-[30px] mb-[6px]">
         {isImage ? (
