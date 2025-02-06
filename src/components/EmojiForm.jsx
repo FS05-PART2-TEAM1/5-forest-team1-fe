@@ -3,7 +3,7 @@ import EmojiPicker from "emoji-picker-react";
 import emojiCreateImg from "../assets/icons/emoji_create.png"
 import { useState } from "react";
 
-function EmojiForm () {
+function EmojiForm ({reactions}) {
   /*
   API 데이터를 가져온다
   useState 걸어서 emojis 같은 배열에 객체들을 저장한다.
@@ -13,25 +13,36 @@ function EmojiForm () {
   아니면 이모지 정보만 전송한다.
   그리고 다시 API 데이터를 emojis에 가져온다.
   */
+  const [emojis, setEmojis] = useState([]);
   const [isAddMod, setIsAddMod] = useState(false);
 
   const onEmojiClick = (emojiData) => {
     
     setIsAddMod(false);
   }
-
   return (
-    <div>
+    <div className="flex gap-4">
+      <div className="flex gap-2">
+      {
+        reactions.map((reaction) => {
+          return (
+            <EmojiTag emoji={reaction.emoji} count={reaction.counts}/>
+          )
+        })
+      }
+      </div>
+      <div>
       <div className="border flex w-[75px] text-16pt gap-2 items-center p-2 rounded-[50px] cursor-pointer" onClick={() => setIsAddMod(!isAddMod)}>
         <img src={emojiCreateImg} /> 
         <div>추가</div>
       </div>
       {
         isAddMod &&
-        <div className="absolute mt-2">
+        <div className="absolute mt-3">
         <EmojiPicker onEmojiClick={onEmojiClick}/>
         </div>
       }
+      </div>
     </div>
   );
 }
