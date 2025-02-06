@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link } from "react-router-dom";
+import HabitListModal from "../common/modal/HabitListModal"; // 모달 import
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -36,6 +37,30 @@ const TimeBox = () => {
 };
 
 function HabitPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [habits, setHabits] = useState([]);
+  const maxHabitCount = 5;
+
+  const onAddHabit = () => {
+    if (habits.length < maxHabitCount) {
+      const newHabit = prompt("새로운 습관을 입력하세요:");
+      if (newHabit) {
+        setHabits([...habits, newHabit]);
+      }
+    } else {
+      alert("최대 5개의 습관만 추가할 수 있습니다.");
+    }
+  };
+
+  const onRemoveHabit = (index) => {
+    const updatedHabits = habits.filter((_, i) => i !== index);
+    setHabits(updatedHabits);
+  };
+
+  const onSave = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF] pt-4">
@@ -62,14 +87,49 @@ function HabitPage() {
             </div>
             <TimeBox />
             <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6">
-              <div>
-                <div>오늘의 습관</div>
+              <div className="relative w-full flex justify-center items-center">
+                <div className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] font-bold text-[#414141]">
+                  오늘의 습관
+                </div>
+
+                <button
+                  className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  목록 수정
+                </button>
               </div>
-              <div className="h-[498px]">습관 목록</div>
+
+              <div className="h-[498px] flex justify-center items-center w-full">
+                {habits.length > 0 ? (
+                  <ul className="flex flex-col gap-3 text-center">
+                    {habits.map((habit, index) => (
+                      <li key={index} className="text-[#414141] text-[20px]">
+                        {habit}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="flex flex-col justify-center items-center text-center text-[#818181] text-[20px]">
+                    아직 습관이 없어요 <br /> 목록 수정을 눌러 습관을
+                    생성해보세요
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </main>
       </div>
+
+      <HabitListModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={onSave}
+        habits={habits}
+        onAddHabit={onAddHabit}
+        onRemoveHabit={onRemoveHabit}
+        maxHabitCount={maxHabitCount}
+      />
     </>
   );
 }
