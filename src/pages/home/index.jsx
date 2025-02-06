@@ -1,70 +1,126 @@
+import axiosClient from "@/api/axios";
 import StudyCard from "@/components/StudyCard";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
 
-const STUDY = [
-  {
-    id: "70c8c2ef-dca8-4667-924c-140cd339712b",
-    nickname: "새하",
-    title: "웹 보안 스터디",
-    description:
-      "웹 보안과 관련된 개념을 학습합니다.웹 보안과 관련된 개념을웹 보안과 관련된 개념을웹 보안과 관련된 개념을 ",
-    backgroundType: "image",
-    backgroundContent: `https://picsum.photos/200/200`,
-    points: 180,
-    createdAt: "2024-03-30T00:00:00.000Z",
-    updatedAt: "2025-01-30T08:42:58.828Z",
-    reactions: [
-      {
-        id: "dc77b00b-795d-4490-8679-8eff574027be",
-        studyId: "cf38c6d9-686a-44de-8490-2a2ffa1bcba1",
-        emoji: "👍",
-        counts: 5,
-        createdAt: "2025-01-31T15:22:05.752Z",
-        updatedAt: "2025-01-31T15:22:05.752Z",
-      },
-      {
-        id: "7d702831-04e5-4937-910c-029adb385eb5",
-        studyId: "cf38c6d9-686a-44de-8490-2a2ffa1bcba1",
-        emoji: "🔥",
-        counts: 3,
-        createdAt: "2025-01-31T15:22:05.754Z",
-        updatedAt: "2025-01-31T15:22:05.754Z",
-      },
-    ],
-  },
-  {
-    id: "70c8c2ef-dca8-4667-924c-140cd339712b",
-    nickname: "새하",
-    title: "웹 보안 스터디",
-    description: "웹 보안과 관련된 개념을 학습합니다.",
-    backgroundType: "color",
-    backgroundContent: "green",
-    points: 180,
-    createdAt: "2024-03-30T00:00:00.000Z",
-    updatedAt: "2025-01-30T08:42:58.828Z",
-    reactions: [],
-  },
-];
+/**
+ * @todo: 상세 페이지 렌더링 추가
+ * @todo: 검색 및 정렬 추가
+ * @todo: 페이지네이션 추가
+ * @todo: ui 디자인 및 컴포넌트 분리
+ */
 function Home() {
+  const [viewedStudyIds, setViewedStudyIds] = useLocalStorage(
+    "viewed_study_ids",
+    []
+  );
+  const [studies, setStudies] = useState({
+    studies: [],
+    total: 0,
+    currentPage: 1,
+    totalPages: 1,
+  });
+  const [viewedStudies, setViewedStudies] = useState({
+    studies: [],
+    total: 0,
+  });
+  const hasBrowseStudy = studies?.studies?.length > 0;
+  const hasViewedStudy = viewedStudyIds?.length > 0;
+
+  useEffect(() => {
+    if (!hasViewedStudy) return;
+
+    const fetchViewedStudies = async () => {
+      const ids = viewedStudyIds.join(",");
+      const response = await axiosClient.get(
+        `/api/studies/recent?studyIds=${ids}`
+      );
+      const sortedStudies = viewedStudyIds
+        .map((id) => response.data.studies.find((study) => study.id === id))
+        .filter(Boolean);
+      setViewedStudies({ ...response.data, studies: sortedStudies });
+    };
+
+    fetchViewedStudies();
+  }, [viewedStudyIds]);
+
+  useEffect(() => {
+    const fetchStudies = async () => {
+      const response = await axiosClient.get("/api/studies");
+      setStudies({ ...response.data });
+    };
+
+    fetchStudies();
+  }, []);
+
+  const handleClickStudyCard = (studyId) => {
+    setViewedStudyIds((prevViewedStudies) => {
+      const filteredStudies = prevViewedStudies.filter((id) => id !== studyId);
+      return [studyId, ...filteredStudies].slice(0, 3);
+    });
+    //todo : 상세 페이지 렌더링 추가
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold">스터디 목록 - 정한샘</h1>
-      <div className="max-w-[1200px] px-[38px]">
-        최근 조회한 스터디
+      <div
+        className={clsx(
+          "relative max-w-[1200px] min-h-[247px] md:min-h-[338px] lg:min-h-[382px] p-[16px] md:p-[24px] lg:p-[40px]",
+          {
+            "flex items-center justify-center": !hasViewedStudy,
+          }
+        )}
+      >
+        <span
+          className={clsx({
+            "absolute top-[16px] md:top-[24px] left-[16px] md:left-[24px] lg:left-[40px]":
+              !hasViewedStudy,
+          })}
+        >
+          최근 조회한 스터디
+        </span>
         <div className="flex gap-[16px] md:gap-[24px] overflow-x-auto [&::-webkit-scrollbar]:hidden">
-          <StudyCard study={STUDY[0]} type={"viewed"}></StudyCard>
-          <StudyCard study={STUDY[0]} type={"viewed"}></StudyCard>
-          <StudyCard study={STUDY[0]} type={"viewed"}></StudyCard>
+          {hasViewedStudy ? (
+            viewedStudies.studies.map((item) => (
+              <StudyCard
+                key={item.id}
+                study={item}
+                type={"viewed"}
+                onClick={() => handleClickStudyCard(item.id)}
+              />
+            ))
+          ) : (
+            <div className="text-16pt md:text-20pt font-regular text-f-gray-500">
+              아직 조회한 스터디가 없어요
+            </div>
+          )}
         </div>
       </div>
+
       <div className="max-w-[1200px] px-[38px]">
         스터디 둘러보기
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-[16px] md:gap-[24px]">
-          <StudyCard study={STUDY[0]}></StudyCard>
-          <StudyCard study={STUDY[0]}></StudyCard>
-          <StudyCard study={STUDY[1]}></StudyCard>
-          <StudyCard study={STUDY[1]}></StudyCard>
-          <StudyCard study={STUDY[0]}></StudyCard>
-          <StudyCard study={STUDY[0]}></StudyCard>
+        <div
+          className={clsx("min-h-[405px] md:min-h-[623px]", {
+            "flex items-center justify-center": !hasBrowseStudy,
+            "grid md:grid-cols-2 lg:grid-cols-3 gap-y-[16px] md:gap-[24px]":
+              hasBrowseStudy,
+          })}
+        >
+          {hasBrowseStudy ? (
+            studies?.studies.map((item) => (
+              <StudyCard
+                key={item.id}
+                study={item}
+                onClick={() => handleClickStudyCard(item.id)}
+              ></StudyCard>
+            ))
+          ) : (
+            <div className="text-16pt md:text-20pt font-regular text-f-gray-500">
+              아직 둘러 볼 스터디가 없어요
+            </div>
+          )}
         </div>
       </div>
     </div>
