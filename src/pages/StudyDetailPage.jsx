@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import arrowImg from "../assets/icons/ic_arrow.png";
 import EmojiForm from "@/components/EmojiForm";
+import PasswordModal from "@/common/modal/PasswordModal";
 
 function StudyDetailPage() {
   const { studyId } = useParams();
@@ -48,7 +49,6 @@ function StudyDetailPage() {
             </div>
           </div>
           <div className="mt-6 md:text-18pt text-16pt text-[#818181]">현재까지 획득한 포인트</div>
-          
         </div>
       </div>
     </div>
