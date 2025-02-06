@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import StudyListPage from "./pages/StudyListPage";
 import StudyDetailPage from "./pages/StudyDetailPage";
 import StudyCreatePage from "./pages/StudyCreatePage";
 import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
+import Home from "./pages/home";
 import HabitTracker from "./components/HabitTracker.jsx";
 
 function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<StudyListPage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
           <Route path="HabitTracker" element={<HabitTracker />} />
