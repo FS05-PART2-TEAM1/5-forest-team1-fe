@@ -10,10 +10,38 @@ import stopIcon from "../assets/icons/ic_stop.png";
 import bracketIcon from "../assets/icons/ic_bracket.png";
 
 function FocusPage() {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25분을 초로 변환
+  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 25분을 초로 변환
   const [isRunning, setIsRunning] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0);
+  const [startTime, setStartTime] = useState(new Date());
+  const [totalPauseTime, setTotalPauseTime] = useState(0);
+  const [focusTime, setFocusTime] = useState(0);
+  const [studyId, setStudyId] = useState("");
+  const [currentPoints, setCurrentPoints] = useState(0);
+
+  // 포인트 조회 from study schema
+  const fetchPoints = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28`
+      );
+      if (!response.ok) {
+        throw new Error("포인트 정보를 가져오는데 실패했습니다.");
+      }
+      const { totalPoints } = await response.json();
+
+      return totalPoints;
+    } catch (error) {
+      console.error("포인트 로딩 실패:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    // 초기 포인트 로딩, 포인트 업데이트
+    fetchPoints().then((points) => setCurrentPoints(points));
+  }, []);
 
   useEffect(() => {
     let timer;
@@ -27,10 +55,16 @@ function FocusPage() {
 
   const startTimer = () => {
     setIsRunning(true);
+    setStartTime(new Date());
   };
 
   const pauseTimer = () => {
     setIsRunning(false);
+    const currentTime = new Date();
+    const pauseDuration = currentTime - startTime;
+    setTotalPauseTime(
+      (prevTotalPauseTime) => prevTotalPauseTime + pauseDuration
+    );
   };
 
   const resetTimer = () => {
@@ -38,20 +72,59 @@ function FocusPage() {
     setTimeLeft(25 * 60);
   };
 
-  const finishTimer = () => {
-    const extraMinutes = Math.abs(timeLeft) / 60; // 25분 이후 추가 시간(분)
-    setIsRunning(false);
-    setTimeLeft(25 * 60);
-    setIsCompleted(true);
-    setEarnedPoints(calculatePoints(extraMinutes));
+  const finishTimer = async () => {
+    const finishTime = new Date();
+    const extraMinutes = Math.abs(timeLeft) / 60;
+    const points = calculatePoints(extraMinutes);
+
+    const totalDuration = finishTime - startTime;
+    const actualFocusTime = totalDuration - totalPauseTime;
+
+    try {
+      const totalPoints = await fetchPoints();
+      const updatedTotalPoints = totalPoints + points;
+
+      const response = await fetch(
+        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28/points`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            points,
+            totalPoints: updatedTotalPoints,
+            startedAt: startTime.toISOString(),
+            finishedAt: finishTime.toISOString(),
+            focusTime: Math.floor(actualFocusTime / 1000),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("집중 시간 저장에 실패했습니다.");
+      }
+
+      setIsRunning(false);
+      setTimeLeft(25 * 60);
+      setIsCompleted(true);
+      setEarnedPoints(points);
+      setFocusTime(actualFocusTime);
+      setCurrentPoints(updatedTotalPoints);
+    } catch (error) {
+      console.error("API 오류:", error);
+      // 에러 처리 로직 추가 필요
+    }
   };
 
+  // 포인트 계산 함수
   const calculatePoints = (extraMinutes) => {
     const basePoints = 3; // 기본 3포인트 (25분 완료)
-    const additionalPoints = Math.floor(extraMinutes / 10); // 추가 시간 10분당 1포인트
+    const additionalPoints = Math.floor(extraMinutes / 0.1); // 추가 시간 10분당 1포인트
     return basePoints + additionalPoints;
   };
 
+  // 시간 포맷팅 함수
   const formatTime = (seconds) => {
     const isNegative = seconds < 0;
     const absoluteSeconds = Math.abs(seconds);
@@ -93,7 +166,7 @@ function FocusPage() {
           <p className="text-[#818181] text-[16px] md:text-[18px] font-normal">
             현재까지 획득한 포인트
           </p>
-          <EarnedPointsBoxMd points={9999} />
+          <EarnedPointsBoxMd points={currentPoints} />
         </div>
 
         <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
