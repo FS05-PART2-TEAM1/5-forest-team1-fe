@@ -8,7 +8,9 @@
       "@pages/*": ["src/pages/*"],
       "@styles/*": ["src/styles/*"],
       "@utils/*": ["src/utils/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@api/*": ["src/api/*"]
     }
   }
 }
