@@ -2,6 +2,7 @@ import StudyCard from "@/components/StudyCard";
 import clsx from "clsx";
 import icSearch from "@assets/icons/ic_search.png";
 import icToggle from "@assets/icons/ic_toggle.png";
+import Select from "@/components/Select";
 
 const BrowseStudySection = ({ children }) => {
   return (
@@ -35,22 +36,16 @@ BrowseStudySection.Filter = ({
           className="absolute w-[18px] h-[18px] left-[12px] top-1/2 -translate-y-1/2"
         />
       </div>
-      <select
-        style={{
-          backgroundImage: `url(${icToggle})`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 10px center",
-          backgroundSize: "30px 30px",
-        }}
-        className={`w-[180px] h-[42px] text-16pt font-regular text-f-gray-500 rounded-[15px] border border-f-gray-200 px-[20px] appearance-none outline-none focus:ring-f-green-text focus:ring-[2px]`}
-        value={selectedOption}
-        onChange={(e) => handleChangeSelectedOption(e)}
-      >
-        <option value="newest">최근 순</option>
-        <option value="oldest">오래된 순</option>
-        <option value="mostPoints">많은 포인트 순</option>
-        <option value="leastPoints">적은 포인트 순</option>
-      </select>
+      <Select
+        selected={selectedOption}
+        onClick={(option) => handleChangeSelectedOption(option)}
+        options={[
+          { value: "newest", label: "최신 순" },
+          { value: "oldest", label: "오래된 순" },
+          { value: "mostPoints", label: "많은 포인트 순" },
+          { value: "leastPoints", label: "적은 포인트 순" },
+        ]}
+      />
     </div>
   );
 };

@@ -1,8 +1,6 @@
-import StudyCard from "@/components/StudyCard";
 import { useDebounce } from "@/hooks/useDebounce";
 import useFetchBrowseStudies from "@/hooks/useFetchBrowseStudies";
 import useFetchRecentViewedStudies from "@/hooks/useFetchRecentViewedStudies";
-import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BrowseStudySection from "./BrowseStudySection";
@@ -51,8 +49,7 @@ const BrowseStudyContainer = () => {
     setLocalKeyword(e.target.value);
   };
 
-  const handleChangeSelectedOption = (e) => {
-    const option = e.target.value;
+  const handleChangeSelectedOption = (option) => {
     setSelectedOption(option);
     setParams((prev) => ({
       ...prev,
