@@ -12,6 +12,9 @@ const PasswordModal = ({
   onPasswordChange,
   isPasswordVisible,
   onTogglePasswordVisibility,
+  buttonText,
+  link,
+  studyId,
 }) => {
   if (!isOpen) return null;
 
@@ -65,7 +68,7 @@ const PasswordModal = ({
           </div>
 
           <ModalButton onClick={() => onVerify(password)} className="w-full">
-            수정하러 가기
+            {buttonText}
           </ModalButton>
         </div>
       </div>
