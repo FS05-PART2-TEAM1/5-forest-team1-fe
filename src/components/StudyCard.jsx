@@ -33,9 +33,9 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
   // 카드 사이즈 및 배경 관련 클래스들
   const typeStyle = type === "viewed" ? "md:min-w-[358px]" : "";
   const baseStyle =
-    "bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300 flex flex-col justify-between";
-  const mobileStyle = "min-w-[240px] min-h-[180px] p-[16px]";
-  const tabletStyle = "md:min-h-[243px] md:p-[30px]";
+    " bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300 flex flex-col justify-between";
+  const mobileStyle = "h-[180px] min-w-[240px] p-[16px]";
+  const tabletStyle = "md:h-[243px] md:p-[30px]";
 
   // 텍스트 색상 설정 (이미지 배경이면 흰색, 아니면 지정된 색상)
   const nameTextColor = isImage
@@ -104,9 +104,7 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
           ))}
         </div>
       ) : (
-        <div
-          className={`absolute bottom-[16px] md:bottom-[30px] text-[14px] ${infoTextColor} flex items-center`}
-        >
+        <div className={`text-[14px] ${infoTextColor} flex items-center`}>
           응원하러 가기! 👏🎈
         </div>
       )}
