@@ -33,9 +33,9 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
   // 카드 사이즈 및 배경 관련 클래스들
   const typeStyle = type === "viewed" ? "md:min-w-[358px]" : "";
   const baseStyle =
-    "bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300";
-  const mobileStyle = "min-w-[240px] min-h-[180px] p-[16px]";
-  const tabletStyle = "md:min-h-[243px] md:p-[30px]";
+    " bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300 flex flex-col justify-between";
+  const mobileStyle = "h-[180px] min-w-[240px] p-[16px]";
+  const tabletStyle = "md:h-[243px] md:p-[30px]";
 
   // 텍스트 색상 설정 (이미지 배경이면 흰색, 아니면 지정된 색상)
   const nameTextColor = isImage
@@ -61,33 +61,40 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
       style={backgroundStyle}
       onClick={onClick}
     >
-      <div className="md:absolute md:right-[30px] mb-[6px]">
-        {isImage ? (
-          <EarnedPointsBoxSmBlack points={study.totalPoints} />
-        ) : (
-          <EarnedPointsBoxSm points={study.totalPoints} />
-        )}
-      </div>
+      <div>
+        <div className="md:absolute md:right-[30px] mb-[6px]">
+          {isImage ? (
+            <EarnedPointsBoxSmBlack points={study.totalPoints} />
+          ) : (
+            <EarnedPointsBoxSm points={study.totalPoints} />
+          )}
+        </div>
 
-      <div className="text-18pt h-[26px] font-bold flex items-center md:mb-[10px]">
-        <span className={nameTextColor}>{study.nickname}</span>
-        <span className={titleTextColor}>의 {study.title}</span>
+        <div className="text-18pt font-bold mb-1 md:mb-2 md:flex md:flex-col md:items-start whitespace-nowrap overflow-hidden md:overflow-visible text-ellipsis">
+          <span className="mb-1">
+            <span className={`${nameTextColor}`}>{study.nickname}</span>
+            <span className={`${titleTextColor}`}>의&nbsp;</span>
+          </span>
+          <span className={`${titleTextColor} md:line-clamp-1`}>
+            {study.title}
+          </span>
+        </div>
+
+        <span
+          className={`text-[12px] md:text-[14px] ${infoTextColor} mb-[10px] md:mb-[30px] block`}
+        >
+          {day}일째 진행중
+        </span>
       </div>
 
       <span
-        className={`text-[12px] md:text-[14px] ${infoTextColor} mb-[10px] md:mb-[30px] block`}
-      >
-        {day}일째 진행중
-      </span>
-
-      <span
-        className={`text-[14px] ${descriptionTextColor} md:text-16pt font-normal max-w-[208px] md:max-w-none leading-tight md:leading-snug lg:leading-normal line-clamp-2`}
+        className={`text-[14px] ${descriptionTextColor} md:text-16pt font-normal md:max-w-none leading-tight md:leading-snug lg:leading-normal line-clamp-1 md:line-clamp-2`}
       >
         {study.description}
       </span>
 
       {hasReactions ? (
-        <div className="flex absolute gap-1 bottom-[16px] md:bottom-[30px]">
+        <div className="flex gap-1">
           {study.reactions.map((reaction) => (
             <EmojiTag
               key={reaction.id}
@@ -97,9 +104,7 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
           ))}
         </div>
       ) : (
-        <div
-          className={`absolute bottom-[16px] md:bottom-[30px] text-[14px] ${infoTextColor} flex items-center`}
-        >
+        <div className={`text-[14px] ${infoTextColor} flex items-center`}>
           응원하러 가기! 👏🎈
         </div>
       )}
