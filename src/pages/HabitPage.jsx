@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-import { getHabits } from "@/api/habitApi";
+import { getStudy, getHabits } from "@/api/habitApi";
+
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
 
@@ -40,8 +41,24 @@ function HabitPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [habits, setHabits] = useState([]);
   const [selectedHabits, setSelectedHabits] = useState([]);
-  const maxHabitCount = 5;
-  const [loading, setLoading] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [title, setTitle] = useState("");
+  const maxHabitCount = 10;
+
+  useEffect(() => {
+    async function fetchStudy() {
+      const studyId = "439420f4-4631-43a7-962a-cf1ec7b7ce53";
+      const studyData = await getStudy(studyId);
+      if (studyData) {
+        setNickname(studyData.nickname || "");
+        setTitle(studyData.title || "");
+      }
+      const habitList = await getHabits(studyId);
+      setHabits(habitList);
+    }
+
+    fetchStudy();
+  }, []);
 
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
@@ -50,7 +67,7 @@ function HabitPage() {
         setHabits([...habits, newHabit]);
       }
     } else {
-      alert("습관은 최대 n개까지만 추가할 수 있습니다.");
+      alert("습관은 최대 10개까지만 추가할 수 있습니다.");
     }
   };
 
@@ -61,7 +78,7 @@ function HabitPage() {
     setSelectedHabits(selectedHabits.filter((_, i) => i !== index));
   };
 
-  const onSave = () => {
+  const onSave = async () => {
     setIsModalOpen(false);
   };
 
@@ -72,17 +89,6 @@ function HabitPage() {
       setSelectedHabits([...selectedHabits, index]);
     }
   };
-  const handleFetchHabits = async () => {
-    setLoading(true); // ✅ 로딩 시작
-    try {
-      const data = await getHabits();
-      setHabits(data); // ✅ 데이터 저장
-    } catch (error) {
-      console.error("❌ 습관 목록을 불러오는데 실패했습니다.");
-    } finally {
-      setLoading(false); // ✅ 로딩 종료
-    }
-  };
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF] pt-4">
@@ -90,7 +96,11 @@ function HabitPage() {
         <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
           <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold mb-4">스터디 이름</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                {nickname && title
+                  ? `${nickname} 의 ${title}`
+                  : "스터디 정보 없음"}
+              </h2>
               <div className="flex gap-4 items-center">
                 <Link to="/focus">
                   <button className="border py-2 pl-[10px] pr-[6px] md:py-3 md:pl-6 md:pr-[16px] rounded-xl text-[#818181] md:w-[144px] md:h-[48px] w-[120px] h-[40px] ">
