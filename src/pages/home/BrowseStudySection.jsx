@@ -92,7 +92,7 @@ BrowseStudySection.Pagination = ({
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`px-4 py-2 border rounded ${
+          className={`px-3 md:px-4 py-1 md:py-2 border rounded ${
             i === currentPage ? "bg-f-brand text-[#ffffff]" : ""
           }`}
         >
@@ -107,7 +107,7 @@ BrowseStudySection.Pagination = ({
       <button
         disabled={currentPage === 1}
         onClick={() => handlePageChange(currentPage - 1)}
-        className="px-4 py-2 border rounded disabled:opacity-50"
+        className="px-3 md:px-4 py-1 md:py-2 border rounded disabled:opacity-50"
       >
         이전
       </button>
@@ -115,7 +115,7 @@ BrowseStudySection.Pagination = ({
       <button
         disabled={currentPage === totalPage}
         onClick={() => handlePageChange(currentPage + 1)}
-        className="px-4 py-2 border rounded disabled:opacity-50"
+        className="px-3 md:px-4 py-1 md:py-2 border rounded disabled:opacity-50"
       >
         다음
       </button>
