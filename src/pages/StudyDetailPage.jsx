@@ -13,6 +13,8 @@ function StudyDetailPage() {
   const [studyData, setStudyData] = useState();
   const [isModal, setIsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState();
+  const [buttonName, setButtonName] = useState();
   useEffect(() => {
     const fetchStudy = async () => {
       const data = await getStudy(studyId);
@@ -20,13 +22,17 @@ function StudyDetailPage() {
       setIsLoading(false);
     };
     fetchStudy();
+    // setTitle(studyData.nickname + "의 " + studyData.title)
   }, []);
   const enableModal = (e) => {
+    setButtonName(e.target.dataset.name);
     setIsModal(true);
+
   };
   const disableModal = (e) => {
     setIsModal(false);
   };
+
   return (
     <div className="w-full h-screen bg-[#F6F4EF]">
       <Header />
@@ -40,14 +46,16 @@ function StudyDetailPage() {
                 <div className="text-[#818181] text-16pt">|</div>
                 <div
                   className="text-[#578246] text-16pt cursor-pointer"
-                  onClick={enableModal}
+                  data-name="수정하러 가기"
+                  onClick={(e) => enableModal(e)}
                 >
                   수정하기
                 </div>
                 <div className="text-[#818181] text-16pt">|</div>
                 <div
                   className="text-[#818181] text-16pt cursor-pointer"
-                  onClick={enableModal}
+                  onClick={(e) => enableModal(e)}
+                  data-name="스터디 삭제하기"
                 >
                   스터디 삭제하기
                 </div>
@@ -60,13 +68,14 @@ function StudyDetailPage() {
               <div className="flex gap-4">
                 <div
                   className="flex items-center justify-center text-[#818181] border border-[#DDDDDD] md:w-[144px] w-[120px] rounded-2xl text-16pt md:h-[48px] h-[40px] cursor-pointer"
-                  onClick={enableModal}
+                  onClick={(e) => enableModal(e)}
+                  data-name="오늘의 습관으로 가기"
                 >
                   오늘의 습관 <img src={arrowImg} className="ml-3" />
                 </div>
                 <div
                   className="flex items-center justify-center text-[#818181] border border-[#DDDDDD] md:w-[144px] w-[120px] rounded-2xl text-16pt cursor-pointer md:h-[48px] h-[40px] "
-                  onClick={enableModal}
+                  onClick={(e) => enableModal(e)} data-name={"오늘의 집중으로 가기"}
                 >
                   오늘의 집중 <img src={arrowImg} className="ml-3" />
                 </div>
@@ -87,7 +96,7 @@ function StudyDetailPage() {
           </div>
         </div>
       )}
-      {isModal && <PasswordModal isOpen={true} onClose={disableModal} />}
+      {isModal && <PasswordModal isOpen={true} onClose={disableModal} title={title} studyId={studyId} buttonText={buttonName}/>}
     </div>
   );
 }

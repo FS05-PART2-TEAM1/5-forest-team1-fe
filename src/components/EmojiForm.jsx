@@ -74,7 +74,7 @@ function EmojiForm({ studyId }) {
         </div>
         {
           isShowAll &&
-          <div className="pl-5 w-[242px] flex-wrap -translate-x-48 border p-4 gap-1 mt-10 absolute bg-white grid-cols-2 flex rounded-[20px]">
+          <div className="lg:visible invisible pl-5 w-[242px] flex-wrap -translate-x-48 border p-4 gap-1 mt-10 absolute bg-white grid-cols-2 flex rounded-[20px]">
             {
               emojis.map((element, index) => {
                   return <EmojiTag emoji={element.emoji} count={element.counts} />;
