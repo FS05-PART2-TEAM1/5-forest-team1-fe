@@ -5,7 +5,6 @@ import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
-import HabitTracker from "./components/HabitTracker.jsx";
 
 function AppRouter() {
   return (
@@ -14,8 +13,8 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
-          <Route path="HabitTracker" element={<HabitTracker />} />
-          <Route path=":studyId" element={<StudyDetailPage />} />
+          {/* 스터디 상세 페이지 테스트를 위해 경로 임시 변경 :studyId -> test*/}
+          <Route path="test" element={<StudyDetailPage />} />
         </Route>
         <Route path="/focus" element={<FocusPage />} />
         <Route path="/habit" element={<HabitPage />} />

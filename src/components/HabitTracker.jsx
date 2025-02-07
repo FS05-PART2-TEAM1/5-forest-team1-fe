@@ -23,24 +23,27 @@ function HabitTracker() {
   const toggleCompletion = (habitIndex, dayIndex) => {
     setCompleted((prev) => {
       const updated = [...prev];
+      updated[habitIndex] = [...updated[habitIndex]];
       updated[habitIndex][dayIndex] = !updated[habitIndex][dayIndex];
       return updated;
     });
   };
 
   return (
-    <div className="flex justify-center items-center bg-blue-950 bg-opacity-80">
-      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[1120px] lg:h-[511px] md:w-[648px] md:h-[511px] w-[312px] h-[450px] bg-white p-4 overflow-x-auto">
+    <div className="flex justify-center items-center">
+      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:max-w-[1120px] w-full bg-white p-4 overflow-x-auto md:w-full">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">습관 기록표</h1>
         </div>
         <section className="p-4">
           {/* 요일 헤더 */}
-
-          <div className="grid grid-cols-8 gap-4 items-center text-[14px] md:text-[18px] mb-4">
-            <div></div> {/* 빈칸 */}
+          <div className="grid grid-cols-9 gap-2 md:gap-4 items-center text-[12px] sm:text-[14px] md:text-[18px] mb-4">
+            <div className="col-span-2"></div>
             {days.map((day) => (
-              <div key={day} className="text-center font-semibold">
+              <div
+                key={day}
+                className="text-center text-gray-500 font-semibold"
+              >
                 {day}
               </div>
             ))}
@@ -50,19 +53,20 @@ function HabitTracker() {
           {habits.map((habit, habitIndex) => (
             <div
               key={habitIndex}
-              className="grid grid-cols-8 gap-4 items-center mb-4 whitespace-pre-wrap"
+              className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4"
             >
-              {/* 습관 이름: 줄바꿈 처리, 최대 너비 조정 */}
-              <div className="col-span-1 font-medium text-[14px] md:text-[18px] text-right pr-4 w-[122px] md:max-w-[246px]">
+              {/* 습관 이름 */}
+              <div className="col-span-2 font-medium text-[12px] sm:text-[14px] md:text-[18px] text-right pr-2 sm:pr-4 max-w-[100px] sm:max-w-[200px] md:max-w-none whitespace-normal">
                 {habit.name}
               </div>
-              <div className="col-span-7 grid grid-cols-7  gap-2 md:gap-4">
+              {/* paw 이미지 */}
+              <div className="col-span-7 grid grid-cols-7 gap-1 sm:gap-2 md:gap-4">
                 {days.map((_, dayIndex) => (
                   <img
                     key={dayIndex}
                     src={completed[habitIndex][dayIndex] ? completedPaw : paw}
                     alt="paw"
-                    className="w-6 h-6 md:w-8 md:h-8 md:mx-auto cursor-pointer"
+                    className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mx-auto cursor-pointer"
                     onClick={() => toggleCompletion(habitIndex, dayIndex)}
                   />
                 ))}
@@ -74,5 +78,4 @@ function HabitTracker() {
     </div>
   );
 }
-
 export default HabitTracker;
