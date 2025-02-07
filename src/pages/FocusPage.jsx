@@ -10,39 +10,41 @@ import stopIcon from "../assets/icons/ic_stop.png";
 import bracketIcon from "../assets/icons/ic_bracket.png";
 
 function FocusPage() {
-  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // 25분을 초로 변환
+  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // test를 위해 25분을 0.1분으로 변환
   const [isRunning, setIsRunning] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [earnedPoints, setEarnedPoints] = useState(0);
   const [startTime, setStartTime] = useState(new Date());
+  const [pauseStartTime, setPauseStartTime] = useState(null);
   const [totalPauseTime, setTotalPauseTime] = useState(0);
+  const [earnedPoints, setEarnedPoints] = useState(0);
+  const [currentPoints, setCurrentPoints] = useState(0);
   const [focusTime, setFocusTime] = useState(0);
   const [studyId, setStudyId] = useState("");
-  const [currentPoints, setCurrentPoints] = useState(0);
 
   // 포인트 조회 from study schema
   const fetchPoints = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28`
+        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28` // studyId 임시 설정
       );
       if (!response.ok) {
         throw new Error("포인트 정보를 가져오는데 실패했습니다.");
       }
-      const { totalPoints } = await response.json();
+      const data = await response.json();
 
-      return totalPoints;
+      return data.totalPoints;
     } catch (error) {
       console.error("포인트 로딩 실패:", error);
       throw error;
     }
   };
 
+  // 초기 포인트 로딩, 포인트 업데이트
   useEffect(() => {
-    // 초기 포인트 로딩, 포인트 업데이트
     fetchPoints().then((points) => setCurrentPoints(points));
   }, []);
 
+  // 타이머
   useEffect(() => {
     let timer;
     if (isRunning) {
@@ -53,39 +55,67 @@ function FocusPage() {
     return () => clearInterval(timer);
   }, [isRunning]);
 
+  // 타이머 시작
   const startTimer = () => {
-    setIsRunning(true);
-    setStartTime(new Date());
+    const startTime = new Date();
+    if (!isRunning) {
+      setIsRunning(true);
+      // 일시정지 후 재시작하는 경우
+      if (pauseStartTime) {
+        const pauseDuration = startTime - pauseStartTime;
+        setTotalPauseTime((prevTime) => prevTime + pauseDuration);
+        setPauseStartTime(null);
+      } else {
+        // 처음 시작하는 경우
+        setStartTime(startTime);
+        setTotalPauseTime(0); // 총 일시정지 시간 초기화
+      }
+    }
   };
 
+  // 타이머 일시정지
   const pauseTimer = () => {
-    setIsRunning(false);
-    const currentTime = new Date();
-    const pauseDuration = currentTime - startTime;
-    setTotalPauseTime(
-      (prevTotalPauseTime) => prevTotalPauseTime + pauseDuration
-    );
+    const pauseStartTime = new Date();
+    // 이미 일시정지 상태일 때는 다시 pauseStartTime을 설정하지 않음
+    if (isRunning) {
+      setIsRunning(false);
+      setPauseStartTime(pauseStartTime);
+    }
   };
 
+  // 타이머 초기화
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(25 * 60);
   };
 
+  //
   const finishTimer = async () => {
     const finishTime = new Date();
-    const extraMinutes = Math.abs(timeLeft) / 60;
-    const points = calculatePoints(extraMinutes);
+    const extraTime = Math.abs(timeLeft) / 60;
+    const points = calculatePoints(extraTime);
 
-    const totalDuration = finishTime - startTime;
-    const actualFocusTime = totalDuration - totalPauseTime;
+    // 마지막 일시정지 시간 계산, 일시정지 시간 합산
+    let finalTotalPauseTime = totalPauseTime; // 변수 재할당을 위해 let 선언
+    const pauseDuration = new Date() - pauseStartTime;
+    if (pauseStartTime) {
+      finalTotalPauseTime += pauseDuration;
+    }
+
+    // start time과 finish time의 차이 계산
+    const totalDuration = finishTime.getTime() - startTime.getTime();
+
+    // 실제 집중 시간 = 총 시간 - 일시정지 시간
+    const actualFocusTime = Math.floor(
+      (totalDuration - finalTotalPauseTime) / 1000 // 초 단위로 변환
+    );
 
     try {
       const totalPoints = await fetchPoints();
       const updatedTotalPoints = totalPoints + points;
 
       const response = await fetch(
-        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28/points`,
+        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28/points`, // studyId 임시 설정
         {
           method: "POST",
           headers: {
@@ -96,7 +126,7 @@ function FocusPage() {
             totalPoints: updatedTotalPoints,
             startedAt: startTime.toISOString(),
             finishedAt: finishTime.toISOString(),
-            focusTime: Math.floor(actualFocusTime / 1000),
+            focusTime: actualFocusTime,
           }),
         }
       );
@@ -112,19 +142,18 @@ function FocusPage() {
       setFocusTime(actualFocusTime);
       setCurrentPoints(updatedTotalPoints);
     } catch (error) {
-      console.error("API 오류:", error);
-      // 에러 처리 로직 추가 필요
+      console.log("API 오류:", error);
     }
   };
 
-  // 포인트 계산 함수
-  const calculatePoints = (extraMinutes) => {
+  // 포인트 계산
+  const calculatePoints = (extraTime) => {
     const basePoints = 3; // 기본 3포인트 (25분 완료)
-    const additionalPoints = Math.floor(extraMinutes / 0.1); // 추가 시간 10분당 1포인트
+    const additionalPoints = Math.floor(extraTime / 0.1); // test를 위해 0.1분당 1포인트
     return basePoints + additionalPoints;
   };
 
-  // 시간 포맷팅 함수
+  // 시간 포맷팅
   const formatTime = (seconds) => {
     const isNegative = seconds < 0;
     const absoluteSeconds = Math.abs(seconds);
