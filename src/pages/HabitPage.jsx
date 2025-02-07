@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-
+import { getHabits } from "@/api/habitApi";
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
 
@@ -41,6 +41,7 @@ function HabitPage() {
   const [habits, setHabits] = useState([]);
   const [selectedHabits, setSelectedHabits] = useState([]);
   const maxHabitCount = 5;
+  const [loading, setLoading] = useState(false);
 
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
@@ -71,7 +72,17 @@ function HabitPage() {
       setSelectedHabits([...selectedHabits, index]);
     }
   };
-
+  const handleFetchHabits = async () => {
+    setLoading(true); // ✅ 로딩 시작
+    try {
+      const data = await getHabits();
+      setHabits(data); // ✅ 데이터 저장
+    } catch (error) {
+      console.error("❌ 습관 목록을 불러오는데 실패했습니다.");
+    } finally {
+      setLoading(false); // ✅ 로딩 종료
+    }
+  };
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF] pt-4">

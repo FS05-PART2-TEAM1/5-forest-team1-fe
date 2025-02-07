@@ -57,7 +57,7 @@ const HabitListModal = ({
               habits.length < maxHabitCount) && (
               <button
                 onClick={onAddHabit}
-                className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0 "
+                className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
               >
                 <img src={addHabitImg} alt="추가" className="w-6 h-6" />
               </button>
