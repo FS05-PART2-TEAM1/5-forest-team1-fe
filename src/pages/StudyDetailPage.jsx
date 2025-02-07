@@ -7,6 +7,7 @@ import PasswordModal from "@/common/modal/PasswordModal";
 import { useEffect, useState } from "react";
 import { getStudy } from "@/api/studyApi";
 import { EarnedPointsBoxMd } from "@/common/EarnedPointsBox";
+import ErrorMessage from "@/common/MessageBox";
 
 function StudyDetailPage() {
   const { studyId } = useParams();
@@ -19,15 +20,14 @@ function StudyDetailPage() {
     const fetchStudy = async () => {
       const data = await getStudy(studyId);
       setStudyData(data);
+      setTitle(data.nickname + "의 " + data.title);
       setIsLoading(false);
     };
     fetchStudy();
-    // setTitle(studyData.nickname + "의 " + studyData.title)
   }, []);
   const enableModal = (e) => {
-    setButtonName(e.target.dataset.name);
+    setButtonName(e.currentTarget.dataset.name);
     setIsModal(true);
-
   };
   const disableModal = (e) => {
     setIsModal(false);
@@ -40,7 +40,7 @@ function StudyDetailPage() {
         <div className="grid place-items-center mt-14">
           <div className="bg-white lg:max-w-[1200px] lg:w-9/12 md:w-10/12 w-11/12 md: rounded-[20px] lg:p-10 md:p-6 p-4">
             <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
-              <EmojiForm studyId={studyId}/>
+              <EmojiForm studyId={studyId} />
               <div className="flex gap-4 md:justify-start justify-end mt-4">
                 <div className="text-[#578246] text-16pt">공유하기</div>
                 <div className="text-[#818181] text-16pt">|</div>
@@ -75,7 +75,8 @@ function StudyDetailPage() {
                 </div>
                 <div
                   className="flex items-center justify-center text-[#818181] border border-[#DDDDDD] md:w-[144px] w-[120px] rounded-2xl text-16pt cursor-pointer md:h-[48px] h-[40px] "
-                  onClick={(e) => enableModal(e)} data-name={"오늘의 집중으로 가기"}
+                  onClick={(e) => enableModal(e)}
+                  data-name={"오늘의 집중으로 가기"}
                 >
                   오늘의 집중 <img src={arrowImg} className="ml-3" />
                 </div>
@@ -96,7 +97,16 @@ function StudyDetailPage() {
           </div>
         </div>
       )}
-      {isModal && <PasswordModal isOpen={true} onClose={disableModal} title={title} studyId={studyId} buttonText={buttonName}/>}
+      {isModal && (
+        <PasswordModal
+          isOpen={true}
+          onClose={disableModal}
+          title={title}
+          buttonText={buttonName}
+          studyId={studyId}
+          studyData={studyData}
+        />
+      )}
     </div>
   );
 }

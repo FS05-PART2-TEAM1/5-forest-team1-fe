@@ -68,20 +68,22 @@ function EmojiForm({ studyId }) {
         })}
       </div>
       <div className="flex">
-        <div className="lg:visible invisible cursor-pointer flex gap-1 p-2 rounded-[50px] items-center text-[14px] text-white bg-black opacity-30" onClick={onShowAllClick}>
-          <img src={plusImg}/>
-          {emojis.length - 3}..
-        </div>
-        {
-          isShowAll &&
-          <div className="lg:visible invisible pl-5 w-[242px] flex-wrap -translate-x-48 border p-4 gap-1 mt-10 absolute bg-white grid-cols-2 flex rounded-[20px]">
-            {
-              emojis.map((element, index) => {
-                  return <EmojiTag emoji={element.emoji} count={element.counts} />;
-              })
-            }
+        {emojis.length > 3 && (
+          <div
+            className="lg:visible invisible cursor-pointer flex gap-1 p-2 rounded-[50px] items-center text-[14px] text-white bg-black opacity-30"
+            onClick={onShowAllClick}
+          >
+            <img src={plusImg} />
+            {emojis.length - 3}..
           </div>
-        }
+        )}
+        {isShowAll && (
+          <div className="lg:visible invisible pl-5 w-[242px] flex-wrap -translate-x-48 border p-4 gap-1 mt-10 absolute bg-white grid-cols-2 flex rounded-[20px]">
+            {emojis.map((element, index) => {
+              return <EmojiTag emoji={element.emoji} count={element.counts} />;
+            })}
+          </div>
+        )}
       </div>
       <div>
         <div
