@@ -96,7 +96,7 @@ function FocusPage() {
     const points = calculatePoints(extraTime);
 
     // 마지막 일시정지 시간 계산, 일시정지 시간 합산
-    const finalTotalPauseTime = totalPauseTime;
+    let finalTotalPauseTime = totalPauseTime; // 변수 재할당을 위해 let 선언
     const pauseDuration = new Date() - pauseStartTime;
     if (pauseStartTime) {
       finalTotalPauseTime += pauseDuration;
