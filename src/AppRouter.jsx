@@ -1,16 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import StudyListPage from "./pages/StudyListPage";
 import StudyDetailPage from "./pages/StudyDetailPage";
 import StudyCreatePage from "./pages/StudyCreatePage";
 import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
+import Home from "./pages/home";
 
 function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<StudyListPage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
           <Route path=":studyId" element={<StudyDetailPage />} />
