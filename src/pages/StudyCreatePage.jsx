@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
 import selectBtn from "../assets/icons/ic_selected.png";
-import btn_visible_on from "../assets/icons/btn_visibility_on.svg";
-import btn_visible_off from "../assets/icons/btn_visibility_off.svg";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
+import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 
 //TO DO: 수정페이지 작업, 컴포넌트 분리,
-//       비밀번호 visible 토글 버튼 에러메시지 출력시 위치 변경되는것 해결,
 //       POST API 작업
-//       소개 입력 textarea 검증?
 
 const backgrounds = [
   { type: "color", content: "#EED3D9" },
@@ -40,7 +37,7 @@ const backgrounds = [
 function StudyCreatePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
 
   const handleClick = () => {
@@ -61,6 +58,13 @@ function StudyCreatePage() {
     if (!value) return "*스터디 이름을 입력해주세요.";
     if ((value.length < 3) | (value.length > 10))
       return "스터디 이름은 3글자 이상 10글자 이하로 설정해주세요.";
+    return null;
+  };
+
+  const validateStudyDesc = (value) => {
+    if (!value) return "*스터디 설명을 입력해주세요.";
+    if ((value.length < 10) | (value.length > 100))
+      return "스터디 설명은 10글자 이상 100글자 이하로 설정해주세요.";
     return null;
   };
   const validatePassword = (value) => {
@@ -101,12 +105,12 @@ function StudyCreatePage() {
                   ></StudyFormValidation>
                 </form>
                 <form className="flex flex-col mb-6 gap-2">
-                  <label className="text-lg font-semibold" htmlFor="">
-                    소개
-                  </label>
-                  <textarea
+                  <StudyFormValidation
+                    label="소개"
                     className="border border-gray-300 p-3 h-24 rounded-xl  leading-7"
-                    placeholder="소개 멘트를 작성해 주세요"
+                    placeholder="내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다."
+                    validateFn={validateStudyDesc}
+                    isTextarea
                   />
                 </form>
                 <div className=" mb-4 ">
@@ -131,7 +135,6 @@ function StudyCreatePage() {
                         {background.type === "image" && (
                           <img
                             src={background.content}
-                            // alt={`Background ${index + 1}`}
                             className="w-full h-full object-cover"
                           />
                         )}
@@ -148,49 +151,26 @@ function StudyCreatePage() {
                 </div>
               </div>
               <form className="flex flex-col mb-4 gap-2">
-                {/* <label className="text-lg font-semibold" htmlFor="">
-      비밀번호
-    </label> */}
-                <div className="relative">
-                  <StudyFormValidation
-                    id="password"
-                    type={isVisible ? "text" : "password"}
-                    label="비밀번호"
-                    placeholder="비밀번호를 입력해 주세요"
-                    validateFn={validatePassword}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-
-                  <img
-                    src={isVisible ? btn_visible_on : btn_visible_off}
-                    alt="Toggle visibility"
-                    type="button"
-                    onClick={handleClick}
-                    className="w-5 absolute inset-y-0 top-4 right-3 flex items-center justify-center h-full z-10"
-                  />
-                </div>
+                <PasswordValidation
+                  id="password"
+                  type={isVisible ? "text" : "password"}
+                  label="비밀번호"
+                  placeholder="비밀번호를 입력해 주세요"
+                  validateFn={validatePassword}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </form>
 
               <div className="flex flex-col mb-5 md:mb-6 gap-2">
-                <div className="relative">
-                  <StudyFormValidation
-                    type={isVisible ? "text" : "password"}
-                    id="confirmPassword"
-                    label="비밀번호 확인"
-                    placeholder="비밀번호를 다시 입력해 주세요"
-                    validateFn={(value) =>
-                      validateConfirmPassword(value, password)
-                    }
-                  />
-
-                  <img
-                    src={isVisible ? btn_visible_on : btn_visible_off}
-                    alt="Toggle visibility"
-                    type="button"
-                    onClick={handleClick}
-                    className=" w-5 absolute inset-y-0 top-4 right-3 flex items-center justify-center h-full z-10"
-                  />
-                </div>
+                <PasswordValidation
+                  type={isVisible ? "text" : "password"}
+                  id="confirmPassword"
+                  label="비밀번호 확인"
+                  placeholder="비밀번호를 다시 입력해 주세요"
+                  validateFn={(value) =>
+                    validateConfirmPassword(value, password)
+                  }
+                />
               </div>
             </div>
             <PrimaryButton>만들기</PrimaryButton>
