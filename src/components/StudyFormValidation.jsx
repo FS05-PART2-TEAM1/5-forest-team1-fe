@@ -35,6 +35,12 @@ const StudyFormValidation = ({
           placeholder={placeholder}
           onChange={handleChange}
           onBlur={handleBlur}
+          style={{
+            width: "100%",
+            height: "100px",
+            resize: "none", // 사용자가 크기를 조정하지 못하게
+            overflowY: "auto", // 세로 스크롤만 허용
+          }}
           className={`border h-24 rounded-xl p-3 leading-7 resize-none ${
             error ? "border-f-error" : "border-gray-200"
           }`}

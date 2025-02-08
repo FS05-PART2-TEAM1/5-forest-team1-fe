@@ -108,7 +108,7 @@ function StudyCreatePage() {
                   <StudyFormValidation
                     label="소개"
                     className="border border-gray-300 p-3 h-24 rounded-xl  leading-7"
-                    placeholder="내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다. 내용이 늘어날 경우 다음과 같이 잘리며 내부 스크롤이 생깁니다."
+                    placeholder="스터디에 대한 소개를 10자 이상 100자 이하로 입력해주세요."
                     validateFn={validateStudyDesc}
                     isTextarea
                   />
