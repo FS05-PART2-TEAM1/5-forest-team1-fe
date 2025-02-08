@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EarnedPointsBoxMd } from "../common/EarnedPointsBox";
+import { fetchPoints, updatePoints } from "@/api/pointApi";
 import TimerButton from "../common/buttons/TimerButton";
 import TimerCircleButton from "../common/buttons/TimerCircleButton";
 import ErrorMessage from "../common/MessageBox";
@@ -18,31 +19,15 @@ function FocusPage() {
   const [totalPauseTime, setTotalPauseTime] = useState(0);
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [currentPoints, setCurrentPoints] = useState(0);
-  const [focusTime, setFocusTime] = useState(0);
-  const [studyId, setStudyId] = useState("");
-
-  // 포인트 조회 from study schema
-  const fetchPoints = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28` // studyId 임시 설정
-      );
-      if (!response.ok) {
-        throw new Error("포인트 정보를 가져오는데 실패했습니다.");
-      }
-      const data = await response.json();
-
-      return data.totalPoints;
-    } catch (error) {
-      console.error("포인트 로딩 실패:", error);
-      throw error;
-    }
-  };
+  const [studyId, setStudyId] = useState(
+    "39cfd85c-cf40-4a0a-853a-1e4ed1be3a28"
+  ); // 임시 studyId
+  const [errorMessage, setErrorMessage] = useState("");
 
   // 초기 포인트 로딩, 포인트 업데이트
   useEffect(() => {
-    fetchPoints().then((points) => setCurrentPoints(points));
-  }, []);
+    fetchPoints(studyId).then((points) => setCurrentPoints(points));
+  }, [studyId]);
 
   // 타이머
   useEffect(() => {
@@ -96,7 +81,7 @@ function FocusPage() {
     const points = calculatePoints(extraTime);
 
     // 마지막 일시정지 시간 계산, 일시정지 시간 합산
-    let finalTotalPauseTime = totalPauseTime; // 변수 재할당을 위해 let 선언
+    let finalTotalPauseTime = totalPauseTime;
     const pauseDuration = new Date() - pauseStartTime;
     if (pauseStartTime) {
       finalTotalPauseTime += pauseDuration;
@@ -107,42 +92,34 @@ function FocusPage() {
 
     // 실제 집중 시간 = 총 시간 - 일시정지 시간
     const actualFocusTime = Math.floor(
-      (totalDuration - finalTotalPauseTime) / 1000 // 초 단위로 변환
+      (totalDuration - finalTotalPauseTime) / 1000
     );
 
     try {
-      const totalPoints = await fetchPoints();
+      const totalPoints = await fetchPoints(studyId);
       const updatedTotalPoints = totalPoints + points;
 
-      const response = await fetch(
-        `http://localhost:3000/api/studies/39cfd85c-cf40-4a0a-853a-1e4ed1be3a28/points`, // studyId 임시 설정
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            points,
-            totalPoints: updatedTotalPoints,
-            startedAt: startTime.toISOString(),
-            finishedAt: finishTime.toISOString(),
-            focusTime: actualFocusTime,
-          }),
-        }
-      );
+      const pointData = {
+        points,
+        totalPoints: updatedTotalPoints,
+        startedAt: startTime.toISOString(),
+        finishedAt: finishTime.toISOString(),
+        focusTime: actualFocusTime,
+      };
 
-      if (!response.ok) {
-        throw new Error("집중 시간 저장에 실패했습니다.");
-      }
+      await updatePoints(studyId, pointData);
 
       setIsRunning(false);
       setTimeLeft(25 * 60);
       setIsCompleted(true);
       setEarnedPoints(points);
-      setFocusTime(actualFocusTime);
       setCurrentPoints(updatedTotalPoints);
     } catch (error) {
-      console.log("API 오류:", error);
+      // UI 상태 관리
+      setIsRunning(false);
+      setIsCompleted(false);
+      // 사용자에게 에러 상태 표시
+      setErrorMessage("포인트 적립에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
@@ -166,8 +143,8 @@ function FocusPage() {
   };
 
   return (
-    <div className="h-screen bg-[#F6F4EF] py-10 md:py-20">
-      <div className="w-[95%] min-w-[380px] mx-auto mb-[65.5px] bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
+    <div className="min-h-screen bg-[#F6F4EF] py-10 md:py-20">
+      <div className="w-[95%] min-w-[380px] mx-auto  bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
         <div className="flex flex-col items-start justify-between mb-[21px] md:flex-row md:items-center">
           <h1 className="text-[24px] md:text-[32px] font-extrabold text-[#414141] mb-4 md:mb-0">
             연우의 개발공장
@@ -252,7 +229,9 @@ function FocusPage() {
           </div>
         </div>
       </div>
-      {!isRunning && timeLeft !== 25 * 60 && !isCompleted ? (
+      {errorMessage ? (
+        <ErrorMessage message={errorMessage} isCompleted={false} />
+      ) : !isRunning && timeLeft !== 25 * 60 && !isCompleted ? (
         <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
       ) : isCompleted ? (
         <ErrorMessage
