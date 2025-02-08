@@ -11,7 +11,6 @@ function EmojiForm({ studyId }) {
   const [isAddMod, setIsAddMod] = useState(false);
   const [isShowAll, setIsShowAll] = useState(false);
   const [isChanged, setIsChanged] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchReactions = async () => {
@@ -64,7 +63,7 @@ function EmojiForm({ studyId }) {
       <div className="flex gap-1">
         {emojis.map((element, index) => {
           if (index < 3)
-            return <div className="cursor-pointer" key={element.emoji} onClick={() => onEmojiTagClick(element.emoji)}><EmojiTag emoji={element.emoji} count={element.counts} /></div>;
+            return <div className="cursor-pointer" key={index} onClick={() => onEmojiTagClick(element.emoji)}><EmojiTag emoji={element.emoji} count={element.counts} /></div>;
         })}
       </div>
       <div className="flex">

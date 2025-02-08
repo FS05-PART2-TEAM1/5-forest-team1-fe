@@ -39,7 +39,9 @@ function StudyDetailPage() {
       {!isLoading && (
         <div className="grid place-items-center mt-14">
           <div className="bg-white lg:max-w-[1200px] lg:w-9/12 md:w-10/12 w-11/12 md: rounded-[20px] lg:p-10 md:p-6 p-4">
-            <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
+            {studyData.title? (
+              <>
+              <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
               <EmojiForm studyId={studyId} />
               <div className="flex gap-4 md:justify-start justify-end mt-4">
                 <div className="text-[#578246] text-16pt">공유하기</div>
@@ -94,6 +96,12 @@ function StudyDetailPage() {
             <div className="mt-2">
               <EarnedPointsBoxMd points={studyData.totalPoints} />
             </div>
+            </>
+            ):(
+              <div className="text-center text-32pt">
+                존재하지 않는 스터디입니다.
+                </div>
+            )}
           </div>
         </div>
       )}
