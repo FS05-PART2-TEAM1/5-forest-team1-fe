@@ -8,11 +8,13 @@ import { useEffect, useState } from "react";
 import { getStudy } from "@/api/studyApi";
 import { EarnedPointsBoxMd } from "@/common/EarnedPointsBox";
 import ErrorMessage from "@/common/MessageBox";
+import ShareModal from "@/components/ShareModal";
 
 function StudyDetailPage() {
   const { studyId } = useParams();
   const [studyData, setStudyData] = useState();
   const [isModal, setIsModal] = useState(false);
+  const [shareModal, setShareModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [title, setTitle] = useState();
   const [buttonName, setButtonName] = useState();
@@ -33,6 +35,14 @@ function StudyDetailPage() {
     setIsModal(false);
   };
 
+  const enableShare = (e) => {
+    setShareModal(true)
+  }
+
+  const disableShare = (e) => {
+    setShareModal(false)
+  }
+
   return (
     <div className="w-full h-screen bg-[#F6F4EF]">
       <Header />
@@ -44,7 +54,7 @@ function StudyDetailPage() {
               <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
               <EmojiForm studyId={studyId} />
               <div className="flex gap-4 md:justify-start justify-end mt-4">
-                <div className="text-[#578246] text-16pt">공유하기</div>
+                <div className="text-[#578246] text-16pt cursor-pointer" onClick={enableShare}>공유하기</div>
                 <div className="text-[#818181] text-16pt">|</div>
                 <div
                   className="text-[#578246] text-16pt cursor-pointer"
@@ -115,6 +125,11 @@ function StudyDetailPage() {
           studyData={studyData}
         />
       )}
+      {
+        shareModal && (
+          <ShareModal onClose={disableShare} title={title} description={studyData.description}/>
+        )
+      }
     </div>
   );
 }

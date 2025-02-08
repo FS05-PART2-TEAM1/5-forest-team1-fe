@@ -17,7 +17,6 @@ const PasswordModal = ({
   if (!isOpen) return null;
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
   const [password, setPassword] = useState("");
   const [link, setLink] = useState(``);
   const [message, setMessage] = useState("");
