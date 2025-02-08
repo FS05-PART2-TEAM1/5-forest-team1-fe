@@ -43,11 +43,11 @@ const PasswordValidation = ({
       <button
         type="button"
         onClick={() => setIsVisible(!isVisible)}
-        className="absolute right-3 top-[42px] w-5 h-5"
+        className="absolute right-3 top-[42px] w-6 h-6"
       >
         <img
           src={isVisible ? hideIcon : openIcon}
-          alt={isVisible ? "Hide password" : "Show password"}
+          alt={isVisible ? "비밀번호 숨기기" : "비밀번호 보이기"}
         />
       </button>
       {error && <span className="text-f-error text-sm">{error}</span>}
