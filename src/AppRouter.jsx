@@ -5,7 +5,7 @@ import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
-
+import TestPage from "./pages/TestPage";
 function AppRouter() {
   return (
     <BrowserRouter>
@@ -14,7 +14,8 @@ function AppRouter() {
         <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
           {/* 스터디 상세 페이지 테스트를 위해 경로 임시 변경 :studyId -> test*/}
-          <Route path="test" element={<StudyDetailPage />} />
+          <Route path="test" element={<TestPage />} />
+          <Route path=":studyId" element={<StudyDetailPage />} />
         </Route>
         <Route path="/focus" element={<FocusPage />} />
         <Route path="/habit" element={<HabitPage />} />
