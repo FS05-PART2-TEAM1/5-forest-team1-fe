@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { EarnedPointsBoxMd } from "../common/EarnedPointsBox";
+import { EarnedPointsBoxMd } from "@/common/EarnedPointsBox";
 import { fetchPoints, updatePoints } from "@/api/pointApi";
-import TimerButton from "../common/buttons/TimerButton";
-import TimerCircleButton from "../common/buttons/TimerCircleButton";
-import ErrorMessage from "../common/MessageBox";
-import playIcon from "../assets/icons/ic_play.png";
-import pauseIcon from "../assets/icons/ic_pause.png";
-import resetIcon from "../assets/icons/ic_restart.png";
-import stopIcon from "../assets/icons/ic_stop.png";
-import bracketIcon from "../assets/icons/ic_bracket.png";
+import TimerButton from "@/common/buttons/TimerButton";
+import TimerCircleButton from "@/common/buttons/TimerCircleButton";
+import ErrorMessage from "@/common/MessageBox";
+import playIcon from "@/assets/icons/ic_play.png";
+import pauseIcon from "@/assets/icons/ic_pause.png";
+import resetIcon from "@/assets/icons/ic_restart.png";
+import stopIcon from "@/assets/icons/ic_stop.png";
+import bracketIcon from "@/assets/icons/ic_bracket.png";
 
 function FocusPage() {
   const [timeLeft, setTimeLeft] = useState(0.1 * 60); // test를 위해 25분을 0.1분으로 변환
@@ -45,15 +45,16 @@ function FocusPage() {
     const startTime = new Date();
     if (!isRunning) {
       setIsRunning(true);
-      // 일시정지 후 재시작하는 경우
+      setIsCompleted(false);
+      // 일시정지 후 재시작하는 경우, 일시정지 시간 합산
       if (pauseStartTime) {
         const pauseDuration = startTime - pauseStartTime;
         setTotalPauseTime((prevTime) => prevTime + pauseDuration);
         setPauseStartTime(null);
       } else {
-        // 처음 시작하는 경우
+        // 처음 시작하는 경우, 시작 시간 설정
         setStartTime(startTime);
-        setTotalPauseTime(0); // 총 일시정지 시간 초기화
+        setTotalPauseTime(0);
       }
     }
   };
@@ -61,7 +62,6 @@ function FocusPage() {
   // 타이머 일시정지
   const pauseTimer = () => {
     const pauseStartTime = new Date();
-    // 이미 일시정지 상태일 때는 다시 pauseStartTime을 설정하지 않음
     if (isRunning) {
       setIsRunning(false);
       setPauseStartTime(pauseStartTime);
@@ -74,26 +74,17 @@ function FocusPage() {
     setTimeLeft(25 * 60);
   };
 
-  //
+  // 타이머 종료
   const finishTimer = async () => {
     const finishTime = new Date();
     const extraTime = Math.abs(timeLeft) / 60;
     const points = calculatePoints(extraTime);
 
-    // 마지막 일시정지 시간 계산, 일시정지 시간 합산
-    let finalTotalPauseTime = totalPauseTime;
-    const pauseDuration = new Date() - pauseStartTime;
-    if (pauseStartTime) {
-      finalTotalPauseTime += pauseDuration;
-    }
-
     // start time과 finish time의 차이 계산
     const totalDuration = finishTime.getTime() - startTime.getTime();
 
     // 실제 집중 시간 = 총 시간 - 일시정지 시간
-    const actualFocusTime = Math.floor(
-      (totalDuration - finalTotalPauseTime) / 1000
-    );
+    const actualFocusTime = Math.floor((totalDuration - totalPauseTime) / 1000);
 
     try {
       const totalPoints = await fetchPoints(studyId);
@@ -203,6 +194,7 @@ function FocusPage() {
                       <TimerCircleButton
                         onClick={pauseTimer}
                         img={pauseIcon}
+                        disabled={!isRunning}
                       ></TimerCircleButton>
 
                       <TimerButton
