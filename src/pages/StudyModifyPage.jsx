@@ -5,7 +5,7 @@ import selectBtn from "../assets/icons/ic_selected.png";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 //TO DO: 수정페이지 작업, 리팩토링 & 컴포넌트 분리,
 
@@ -35,59 +35,64 @@ const backgrounds = [
       "https://fastly.picsum.photos/id/657/200/200.jpg?hmac=6vrgINA0qije4LsZMVl1Rea_OtagocnfsCfETPr0_Hc",
   },
 ];
-function StudyCreatePage() {
-  const [nickname, setNickname] = useState("");
+function StudyModifyPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const studyId = location.state?.studyId;
+
+  const [nickname, setNickname] = useState(""); //닉네임도 수정 가능?
   const [studyName, setStudyName] = useState("");
   const [studyDesc, setStudyDesc] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (studyId) {
+      getStudy(studyId).then((data) => {
+        setNickname(data.nickname);
+        setStudyName(data.title);
+        setStudyDesc(data.description);
+        setPassword(data.password);
+        setConfirmPassword(data.password);
+        const selectedIndex = backgrounds.findIndex(
+          (bg) =>
+            bg.type === data.backgroundType &&
+            bg.content === data.backgroundContent
+        );
+        setHasSelected(selectedIndex);
+      });
+    }
+  }, [studyId]);
 
   const handleImageClick = (index) => {
     setHasSelected(index);
   };
 
   const handleSubmit = async () => {
-    console.log("비밀번호 확인:", password, confirmPassword);
-    const trimmedPassword = password.trim();
-    const trimmedConfirmPassword = confirmPassword.trim();
-
-    // 비밀번호 일치 여부 체크
-    if (trimmedPassword !== trimmedConfirmPassword) {
+    if (password.trim() !== confirmPassword.trim()) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-
-    // 배경 이미지 선택 여부 체크
     if (hasSelected === null) {
       alert("배경을 선택해주세요.");
       return;
     }
 
     const background = backgrounds[hasSelected];
-    if (!background) {
-      alert("유효하지 않은 배경입니다.");
-      return;
-    }
-
     try {
-      const response = await createStudy({
+      await patchStudy(studyId, {
         nickname,
         title: studyName,
         description: studyDesc,
         backgroundType: background.type,
         backgroundContent: background.content,
-        password: trimmedPassword,
-        passwordConfirm: trimmedConfirmPassword,
+        password,
       });
-      console.log("스터디 생성 성공:", response);
-      // 스터디 생성 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
+      navigate(`/study/${studyId}`);
     } catch (error) {
       console.error(
-        "스터디 생성 실패:",
+        "스터디 수정 실패:",
         error.response ? error.response.data : error.message
       );
     }
@@ -222,4 +227,4 @@ function StudyCreatePage() {
   );
 }
 
-export default StudyCreatePage;
+export default StudyModifyPage;
