@@ -4,19 +4,27 @@ import { FocusTimer } from "@/components/FocusTimer";
 import { FocusHeader } from "@/components/FocusHeader";
 import { PointsDisplay } from "@/components/PointsDisplay";
 import ErrorMessage from "@/common/MessageBox";
+import { useTimer } from "@/hooks/useTimer";
 
 function FocusPage() {
-  const [timeLeft, setTimeLeft] = useState(0.1 * 60); // test를 위해 25분을 0.1분으로 변환
-  const [isRunning, setIsRunning] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [startTime, setStartTime] = useState(new Date());
-  const [pauseStartTime, setPauseStartTime] = useState(null);
-  const [totalPauseTime, setTotalPauseTime] = useState(0);
+  const INITIAL_TIME = 0.1 * 60; // test를 위해 25분을 0.1분으로 변환
+
+  const {
+    timeLeft,
+    isRunning,
+    isCompleted,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    finishTimer,
+    getTimerData,
+  } = useTimer(INITIAL_TIME);
+
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [currentPoints, setCurrentPoints] = useState(0);
   const [studyId, setStudyId] = useState(
     "39cfd85c-cf40-4a0a-853a-1e4ed1be3a28"
-  ); // 임시 studyId
+  );
   const [errorMessage, setErrorMessage] = useState("");
 
   // 초기 포인트 로딩, 포인트 업데이트
@@ -24,61 +32,13 @@ function FocusPage() {
     fetchPoints(studyId).then((points) => setCurrentPoints(points));
   }, [studyId]);
 
-  // 타이머
-  useEffect(() => {
-    let timer;
-    if (isRunning) {
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [isRunning]);
-
-  // 타이머 시작
-  const startTimer = () => {
-    const startTime = new Date();
-    if (!isRunning) {
-      setIsRunning(true);
-      setIsCompleted(false);
-      // 일시정지 후 재시작하는 경우, 일시정지 시간 합산
-      if (pauseStartTime) {
-        const pauseDuration = startTime - pauseStartTime;
-        setTotalPauseTime((prevTime) => prevTime + pauseDuration);
-        setPauseStartTime(null);
-      } else {
-        // 처음 시작하는 경우, 시작 시간 설정
-        setStartTime(startTime);
-        setTotalPauseTime(0);
-      }
-    }
-  };
-
-  // 타이머 일시정지
-  const pauseTimer = () => {
-    const pauseStartTime = new Date();
-    if (isRunning) {
-      setIsRunning(false);
-      setPauseStartTime(pauseStartTime);
-    }
-  };
-
-  // 타이머 초기화
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimeLeft(25 * 60);
-  };
-
-  // 타이머 종료
-  const finishTimer = async () => {
-    const finishTime = new Date();
+  const handlePointsUpdate = async () => {
     const extraTime = Math.abs(timeLeft) / 60;
     const points = calculatePoints(extraTime);
+    const { startTime, totalPauseTime, finishTime } = getTimerData();
 
-    // start time과 finish time의 차이 계산
+    // 실제 집중 시간 계산
     const totalDuration = finishTime.getTime() - startTime.getTime();
-
-    // 실제 집중 시간 = 총 시간 - 일시정지 시간
     const actualFocusTime = Math.floor((totalDuration - totalPauseTime) / 1000);
 
     try {
@@ -94,17 +54,11 @@ function FocusPage() {
       };
 
       await updatePoints(studyId, pointData);
-
-      setIsRunning(false);
-      setTimeLeft(25 * 60);
-      setIsCompleted(true);
       setEarnedPoints(points);
       setCurrentPoints(updatedTotalPoints);
+      finishTimer();
     } catch (error) {
-      // UI 상태 관리
-      setIsRunning(false);
-      setIsCompleted(false);
-      // 사용자에게 에러 상태 표시
+      resetTimer();
       setErrorMessage("포인트 적립에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
@@ -141,11 +95,12 @@ function FocusPage() {
           pauseTimer={pauseTimer}
           resetTimer={resetTimer}
           finishTimer={finishTimer}
+          handlePointsUpdate={handlePointsUpdate}
         />
       </div>
       {errorMessage ? (
         <ErrorMessage message={errorMessage} isCompleted={false} />
-      ) : !isRunning && timeLeft !== 25 * 60 && !isCompleted ? (
+      ) : !isRunning && timeLeft !== INITIAL_TIME && !isCompleted ? (
         <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
       ) : isCompleted ? (
         <ErrorMessage

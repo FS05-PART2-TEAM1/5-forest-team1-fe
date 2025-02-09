@@ -14,6 +14,7 @@ export const FocusTimer = ({
   pauseTimer,
   resetTimer,
   finishTimer,
+  handlePointsUpdate,
 }) => {
   return (
     <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
@@ -56,7 +57,13 @@ export const FocusTimer = ({
                   <TimerCircleButton onClick={resetTimer} img={resetIcon} />
                 </>
               ) : (
-                <TimerButton onClick={finishTimer} img={stopIcon}>
+                <TimerButton
+                  onClick={() => {
+                    finishTimer();
+                    handlePointsUpdate();
+                  }}
+                  img={stopIcon}
+                >
                   Stop!
                 </TimerButton>
               )}
