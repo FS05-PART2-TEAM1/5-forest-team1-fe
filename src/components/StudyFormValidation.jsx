@@ -7,6 +7,7 @@ const StudyFormValidation = ({
   validateFn,
   type = "text",
   onChange,
+  isTextarea = false,
 }) => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -15,21 +16,19 @@ const StudyFormValidation = ({
     const validationError = validateFn(value);
     setError(validationError);
   };
-  const handleChange = (e) => {
 
+  const handleChange = (e) => {
     const newValue = e.target.value;
     setValue(newValue);
     if (error) setError("");
     onChange?.(newValue); // onChange가 존재할 때만 호출
-
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col space-y-1">
       <label className="text-lg font-semibold" htmlFor={id}>
         {label}
       </label>
-<<<<<<< HEAD
       {isTextarea ? (
         <textarea
           id={id}
@@ -58,19 +57,6 @@ const StudyFormValidation = ({
           }`}
         />
       )}
-=======
-      <input
-        id={id}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={`border h-12 rounded-xl p-3 ${
-          error ? "border-f-error" : "border-gray-200"
-        }`}
-      />
->>>>>>> 221d6ffbe6975f9bcd83bcb675bf982ed68acc0d
       {error && <span className="text-f-error text-sm">{error}</span>}
     </div>
   );
