@@ -20,7 +20,14 @@ export function Header({ isCreateButton = false }) {
       ) : (
         <div className="lg:ml-48 md:ml-8 ml-2 pt-4 mb-8 md:w-[182px] w-[106px] md:h-[60px] h-[35px]">
           <Link to="/">
+<<<<<<< HEAD
             <img className="md:w-[182px] w-[106px] md:h-[60px] h-[35px]" src={logoImg} />
+=======
+            <img
+              className="md:w-[182px] w-[106px] md:h-[60px] h-[35px]"
+              src={logoImg}
+            />
+>>>>>>> 221d6ffbe6975f9bcd83bcb675bf982ed68acc0d
           </Link>
         </div>
       )}

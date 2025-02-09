@@ -57,7 +57,11 @@ const HabitListModal = ({
               habits.length < maxHabitCount) && (
               <button
                 onClick={onAddHabit}
+<<<<<<< HEAD
                 className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
+=======
+                className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0 "
+>>>>>>> 221d6ffbe6975f9bcd83bcb675bf982ed68acc0d
               >
                 <img src={addHabitImg} alt="추가" className="w-6 h-6" />
               </button>
@@ -66,7 +70,12 @@ const HabitListModal = ({
 
         <div className="flex justify-between gap-6 mt-6">
           <ModalButton
+<<<<<<< HEAD
             isCancel={onClose}
+=======
+            isCancel={true}
+            onClick={onClose}
+>>>>>>> 221d6ffbe6975f9bcd83bcb675bf982ed68acc0d
             className="px-5 py-3 bg-[#DDDDDD] text-white rounded-lg w-1/2"
           >
             닫기

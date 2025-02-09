@@ -215,7 +215,6 @@ function StudyCreatePage() {
               만들기
             </PrimaryButton>
           </div>
-          <PrimaryButton>만들기</PrimaryButton>
         </div>
       </div>
     </div>
