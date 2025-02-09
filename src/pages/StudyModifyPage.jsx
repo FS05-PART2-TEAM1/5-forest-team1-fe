@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getStudy, patchStudy } from "@/api/studyApi";
 import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
 import selectBtn from "../assets/icons/ic_selected.png";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
-import { useNavigate, useLocation } from "react-router-dom";
 
 //TO DO: 수정페이지 작업, 리팩토링 & 컴포넌트 분리,
 
@@ -123,7 +123,8 @@ function StudyModifyPage() {
                         ? null
                         : "닉네임은 3~10자여야 합니다."
                     }
-                    onChange={(e) => setNickname(e.target.value)}
+                    onChange={setNickname}
+                    value={nickname} // <- 초기 값 적용
                   ></StudyFormValidation>
                 </form>
                 <form className="flex flex-col mb-4 gap-2">
@@ -217,10 +218,9 @@ function StudyModifyPage() {
               </div>
             </div>
             <PrimaryButton onClick={handleSubmit} disabled={!isFormValid}>
-              만들기
+              수정 완료
             </PrimaryButton>
           </div>
-          <PrimaryButton>수정 완료</PrimaryButton>
         </div>
       </div>
     </div>

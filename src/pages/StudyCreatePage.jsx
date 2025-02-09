@@ -118,8 +118,9 @@ function StudyCreatePage() {
                         ? null
                         : "닉네임은 3~10자여야 합니다."
                     }
-                    onChange={(e) => setNickname(e.target.value)}
-                  ></StudyFormValidation>
+                    onChange={setNickname}
+                    value={nickname}
+                  />
                 </form>
                 <form className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
