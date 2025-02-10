@@ -7,8 +7,6 @@ import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate } from "react-router-dom";
 
-//TO DO: 수정페이지 작업, 리팩토링 & 컴포넌트 분리,
-
 const backgrounds = [
   { type: "color", content: "#EED3D9" },
   { type: "color", content: "#F5E8DD" },
@@ -35,6 +33,7 @@ const backgrounds = [
       "https://fastly.picsum.photos/id/657/200/200.jpg?hmac=6vrgINA0qije4LsZMVl1Rea_OtagocnfsCfETPr0_Hc",
   },
 ];
+
 function StudyCreatePage() {
   const [nickname, setNickname] = useState("");
   const [studyName, setStudyName] = useState("");
@@ -58,15 +57,12 @@ function StudyCreatePage() {
   const handleValidation = (field, error) => {
     setErrors((prev) => ({ ...prev, [field]: !!error }));
   };
+
   const handleSubmit = async () => {
-    if (
-      !nickname ||
-      !studyName ||
-      !studyDesc ||
-      !password ||
-      !confirmPassword
-    ) {
-      alert("모든 입력란을 채워주세요.");
+    const isFormValid =
+      Object.values(errors).every((error) => !error) && hasSelected !== null;
+    if (!isFormValid) {
+      alert("모든 입력란을 올바르게 채워주세요.");
       return;
     }
 
@@ -88,7 +84,7 @@ function StudyCreatePage() {
         password,
         passwordConfirm: confirmPassword,
       });
-      console.log("스터디 생성 성공:", response);
+
       // 스터디 생성 후 StudyDetailPage로 라우팅
       navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
     } catch (error) {
@@ -98,10 +94,6 @@ function StudyCreatePage() {
       );
     }
   };
-  const isFormValid =
-    [nickname, studyName, studyDesc, password, confirmPassword].every(
-      Boolean
-    ) && hasSelected !== null;
 
   return (
     <div className="bg-f-bg">
@@ -114,7 +106,7 @@ function StudyCreatePage() {
                 <div className="mb-4">
                   <h1 className="text-2xl font-bold">스터디 만들기</h1>
                 </div>
-                <form className="flex flex-col mb-4 gap-2">
+                <div className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
                     id="nickname"
                     label="닉네임"
@@ -127,8 +119,8 @@ function StudyCreatePage() {
                     onChange={(e) => setNickname(e.target.value)}
                     onValidate={(error) => handleValidation("nickname", error)}
                   />
-                </form>
-                <form className="flex flex-col mb-4 gap-2">
+                </div>
+                <div className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
                     id="studyName"
                     label="스터디 이름"
@@ -141,11 +133,10 @@ function StudyCreatePage() {
                     onChange={(e) => setStudyName(e.target.value)}
                     onValidate={(error) => handleValidation("studyName", error)}
                   />
-                </form>
-                <form className="flex flex-col mb-6 gap-2">
+                </div>
+                <div className="flex flex-col mb-6 gap-2">
                   <StudyFormValidation
                     label="소개"
-                    // className="border border-gray-300 p-3 h-24 rounded-xl  leading-7"
                     placeholder="스터디에 대한 소개를 10자 이상 300자 이하로 입력해주세요."
                     validateFn={(value) =>
                       value.length >= 10 && value.length <= 300
@@ -156,7 +147,7 @@ function StudyCreatePage() {
                     onValidate={(error) => handleValidation("studyDesc", error)}
                     isTextarea
                   />
-                </form>
+                </div>
                 <div className=" mb-4 ">
                   <h3 className="text-lg font-semibold mb-3">
                     배경을 선택해주세요
@@ -194,7 +185,7 @@ function StudyCreatePage() {
                   </div>
                 </div>
               </div>
-              <form className="flex flex-col mb-4 gap-2">
+              <div className="flex flex-col mb-4 gap-2">
                 <PasswordValidation
                   id="password"
                   label="비밀번호"
@@ -207,7 +198,7 @@ function StudyCreatePage() {
                   onChange={(e) => setPassword(e.target.value)}
                   onValidate={(error) => handleValidation("password", error)}
                 />
-              </form>
+              </div>
 
               <div className="flex flex-col mb-5 md:mb-6 gap-2">
                 <PasswordValidation
@@ -224,8 +215,14 @@ function StudyCreatePage() {
                 />
               </div>
             </div>
-            <PrimaryButton onClick={handleSubmit} disabled={!isFormValid}>
-              만들기
+            <PrimaryButton
+              onClick={handleSubmit}
+              disabled={
+                Object.values(errors).some((error) => error) ||
+                hasSelected === null
+              }
+            >
+              만들기 만들기
             </PrimaryButton>
           </div>
         </div>
