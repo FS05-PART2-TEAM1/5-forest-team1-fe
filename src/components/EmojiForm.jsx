@@ -62,10 +62,10 @@ function EmojiForm({ studyId }) {
   };
 
   useEffect(() => {
-    if(isChanged){
+    if (isChanged) {
       const sortedEmojis = [...emojis].sort((a, b) => b.counts - a.counts);
       setEmojis(sortedEmojis);
-      setIsChanged(false)
+      setIsChanged(false);
     }
   }, [isChanged]);
 
@@ -80,7 +80,11 @@ function EmojiForm({ studyId }) {
                 key={index}
                 onClick={() => onEmojiTagClick(element.emoji)}
               >
-                <EmojiTag emoji={element.emoji} count={element.counts} />
+                <EmojiTag
+                  emoji={element.emoji}
+                  count={element.counts}
+                  size={"base"}
+                />
               </div>
             );
         })}
@@ -105,7 +109,11 @@ function EmojiForm({ studyId }) {
                   className="h-10 flex items-center cursor-pointer "
                   onClick={() => onEmojiTagClick(element.emoji)}
                 >
-                  <EmojiTag emoji={element.emoji} count={element.counts} />
+                  <EmojiTag
+                    emoji={element.emoji}
+                    count={element.counts}
+                    size={"base"}
+                  />
                 </div>
               );
             })}
