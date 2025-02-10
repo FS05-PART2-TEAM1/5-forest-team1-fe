@@ -50,7 +50,12 @@ function StudyCreatePage() {
   };
 
   const handleSubmit = async () => {
-    console.log("비밀번호 확인:", password, confirmPassword);
+    console.log("Nickname:", nickname);
+    console.log("Study Name:", studyName);
+    console.log("Study Description:", studyDesc);
+    console.log("Password:", password);
+    console.log("Confirm Password:", confirmPassword);
+    console.log("Background Selected:", hasSelected);
     const trimmedPassword = password.trim();
     const trimmedConfirmPassword = confirmPassword.trim();
 

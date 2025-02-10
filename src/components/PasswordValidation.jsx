@@ -14,16 +14,17 @@ const PasswordValidation = ({
   const [isVisible, setIsVisible] = useState(false);
 
   const handleBlur = () => {
+    console.log("Validating value:", value);
     const validationError = validateFn(value);
     setError(validationError);
   };
 
   const handleChange = (e) => {
-    setValue(e.target.value);
+    const newValue = e.target.value || "";
+    setValue(newValue);
     if (error) setError("");
-    if (onChange) onChange(e);
+    onChange?.(e);
   };
-
   return (
     <div className="flex flex-col space-y-1 relative">
       <label className="text-lg font-semibold" htmlFor={id}>
