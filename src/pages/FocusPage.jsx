@@ -20,6 +20,7 @@ function FocusPage() {
     resetTimer,
     finishTimer,
     getTimerData,
+    setTimeLeft,
   } = useTimer(INITIAL_TIME);
 
   const [earnedPoints, setEarnedPoints] = useState(0);
@@ -106,7 +107,7 @@ function FocusPage() {
   const handleTimeChange = (minutes) => {
     if (!isRunning) {
       setCustomTime(minutes);
-      setTimeLeft(minutes * 60); // 직접 timeLeft 설정
+      resetTimer();
     }
   };
 

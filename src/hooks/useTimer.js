@@ -76,5 +76,6 @@ export const useTimer = (initialTime) => {
     resetTimer,
     finishTimer,
     getTimerData,
+    setTimeLeft,
   };
 };
