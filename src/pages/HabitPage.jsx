@@ -31,7 +31,7 @@ const TimeBox = () => {
   }, []);
 
   return (
-    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[200px] font-pretendard font-medium shadow-xl mt-2">
+    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[200px] font-pretendard font-medium">
       {currentTime}
     </div>
   );
