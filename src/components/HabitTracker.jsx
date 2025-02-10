@@ -5,6 +5,10 @@ import Paw2 from "../assets/icons/paws/paw02.png";
 import Paw3 from "../assets/icons/paws/paw03.png";
 import Paw4 from "../assets/icons/paws/paw04.png";
 import Paw5 from "../assets/icons/paws/paw05.png";
+import Paw6 from "../assets/icons/paws/paw06.png";
+import Paw7 from "../assets/icons/paws/paw07.png";
+import Paw8 from "../assets/icons/paws/paw08.png";
+
 import habitApi from "../api/habitApi";
 
 function HabitTracker() {
@@ -46,7 +50,7 @@ function HabitTracker() {
   console.log(mappedDays);
 
   // Habit-specific image mapping
-  const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5];
+  const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
 
   return (
     <div className="flex justify-center items-center mt-5 mb-[171px]">
