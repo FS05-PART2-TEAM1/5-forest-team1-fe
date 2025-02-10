@@ -4,6 +4,7 @@ import emojiCreateImg from "../assets/icons/emoji_create.png";
 import plusImg from "../assets/icons/ic_plus.png";
 import { useEffect, useRef, useState } from "react";
 import { getReactions, patchReaction, postReaction } from "@/api/reactionApi";
+import useDebounceCallback from "@/hooks/useDebounceCallback";
 
 function EmojiForm({ studyId }) {
   const [emojis, setEmojis] = useState([]);
@@ -18,7 +19,6 @@ function EmojiForm({ studyId }) {
       setEmojis(data.reactionList);
       setIsChanged(false);
     };
-
     if (isChanged) fetchReactions();
   }, [isChanged]);
 
@@ -26,11 +26,11 @@ function EmojiForm({ studyId }) {
     setIsShowAll(!isShowAll);
   };
 
-  const onEmojiTagClick = async (emoji) => {
+  const onEmojiTagClick = useDebounceCallback(async (emoji) => {
     const findEmoji = emojis.find((element) => element.emoji === emoji);
     await patchReaction(studyId, findEmoji.id, { counts: 1 });
     setIsChanged(true);
-  };
+  }, 200);
 
   const onEmojiClick = async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
@@ -76,7 +76,7 @@ function EmojiForm({ studyId }) {
         )}
         {isShowAll && (
           <div
-            className="lg:visible invisible pl-5 w-[350px] -translate-x-72 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] "
+            className="lg:visible invisible pl-5 -translate-x-72 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] "
           >
             {emojis.map((element, index) => {
               return (
@@ -93,11 +93,11 @@ function EmojiForm({ studyId }) {
       </div>
       <div>
         <div
-          className="border flex w-[75px] text-16pt gap-2 items-center p-2 rounded-[50px] cursor-pointer"
+          className="border flex lg:w-[80px] md:w-[65px] text-16pt gap-2 items-center lg:p-1 p-1 rounded-[50px] cursor-pointer"
           onClick={() => setIsAddMod(!isAddMod)}
         >
           <img src={emojiCreateImg} />
-          <div>추가</div>
+          <div className="md:text-sm lg:text-lg">추가</div>
         </div>
         {isAddMod && (
           <div className="absolute mt-3 md:translate-x-0 -translate-x-48">
