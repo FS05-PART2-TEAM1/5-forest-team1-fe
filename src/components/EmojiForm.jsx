@@ -6,21 +6,10 @@ import { useEffect, useState } from "react";
 import { getReactions, patchReaction, postReaction } from "@/api/reactionApi";
 
 function EmojiForm({ studyId }) {
-  /*
-  API 데이터를 가져온다 -
-  useState 걸어서 emojis 같은 배열에 객체들을 저장한다. -
-  전체 개수는 따로 구해서 (length-3) 해서 + 버튼에 숫자 표기해준다
-  그 +버튼 누르면 emojis 배열에있는 전체 이모지와 각각의 count를 보여준다.
-
-  이모지가 추가되면 emojis 배열에 이미 존재하면 count+1을 반영해준다.
-  아니면 이모지, count:1 을 추가로 저장한다
-  변경된 내용을 백엔드 서버로 전송한다.
-  */
   const [emojis, setEmojis] = useState([]);
   const [isAddMod, setIsAddMod] = useState(false);
   const [isShowAll, setIsShowAll] = useState(false);
   const [isChanged, setIsChanged] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchReactions = async () => {
@@ -38,6 +27,19 @@ function EmojiForm({ studyId }) {
     } else setIsShowAll(true);
   };
 
+  const onEmojiTagClick = async (emoji) => {
+    const findEmoji = emojis.find((element) => element.emoji === emoji);
+    setEmojis(
+      emojis.map((element) => {
+        if (element.emoji === emoji)
+          return { ...element, counts: element.counts + 1 };
+        else return element;
+      })
+    );
+    await patchReaction(studyId, findEmoji.id, { counts: 1 });
+    setIsChanged(true);
+  };
+
   const onEmojiClick = async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
     if (isEmoji) {
@@ -48,7 +50,7 @@ function EmojiForm({ studyId }) {
             : element;
         })
       );
-      const patchData = { counts: isEmoji.counts + 1 };
+      const patchData = { counts: 1 };
       const reactionId = isEmoji.id;
       await patchReaction(studyId, reactionId, patchData);
     } else {
@@ -59,29 +61,56 @@ function EmojiForm({ studyId }) {
     setIsAddMod(false);
   };
 
+  useEffect(() => {
+    if(isChanged){
+      const sortedEmojis = [...emojis].sort((a, b) => b.counts - a.counts);
+      setEmojis(sortedEmojis);
+      setIsChanged(false)
+    }
+  }, [isChanged]);
+
   return (
     <div className="flex gap-4">
-      <div className="flex gap-2">
+      <div className="flex gap-1">
         {emojis.map((element, index) => {
           if (index < 3)
-            return <EmojiTag emoji={element.emoji} count={element.counts} />;
+            return (
+              <div
+                className="cursor-pointer"
+                key={index}
+                onClick={() => onEmojiTagClick(element.emoji)}
+              >
+                <EmojiTag emoji={element.emoji} count={element.counts} />
+              </div>
+            );
         })}
       </div>
       <div className="flex">
-        <div className="lg:visible invisible cursor-pointer flex gap-1 p-2 rounded-[50px] items-center text-[14px] text-white bg-black opacity-30" onClick={onShowAllClick}>
-          <img src={plusImg}/>
-          {emojis.length - 3}..
-        </div>
-        {
-          isShowAll &&
-          <div className="lg:visible invisible pl-5 w-[242px] flex-wrap -translate-x-48 border p-4 gap-1 mt-10 absolute bg-white grid-cols-2 flex rounded-[20px]">
-            {
-              emojis.map((element, index) => {
-                  return <EmojiTag emoji={element.emoji} count={element.counts} />;
-              })
-            }
+        {emojis.length > 3 && (
+          <div className="lg:block hidden">
+            <div
+              className="cursor-pointer flex gap-1 p-2 rounded-[50px] items-center text-[14px] text-white bg-black opacity-30"
+              onClick={onShowAllClick}
+            >
+              <img src={plusImg} />
+              {emojis.length - 3}..
+            </div>
           </div>
-        }
+        )}
+        {isShowAll && (
+          <div className="lg:visible invisible pl-5 w-[250px] -translate-x-48 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-3 place-items-center rounded-[20px] ">
+            {emojis.map((element, index) => {
+              return (
+                <div
+                  className="h-10 flex items-center cursor-pointer "
+                  onClick={() => onEmojiTagClick(element.emoji)}
+                >
+                  <EmojiTag emoji={element.emoji} count={element.counts} />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
       <div>
         <div
@@ -92,7 +121,7 @@ function EmojiForm({ studyId }) {
           <div>추가</div>
         </div>
         {isAddMod && (
-          <div className="absolute mt-3">
+          <div className="absolute mt-3 md:translate-x-0 -translate-x-48">
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
