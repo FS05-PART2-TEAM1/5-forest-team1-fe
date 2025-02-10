@@ -7,6 +7,7 @@ const StudyFormValidation = ({
   validateFn,
   type = "text",
   onChange,
+  onValidate,
   isTextarea = false,
 }) => {
   const [value, setValue] = useState("");
@@ -15,12 +16,16 @@ const StudyFormValidation = ({
   const handleBlur = () => {
     const validationError = validateFn(value);
     setError(validationError);
+    onValidate?.(validationError);
   };
 
   const handleChange = (e) => {
     const newValue = e.target.value;
     setValue(newValue);
-    if (error) setError("");
+    if (error) {
+      setError("");
+      onValidate?.(null);
+    }
     onChange?.(e);
   };
 
