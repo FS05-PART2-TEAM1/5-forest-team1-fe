@@ -100,6 +100,7 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
               key={reaction.id}
               emoji={reaction.emoji}
               count={reaction.counts}
+              size={"xs"}
             />
           ))}
         </div>
