@@ -3,59 +3,101 @@ import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
 import ModalButton from "../buttons/ModalButton";
 import axios from "axios";
+import { createHabit, updateStudy } from "../../api/habitApi";
 
 const HabitListModal = ({
   isOpen,
   onClose,
   onSave,
   habits = [],
-  onAddHabit,
-  onRemoveHabit,
   maxHabitCount,
-  userId, // 사용자 ID (API 요청에 필요)
+  userId,
 }) => {
-  const [editedHabits, setEditedHabits] = useState([...habits]);
+  const [originalHabits, setOriginalHabits] = useState([...habits]);
+  const [pendingEdits, setPendingEdits] = useState([...habits]);
 
-  // 모달이 열릴 때 원래 데이터로 초기화
   useEffect(() => {
     if (isOpen) {
-      setEditedHabits([...habits]);
+      setOriginalHabits([...habits]);
+      setPendingEdits([...habits]);
     }
   }, [isOpen, habits]);
 
-  // 습관 추가 (단순히 editedHabits에만 추가)
-  const handleAddHabit = () => {
-    if (!onAddHabit) return;
+  const handleAddHabit = async () => {
     if (
       typeof maxHabitCount !== "undefined" &&
-      editedHabits.length >= maxHabitCount
+      pendingEdits.length >= maxHabitCount
     )
       return;
 
-    const newHabit = prompt("추가할 습관을 입력하세요:");
-    if (newHabit) {
-      setEditedHabits([...editedHabits, newHabit]);
+    const newHabitName = prompt("추가할 습관을 입력하세요:");
+    if (newHabitName) {
+      try {
+        const newHabit = await createHabit(userId, newHabitName);
+
+        if (newHabit) {
+          const newHabitObj = {
+            id: newHabit.id || `temp-${Date.now()}`,
+            studyId: userId,
+            name: newHabit.name || newHabit,
+            deletedAt: null,
+          };
+          setPendingEdits([...pendingEdits, newHabitObj]);
+        }
+      } catch (error) {
+        console.error("습관 추가 중 오류 발생:", error);
+      }
     }
   };
 
-  // 습관 삭제 (editedHabits에서만 제거)
   const handleRemoveHabit = (index) => {
-    setEditedHabits(editedHabits.filter((_, i) => i !== index));
+    setPendingEdits((prev) =>
+      prev.map((habit, i) =>
+        i === index ? { ...habit, deletedAt: new Date().toISOString() } : habit
+      )
+    );
+
+    console.log("🗑️ 삭제 후 pendingEdits:", pendingEdits);
   };
 
-  // 수정 버튼 클릭 시 API 요청
+  const handleCancel = () => {
+    setPendingEdits([...originalHabits]); // 원래 상태로 되돌림
+    onClose(); // 모달 닫기
+  };
+
   const handleSave = async () => {
     try {
-      const response = await axios.put(`/api/habits/${userId}`, {
-        habits: editedHabits,
-      });
-      console.log("수정 완료:", response.data);
+      const updatedHabits = pendingEdits.map((habit) => ({
+        id: habit.id || `temp-${Date.now()}`, // ✅ ID가 없을 경우 임시 ID 생성
+        studyId: userId,
+        name: habit.name || habit, // ✅ 문자열이 아니라면 name 속성으로 변환
+        deletedAt: habit.deletedAt || null, // ✅ 삭제된 항목은 deletedAt 값을 유지
+      }));
 
-      // 부모 컴포넌트에도 변경 사항 전달
-      onSave(editedHabits);
-      onClose(); // 모달 닫기
+      console.log(
+        "📡 [PATCH 요청 전송] 데이터:",
+        JSON.stringify(updatedHabits, null, 2)
+      );
+
+      for (const habit of updatedHabits) {
+        const response = await updateStudy(habit.id, {
+          name: habit.name,
+          deletedAt: habit.deletedAt || null,
+        });
+
+        if (!response) {
+          alert("❌ 습관 업데이트 실패! 콘솔 로그를 확인하세요.");
+          console.error("❌ [PATCH 요청 실패]:", habit);
+        }
+      }
+
+      console.log("✅ 수정 완료");
+      setOriginalHabits(updatedHabits); // ✅ 원본 상태 업데이트
+      onSave(updatedHabits); // ✅ 부모 컴포넌트(HabitPage)에도 변경된 목록 전달
+      onClose(); // ✅ 모달 닫기
     } catch (error) {
-      console.error("습관 저장 중 오류 발생:", error);
+      console.error("❌ 습관 저장 중 오류 발생:", error);
+      alert("❌ 습관 저장 중 오류 발생! 콘솔 로그를 확인하세요.");
     }
   };
 
@@ -70,14 +112,14 @@ const HabitListModal = ({
 
         <div className="flex flex-col gap-[20px] px-[100px] mt-6 overflow-y-auto max-h-[60vh]">
           <ul className="relative flex flex-col gap-[20px]">
-            {editedHabits.length > 0 ? (
-              editedHabits.map((habit, index) => (
+            {pendingEdits.length > 0 ? (
+              pendingEdits.map((habit, index) => (
                 <li
                   key={index}
                   className="relative flex items-center justify-center bg-[#EEEEEE] rounded-[20px] h-[54px]"
                 >
                   <span className="text-[16px] text-[#818181] underline">
-                    {habit}
+                    {habit.name ? habit.name : habit}{" "}
                   </span>
                   <button
                     onClick={() => handleRemoveHabit(index)}
@@ -95,7 +137,7 @@ const HabitListModal = ({
           </ul>
 
           {(typeof maxHabitCount === "undefined" ||
-            editedHabits.length < maxHabitCount) && (
+            pendingEdits.length < maxHabitCount) && (
             <button
               onClick={handleAddHabit}
               className="w-full flex justify-center items-center border-2 border-black rounded-[20px] h-[54px] p-0"
@@ -108,7 +150,7 @@ const HabitListModal = ({
         <div className="flex justify-between gap-6 mt-6">
           <ModalButton
             isCancel={true}
-            onClick={onClose}
+            onClick={handleCancel}
             className="px-5 py-3 bg-[#DDDDDD] text-white rounded-lg w-1/2"
           >
             취소

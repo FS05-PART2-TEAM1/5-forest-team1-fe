@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
 import { getStudy, getHabits } from "@/api/habitApi";
 
@@ -38,27 +38,33 @@ const TimeBox = () => {
 };
 
 function HabitPage() {
+  const location = useLocation();
+  const { studyData } = location.state || {};
+  const [title, setTitle] = useState(studyData?.title || "");
+  const [nickname, setNickname] = useState(studyData?.nickname || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(
+    studyData?.habits?.map((habit) => habit.name) || []
+  );
   const [selectedHabits, setSelectedHabits] = useState([]);
-  const [nickname, setNickname] = useState("");
-  const [title, setTitle] = useState("");
-  const maxHabitCount = 10;
+  const maxHabitCount = 8;
 
   useEffect(() => {
-    async function fetchStudy() {
-      const studyId = "439420f4-4631-43a7-962a-cf1ec7b7ce53";
-      const studyData = await getStudy(studyId);
-      if (studyData) {
-        setNickname(studyData.nickname || "");
-        setTitle(studyData.title || "");
-      }
-      const habitList = await getHabits(studyId);
-      setHabits(habitList);
+    if (studyData?.habits) {
+      setHabits(studyData.habits.map((habit) => habit.name));
     }
+  }, [studyData]);
 
-    fetchStudy();
-  }, []);
+  useEffect(() => {
+    async function fetchHabits() {
+      const studyId = studyData?.id;
+      if (studyId) {
+        const habitList = await getHabits(studyId);
+        setHabits(habitList);
+      }
+    }
+    fetchHabits();
+  }, [studyData]);
 
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
@@ -78,8 +84,8 @@ function HabitPage() {
     setSelectedHabits(selectedHabits.filter((_, i) => i !== index));
   };
 
-  const onSave = async () => {
-    setIsModalOpen(false);
+  const onSave = async (updatedHabits) => {
+    setHabits([...updatedHabits]);
   };
 
   const onToggleHabit = (index) => {
@@ -170,6 +176,7 @@ function HabitPage() {
         onAddHabit={onAddHabit}
         onRemoveHabit={onRemoveHabit}
         maxHabitCount={maxHabitCount}
+        userId={"439420f4-4631-43a7-962a-cf1ec7b7ce53"}
       />
     </>
   );

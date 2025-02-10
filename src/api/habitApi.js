@@ -77,25 +77,28 @@ export async function getAllStudies() {
  * @param {object} studyData - The study data to create
  * @returns {Promise<object>} - Returns created study data
  */
-export async function createStudy(studyData) {
+export async function createHabit(studyId, habitName) {
   try {
-    const response = await fetch(BASE_URL, {
+    const response = await fetch(`${BASE_URL}/${studyId}/habits`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(studyData),
+      body: JSON.stringify({
+        studyId,
+        name: habitName,
+      }),
     });
 
     if (!response.ok) {
       throw new Error(
-        `Failed to create study: ${response.status} ${response.statusText}`
+        `Failed to create habit: ${response.status} ${response.statusText}`
       );
     }
 
     return await response.json();
   } catch (err) {
-    console.error("Error creating study:", err.message);
+    console.error("Error creating habit:", err.message);
     return null;
   }
 }
@@ -106,25 +109,38 @@ export async function createStudy(studyData) {
  * @param {object} studyData - Updated study data
  * @returns {Promise<object>} - Returns updated study data
  */
-export async function updateStudy(studyId, studyData) {
+export async function updateStudy(habitId, habitData) {
   try {
-    const response = await fetch(`${BASE_URL}/${studyId}`, {
-      method: "PUT",
+    console.log(
+      "📌 [PATCH 요청] 습관 ID:",
+      habitId,
+      "데이터:",
+      JSON.stringify(habitData, null, 2)
+    );
+
+    const response = await fetch(`${BASE_URL}/${habitId}`, {
+      // ✅ PATCH 요청 변경
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(studyData),
+      body: JSON.stringify(habitData),
     });
+
+    const responseData = await response.json();
 
     if (!response.ok) {
       throw new Error(
-        `Failed to update study: ${response.status} ${response.statusText}`
+        `❌ [PATCH 요청 실패] ${response.status} ${response.statusText} - ${
+          responseData.error || "알 수 없는 오류"
+        }`
       );
     }
 
-    return await response.json();
+    console.log("✅ [PATCH 요청 성공]:", responseData);
+    return responseData;
   } catch (err) {
-    console.error("Error updating study:", err.message);
+    console.error("❌ [PATCH 요청 중 오류 발생]:", err.message);
     return null;
   }
 }
