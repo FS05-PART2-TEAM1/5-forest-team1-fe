@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Header } from "@/common/layout/Header";
 import { fetchPoints, updatePoints } from "@/api/pointApi";
 import { FocusTimer } from "@/components/FocusTimer";
 import { FocusHeader } from "@/components/FocusHeader";
@@ -110,54 +111,57 @@ function FocusPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F4EF] py-10 md:py-20">
-      <div className="w-[95%] min-w-[380px] mx-auto bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
-        <FocusHeader />
-        <PointsDisplay currentPoints={currentPoints} />
-        <div className="mb-6 flex flex-col items-center">
-          <div className="flex justify-center gap-2">
-            {[5, 15, 25, 45].map((time) => (
-              <button
-                key={time}
-                onClick={() => handleTimeChange(time)}
-                disabled={isRunning}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  customTime === time
-                    ? "bg-f-brand text-white"
-                    : "bg-gray-100 text-gray-700"
-                } ${
-                  isRunning
-                    ? "opacity-80 cursor-not-allowed"
-                    : "hover:bg-f-brand hover:text-white transition-colors"
-                }`}
-              >
-                {time}분
-              </button>
-            ))}
+    <div className="bg-f-bg">
+      <Header />
+      <div className="min-h-screen bg-f-bg py-10 md:py-20">
+        <div className="w-[95%] min-w-[380px] mx-auto bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
+          <FocusHeader />
+          <PointsDisplay currentPoints={currentPoints} />
+          <div className="mb-6 flex flex-col items-center">
+            <div className="flex justify-center gap-2">
+              {[5, 15, 25, 45].map((time) => (
+                <button
+                  key={time}
+                  onClick={() => handleTimeChange(time)}
+                  disabled={isRunning}
+                  className={`px-4 py-2 rounded-full text-sm ${
+                    customTime === time
+                      ? "bg-f-brand text-white"
+                      : "bg-gray-100 text-gray-700"
+                  } ${
+                    isRunning
+                      ? "opacity-80 cursor-not-allowed"
+                      : "hover:bg-f-brand hover:text-white transition-colors"
+                  }`}
+                >
+                  {time}분
+                </button>
+              ))}
+            </div>
           </div>
+          <FocusTimer
+            timeLeft={timeLeft}
+            isRunning={isRunning}
+            formatTime={formatTime}
+            startTimer={startTimer}
+            pauseTimer={pauseTimer}
+            resetTimer={resetTimer}
+            finishTimer={finishTimer}
+            handlePointsUpdate={handlePointsUpdate}
+            customTime={customTime}
+          />
         </div>
-        <FocusTimer
-          timeLeft={timeLeft}
-          isRunning={isRunning}
-          formatTime={formatTime}
-          startTimer={startTimer}
-          pauseTimer={pauseTimer}
-          resetTimer={resetTimer}
-          finishTimer={finishTimer}
-          handlePointsUpdate={handlePointsUpdate}
-          customTime={customTime}
-        />
+        {errorMessage ? (
+          <ErrorMessage message={errorMessage} isCompleted={false} />
+        ) : !isRunning && timeLeft !== INITIAL_TIME && !isCompleted ? (
+          <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
+        ) : isCompleted ? (
+          <ErrorMessage
+            message={`${earnedPoints}포인트를 획득했습니다!`}
+            isCompleted={true}
+          />
+        ) : null}
       </div>
-      {errorMessage ? (
-        <ErrorMessage message={errorMessage} isCompleted={false} />
-      ) : !isRunning && timeLeft !== INITIAL_TIME && !isCompleted ? (
-        <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
-      ) : isCompleted ? (
-        <ErrorMessage
-          message={`${earnedPoints}포인트를 획득했습니다!`}
-          isCompleted={true}
-        />
-      ) : null}
     </div>
   );
 }
