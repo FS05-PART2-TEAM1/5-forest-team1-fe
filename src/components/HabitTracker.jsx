@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import paw from "../assets/icons/ic_paw.png";
-import completedPaw from "../assets/icons/ic_selected.png";
 import Paw1 from "../assets/icons/paws/paw01.png";
 import Paw2 from "../assets/icons/paws/paw02.png";
 import Paw3 from "../assets/icons/paws/paw03.png";
@@ -85,12 +84,14 @@ function HabitTracker() {
                   const habitStatus = habit.dailyHabitCheck.find(
                     (check) => getDayIndex(check.date) === dayIndex
                   );
+
+                  // habitIndex를 사용해 해당 색상의 paw 이미지 선택
+                  const pawImage = habitImages[habitIndex % habitImages.length];
+
                   return (
                     <img
                       key={dayIndex}
-                      src={
-                        habitStatus && habitStatus.status ? completedPaw : paw
-                      }
+                      src={habitStatus && habitStatus.status ? pawImage : paw} // status가 true면 컬러 paw, false면 기본 paw
                       alt="paw"
                       className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mx-auto"
                     />
