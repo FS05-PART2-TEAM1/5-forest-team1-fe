@@ -113,9 +113,9 @@ function StudyCreatePage() {
                     label="닉네임"
                     placeholder="닉네임을 입력해 주세요"
                     validateFn={(value) =>
-                      value.length >= 3 && value.length <= 10
+                      value.length >= 2 && value.length <= 10
                         ? null
-                        : "닉네임은 3~10자여야 합니다."
+                        : "닉네임은 2~10자여야 합니다."
                     }
                     onChange={(e) => setNickname(e.target.value)}
                   ></StudyFormValidation>
