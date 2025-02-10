@@ -11,6 +11,7 @@ function EmojiForm({ studyId }) {
   const [isShowAll, setIsShowAll] = useState(false);
   const [isChanged, setIsChanged] = useState(true);
 
+
   useEffect(() => {
     const fetchReactions = async () => {
       const data = await getReactions(studyId);
@@ -22,24 +23,11 @@ function EmojiForm({ studyId }) {
   }, [isChanged]);
 
   const onShowAllClick = () => {
-    if (isShowAll) {
-      setIsShowAll(false);
-    } else setIsShowAll(true);
-  };
-
-  const onNotShowAll = () => {
-    setIsShowAll(false);
+    setIsShowAll(!isShowAll);
   };
 
   const onEmojiTagClick = async (emoji) => {
     const findEmoji = emojis.find((element) => element.emoji === emoji);
-    setEmojis(
-      emojis.map((element) => {
-        if (element.emoji === emoji)
-          return { ...element, counts: element.counts + 1 };
-        else return element;
-      })
-    );
     await patchReaction(studyId, findEmoji.id, { counts: 1 });
     setIsChanged(true);
   };
@@ -47,13 +35,6 @@ function EmojiForm({ studyId }) {
   const onEmojiClick = async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
     if (isEmoji) {
-      setEmojis(
-        emojis.map((element) => {
-          return emojiData.emoji === element.emoji
-            ? { ...element, counts: element.counts + 1 }
-            : element;
-        })
-      );
       const patchData = { counts: 1 };
       const reactionId = isEmoji.id;
       await patchReaction(studyId, reactionId, patchData);
@@ -64,14 +45,6 @@ function EmojiForm({ studyId }) {
     setIsChanged(true);
     setIsAddMod(false);
   };
-
-  useEffect(() => {
-    if (isChanged) {
-      const sortedEmojis = [...emojis].sort((a, b) => b.counts - a.counts);
-      setEmojis(sortedEmojis);
-      setIsChanged(false);
-    }
-  }, [isChanged]);
 
   return (
     <div className="flex gap-4">
@@ -103,7 +76,7 @@ function EmojiForm({ studyId }) {
         )}
         {isShowAll && (
           <div
-            className="lg:visible invisible pl-5 w-[250px] -translate-x-48 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-3 place-items-center rounded-[20px] "
+            className="lg:visible invisible pl-5 w-[350px] -translate-x-72 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] "
           >
             {emojis.map((element, index) => {
               return (
