@@ -59,16 +59,15 @@ function StudyCreatePage() {
   };
 
   const handleSubmit = async () => {
+    // 비밀번호 일치 여부 체크
+    if (password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
     const isFormValid =
       Object.values(errors).every((error) => !error) && hasSelected !== null;
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
-      return;
-    }
-
-    // 비밀번호 일치 여부 체크
-    if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -222,7 +221,7 @@ function StudyCreatePage() {
                 hasSelected === null
               }
             >
-              만들기 만들기
+              만들기
             </PrimaryButton>
           </div>
         </div>
