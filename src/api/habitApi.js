@@ -1,10 +1,11 @@
 import axiosClient from "./axios";
 
 const habitApi = {
-  getHabits: async (studyId) => {
+  getHabits: async (studyId, start, end) => {
     try {
       const response = await axiosClient.get(
-        `http://localhost:5004/api/studies/9a1c0e3d-889b-47f1-90cd-75ccd7ab39d3/habits`
+        `https://five-forest-team1.onrender.com/api/studies/${studyId}/habits?start=${start}&end=${end}`,
+        { timeout: 10000 }
       );
       return response.data;
     } catch (error) {

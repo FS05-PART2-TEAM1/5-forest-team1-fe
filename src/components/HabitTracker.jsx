@@ -22,8 +22,10 @@ function HabitTracker() {
   useEffect(() => {
     const fetchHabits = async () => {
       try {
-        const studyId = "9a1c0e3d-889b-47f1-90cd-75ccd7ab39d3";
-        const data = await habitApi.getHabits(studyId);
+        const studyId = "eb119bc0-57d9-4c6c-ad2b-1c3c05a7d12f";
+        const start = "2025-02-02";
+        const end = "2025-02-09";
+        const data = await habitApi.getHabits(studyId, start, end);
         setHabitList(data.habitList); // 여기서 데이터 설정!
         console.log(data.habitList);
       } catch (error) {
