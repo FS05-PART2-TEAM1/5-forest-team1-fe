@@ -31,6 +31,7 @@ function StudyDetailPage() {
     setButtonName(e.currentTarget.dataset.name);
     setIsModal(true);
   };
+  
   const disableModal = (e) => {
     setIsModal(false);
   };

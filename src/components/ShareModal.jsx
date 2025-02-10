@@ -5,13 +5,12 @@ import {
   EmailShareButton,
   FacebookIcon,
   FacebookShareButton,
-  InstapaperIcon,
-  InstapaperShareButton,
   LineIcon,
   LineShareButton,
   LinkedinIcon,
   LinkedinShareButton,
 } from "react-share";
+
 
 function ShareModal({ onClose, title, description }) {
   const currentUrl = window.location.href;
@@ -34,30 +33,36 @@ function ShareModal({ onClose, title, description }) {
           <EmailShareButton url={currentUrl} subject={title} body={description}>
             <EmailIcon size={72} round={true} />
           </EmailShareButton>
-          <FacebookShareButton url={currentUrl}>
+          <FacebookShareButton
+            url={currentUrl}
+            subject={title}
+            body={description}
+          >
             <FacebookIcon size={72} round={true} />
           </FacebookShareButton>
-          <LinkedinShareButton url={currentUrl}>
+          <LinkedinShareButton
+            url={currentUrl}
+            subject={title}
+            body={description}
+          >
             <LinkedinIcon size={72} round={true} />
           </LinkedinShareButton>
-          <LineShareButton url={currentUrl}>
+          <LineShareButton url={currentUrl} subject={title} body={description}>
             <LineIcon size={72} round={true} />
           </LineShareButton>
         </div>
 
         <div className="flex justify-center text-14pt mt-14 gap-6">
           <CopyToClipboard text={currentUrl} onCopy={() => setCopied(true)}>
-          {
-            copied? (
-              <div  className="flex justify-center w-60 border p-2 rounded-3xl">
-                 복사 완료되었습니다! ✅
+            {copied ? (
+              <div className="flex justify-center w-60 border p-2 rounded-3xl">
+                복사 완료되었습니다! ✅
               </div>
-            ):(
+            ) : (
               <div className="flex justify-center w-60 border p-2 rounded-3xl cursor-pointer hover:bg-stone-100">
-            공유 링크 복사하기 🔗
-          </div>
-            )
-          }
+                공유 링크 복사하기 🔗
+              </div>
+            )}
           </CopyToClipboard>
         </div>
       </div>

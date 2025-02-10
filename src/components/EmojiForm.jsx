@@ -2,7 +2,7 @@ import EmojiTag from "@/common/EmojiTag";
 import EmojiPicker from "emoji-picker-react";
 import emojiCreateImg from "../assets/icons/emoji_create.png";
 import plusImg from "../assets/icons/ic_plus.png";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getReactions, patchReaction, postReaction } from "@/api/reactionApi";
 
 function EmojiForm({ studyId }) {
@@ -25,6 +25,10 @@ function EmojiForm({ studyId }) {
     if (isShowAll) {
       setIsShowAll(false);
     } else setIsShowAll(true);
+  };
+
+  const onNotShowAll = () => {
+    setIsShowAll(false);
   };
 
   const onEmojiTagClick = async (emoji) => {
@@ -62,10 +66,10 @@ function EmojiForm({ studyId }) {
   };
 
   useEffect(() => {
-    if(isChanged){
+    if (isChanged) {
       const sortedEmojis = [...emojis].sort((a, b) => b.counts - a.counts);
       setEmojis(sortedEmojis);
-      setIsChanged(false)
+      setIsChanged(false);
     }
   }, [isChanged]);
 
@@ -98,7 +102,9 @@ function EmojiForm({ studyId }) {
           </div>
         )}
         {isShowAll && (
-          <div className="lg:visible invisible pl-5 w-[250px] -translate-x-48 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-3 place-items-center rounded-[20px] ">
+          <div
+            className="lg:visible invisible pl-5 w-[250px] -translate-x-48 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-3 place-items-center rounded-[20px] "
+          >
             {emojis.map((element, index) => {
               return (
                 <div
