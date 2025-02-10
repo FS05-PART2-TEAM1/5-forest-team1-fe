@@ -62,7 +62,7 @@ function HabitTracker() {
 
         <div
           ref={scrollRef}
-          className="mt-2 overflow-x-auto overflow-y-scroll max-h-[380px] md:max-h-[400px]"
+          className="mt-2 overflow-x-auto overflow-y-scroll max-h-[380px] md:max-h-[430px]"
         >
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 md:gap-4 items-center sm:text-[14px] md:text-[18px] mb-4">
