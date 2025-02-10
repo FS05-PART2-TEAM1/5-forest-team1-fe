@@ -15,16 +15,20 @@ export const FocusTimer = ({
   resetTimer,
   finishTimer,
   handlePointsUpdate,
+  customTime,
 }) => {
   return (
     <div className="rounded-[20px] border border-[#dddddd] pt-6 md:pt-10">
-      <h2 className="text-center text-[24px] font-extrabold text-f-black mb-[50px] md:mb-[100px]">
+      <h2 className="text-center text-[24px] font-extrabold text-f-black mb-2">
         오늘의 집중
       </h2>
+      <p className="text-center text-sm text-gray-500 mb-[30px]">
+        목표 시간: {customTime}분
+      </p>
       <div className="text-center">
         <div
           className={`text-[80px] md:text-[120px] font-extrabold mb-[50px] md:mb-[94px] ${
-            timeLeft === 25 * 60
+            timeLeft === customTime * 60
               ? "text-f-black"
               : timeLeft >= 0
               ? "text-red-500"
@@ -34,7 +38,7 @@ export const FocusTimer = ({
           {formatTime(timeLeft)}
         </div>
         <div className="flex justify-center items-center gap-2 md:gap-6">
-          {!isRunning && timeLeft === 25 * 60 ? (
+          {!isRunning && timeLeft === customTime * 60 ? (
             <TimerButton onClick={startTimer} img={playIcon}>
               Start!
             </TimerButton>

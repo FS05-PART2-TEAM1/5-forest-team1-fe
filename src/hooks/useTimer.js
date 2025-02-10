@@ -45,6 +45,8 @@ export const useTimer = (initialTime) => {
     setIsRunning(false);
     setTimeLeft(initialTime);
     setIsCompleted(false);
+    setPauseStartTime(null);
+    setTotalPauseTime(0);
   };
 
   const finishTimer = () => {
@@ -60,6 +62,10 @@ export const useTimer = (initialTime) => {
       finishTime: new Date(),
     };
   };
+
+  useEffect(() => {
+    setTimeLeft(initialTime);
+  }, [initialTime]);
 
   return {
     timeLeft,

@@ -7,7 +7,8 @@ import ErrorMessage from "@/common/MessageBox";
 import { useTimer } from "@/hooks/useTimer";
 
 function FocusPage() {
-  const INITIAL_TIME = 0.1 * 60; // test를 위해 25분을 0.1분으로 변환
+  const [customTime, setCustomTime] = useState(25); // 기본값 25분
+  const INITIAL_TIME = customTime * 60;
 
   const {
     timeLeft,
@@ -56,7 +57,6 @@ function FocusPage() {
       await updatePoints(studyId, pointData);
       setEarnedPoints(points);
       setCurrentPoints(updatedTotalPoints);
-      finishTimer();
     } catch (error) {
       resetTimer();
       setErrorMessage("포인트 적립에 실패했습니다. 잠시 후 다시 시도해주세요.");
@@ -65,8 +65,27 @@ function FocusPage() {
 
   // 포인트 계산
   const calculatePoints = (extraTime) => {
-    const basePoints = 3; // 기본 3포인트 (25분 완료)
-    const additionalPoints = Math.floor(extraTime / 0.1); // test를 위해 0.1분당 1포인트
+    // 기본 포인트 설정
+    let basePoints;
+    switch (customTime) {
+      case 5:
+        basePoints = 10;
+        break;
+      case 15:
+        basePoints = 20;
+        break;
+      case 25:
+        basePoints = 30;
+        break;
+      case 45:
+        basePoints = 40;
+        break;
+      default:
+        basePoints = 30;
+    }
+
+    // 추가 포인트: 10분당 5포인트
+    const additionalPoints = Math.floor(extraTime / 10) * 5;
     return basePoints + additionalPoints;
   };
 
@@ -82,11 +101,41 @@ function FocusPage() {
       .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
+  // 시간 설정 핸들러 수정
+  const handleTimeChange = (minutes) => {
+    if (!isRunning) {
+      setCustomTime(minutes);
+      setTimeLeft(minutes * 60); // 직접 timeLeft 설정
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F6F4EF] py-10 md:py-20">
       <div className="w-[95%] min-w-[380px] mx-auto bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
         <FocusHeader />
         <PointsDisplay currentPoints={currentPoints} />
+        <div className="mb-6 flex flex-col items-center">
+          <div className="flex justify-center gap-2">
+            {[5, 15, 25, 45].map((time) => (
+              <button
+                key={time}
+                onClick={() => handleTimeChange(time)}
+                disabled={isRunning}
+                className={`px-4 py-2 rounded-full text-sm ${
+                  customTime === time
+                    ? "bg-f-brand text-white"
+                    : "bg-gray-100 text-gray-700"
+                } ${
+                  isRunning
+                    ? "opacity-80 cursor-not-allowed"
+                    : "hover:bg-f-brand hover:text-white transition-colors"
+                }`}
+              >
+                {time}분
+              </button>
+            ))}
+          </div>
+        </div>
         <FocusTimer
           timeLeft={timeLeft}
           isRunning={isRunning}
@@ -96,6 +145,7 @@ function FocusPage() {
           resetTimer={resetTimer}
           finishTimer={finishTimer}
           handlePointsUpdate={handlePointsUpdate}
+          customTime={customTime}
         />
       </div>
       {errorMessage ? (
