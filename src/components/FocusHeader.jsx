@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import bracketIcon from "@/assets/icons/ic_bracket.png";
-export const FocusHeader = ({ nickname = "연우", title = "개발공장" }) => {
+import { useLocation } from "react-router-dom";
+
+export const FocusHeader = () => {
+  const location = useLocation();
   return (
     <div className="flex flex-col items-start justify-between mb-[16px] md:flex-row md:items-center">
       <h1 className="text-[24px] md:text-[32px] font-extrabold text-[#414141] mb-4 md:mb-0">
-        {nickname}의 {title}
+        {location.state.studyData.nickname}의 {location.state.studyData.title}
       </h1>
       <div className="flex gap-4">
         <Link to="/habit">

@@ -1,10 +1,9 @@
 import axiosClient from "./axios";
 
+const BASE_URL = "http://localhost:3000/api";
 export async function getStudy(studyId) {
   try {
-    const response = await fetch(
-      `http://localhost:5004/api/studies/${studyId}`
-    );
+    const response = await fetch(`${BASE_URL}/studies/${studyId}`);
     const studyData = await response.json();
     return studyData;
   } catch (err) {
@@ -14,16 +13,13 @@ export async function getStudy(studyId) {
 
 export async function verifyPassword(studyId, password) {
   try {
-    const response = await fetch(
-      `http://localhost:5004/api/studies/verify-password`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ studyId, password }),
-      }
-    );
+    const response = await fetch(`${BASE_URL}/studies/verify-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ studyId, password }),
+    });
     const verifyData = await response.json();
     return verifyData;
   } catch (err) {
@@ -33,7 +29,7 @@ export async function verifyPassword(studyId, password) {
 
 export async function deleteStudy(studyId) {
   try {
-    await fetch(`http://localhost:5004/api/studies/${studyId}`, {
+    await fetch(`${BASE_URL}/studies/${studyId}`, {
       method: "DELETE",
     });
   } catch (err) {

@@ -6,8 +6,10 @@ import { FocusHeader } from "@/components/FocusHeader";
 import { PointsDisplay } from "@/components/PointsDisplay";
 import ErrorMessage from "@/common/MessageBox";
 import { useTimer } from "@/hooks/useTimer";
+import { useLocation } from "react-router-dom";
 
 function FocusPage() {
+  const location = useLocation();
   const [customTime, setCustomTime] = useState(25); // 기본값 25분
   const INITIAL_TIME = customTime * 60;
 
@@ -25,9 +27,7 @@ function FocusPage() {
 
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [currentPoints, setCurrentPoints] = useState(0);
-  const [studyId, setStudyId] = useState(
-    "39cfd85c-cf40-4a0a-853a-1e4ed1be3a28"
-  );
+  const [studyId, setStudyId] = useState(location.state.studyData.id);
   const [errorMessage, setErrorMessage] = useState("");
 
   // 초기 포인트 로딩, 포인트 업데이트
