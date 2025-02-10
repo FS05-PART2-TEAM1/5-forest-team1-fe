@@ -7,6 +7,7 @@ const StudyFormValidation = ({
   validateFn,
   type = "text",
   onChange,
+  isTextarea = false,
 }) => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -15,28 +16,47 @@ const StudyFormValidation = ({
     const validationError = validateFn(value);
     setError(validationError);
   };
+
   const handleChange = (e) => {
-    setValue(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
     if (error) setError("");
-    if (onChange) onChange(e);
+    onChange?.(newValue); // onChange가 존재할 때만 호출
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col space-y-1">
       <label className="text-lg font-semibold" htmlFor={id}>
         {label}
       </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={`border h-12 rounded-xl p-3 ${
-          error ? "border-f-error" : "border-gray-200"
-        }`}
-      />
+      {isTextarea ? (
+        <textarea
+          id={id}
+          value={value}
+          placeholder={placeholder}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`border rounded-xl p-3 leading-7 resize-none ${
+            error ? "border-f-error" : "border-gray-200"
+          } h-[100px]`}
+          style={{
+            resize: "none", // 사용자가 크기를 조정하지 못하게
+            overflowY: "auto", // 세로 스크롤만 허용
+          }}
+        />
+      ) : (
+        <input
+          id={id}
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`border h-12 rounded-xl p-3 ${
+            error ? "border-f-error" : "border-gray-200"
+          }`}
+        />
+      )}
       {error && <span className="text-f-error text-sm">{error}</span>}
     </div>
   );

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import paw from "../assets/icons/ic_paw.png";
 import completedPaw from "../assets/icons/ic_selected.png";
-import completeImg1 from "../assets/icons/paws/paw01.png";
-import completeImg2 from "../assets/icons/paws/paw02.png";
-import completeImg3 from "../assets/icons/paws/paw03.png";
-import completeImg4 from "../assets/icons/paws/paw04.png";
-import completeImg5 from "../assets/icons/paws/paw05.png";
+import Paw1 from "../assets/icons/paws/paw01.png";
+import Paw2 from "../assets/icons/paws/paw02.png";
+import Paw3 from "../assets/icons/paws/paw03.png";
+import Paw4 from "../assets/icons/paws/paw04.png";
+import Paw5 from "../assets/icons/paws/paw05.png";
 import habitApi from "../api/habitApi";
 
 function HabitTracker() {
@@ -47,13 +47,7 @@ function HabitTracker() {
   console.log(mappedDays);
 
   // Habit-specific image mapping
-  const habitImages = [
-    completeImg1,
-    completeImg2,
-    completeImg3,
-    completeImg4,
-    completeImg5,
-  ];
+  const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5];
 
   return (
     <div className="flex justify-center items-center mt-5 mb-[171px]">
