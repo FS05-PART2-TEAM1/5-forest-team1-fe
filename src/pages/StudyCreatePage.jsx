@@ -42,34 +42,41 @@ function StudyCreatePage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
-
+  const [errors, setErrors] = useState({
+    nickname: true,
+    studyName: true,
+    studyDesc: true,
+    password: true,
+    confirmPassword: true,
+  });
   const navigate = useNavigate();
 
   const handleImageClick = (index) => {
     setHasSelected(index);
   };
 
+  const handleValidation = (field, error) => {
+    setErrors((prev) => ({ ...prev, [field]: !!error }));
+  };
   const handleSubmit = async () => {
-    const trimmedPassword = password.trim();
-    const trimmedConfirmPassword = confirmPassword.trim();
+    if (
+      !nickname ||
+      !studyName ||
+      !studyDesc ||
+      !password ||
+      !confirmPassword
+    ) {
+      alert("모든 입력란을 채워주세요.");
+      return;
+    }
 
     // 비밀번호 일치 여부 체크
-    if (trimmedPassword !== trimmedConfirmPassword) {
+    if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    // 배경 이미지 선택 여부 체크
-    if (hasSelected === null) {
-      alert("배경을 선택해주세요.");
-      return;
-    }
-
     const background = backgrounds[hasSelected];
-    if (!background) {
-      alert("유효하지 않은 배경입니다.");
-      return;
-    }
 
     try {
       const response = await createStudy({
@@ -78,8 +85,8 @@ function StudyCreatePage() {
         description: studyDesc,
         backgroundType: background.type,
         backgroundContent: background.content,
-        password: trimmedPassword,
-        passwordConfirm: trimmedConfirmPassword,
+        password,
+        passwordConfirm: confirmPassword,
       });
       console.log("스터디 생성 성공:", response);
       // 스터디 생성 후 StudyDetailPage로 라우팅
@@ -118,7 +125,8 @@ function StudyCreatePage() {
                         : "닉네임은 2~10자여야 합니다."
                     }
                     onChange={(e) => setNickname(e.target.value)}
-                  ></StudyFormValidation>
+                    onValidate={(error) => handleValidation("nickname", error)}
+                  />
                 </form>
                 <form className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
@@ -131,7 +139,8 @@ function StudyCreatePage() {
                         : "스터디 이름은 3~10자여야 합니다."
                     }
                     onChange={(e) => setStudyName(e.target.value)}
-                  ></StudyFormValidation>
+                    onValidate={(error) => handleValidation("studyName", error)}
+                  />
                 </form>
                 <form className="flex flex-col mb-6 gap-2">
                   <StudyFormValidation
@@ -144,6 +153,7 @@ function StudyCreatePage() {
                         : "소개는 10~300자여야 합니다."
                     }
                     onChange={(e) => setStudyDesc(e.target.value)}
+                    onValidate={(error) => handleValidation("studyDesc", error)}
                     isTextarea
                   />
                 </form>
@@ -195,6 +205,7 @@ function StudyCreatePage() {
                       : "비밀번호는 6자 이상이어야 합니다."
                   }
                   onChange={(e) => setPassword(e.target.value)}
+                  onValidate={(error) => handleValidation("password", error)}
                 />
               </form>
 
@@ -207,6 +218,9 @@ function StudyCreatePage() {
                     value === password ? null : "비밀번호가 일치하지 않습니다."
                   }
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  onValidate={(error) =>
+                    handleValidation("confirmPassword", error)
+                  }
                 />
               </div>
             </div>
