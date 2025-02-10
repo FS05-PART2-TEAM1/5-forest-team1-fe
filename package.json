@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cross-env CHOKIDAR_USEPOLLING=true vite",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -17,12 +17,8 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3",
-<<<<<<< HEAD
-    "react-scripts": "^5.0.0"
-=======
     "react-scripts": "^5.0.0",
     "react-share": "^5.2.0"
->>>>>>> 680259fd17a0305e7eba73239d18af2d7d5c6a23
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
