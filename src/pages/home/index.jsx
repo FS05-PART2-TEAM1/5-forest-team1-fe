@@ -4,7 +4,7 @@ import BrowseStudyContainer from "./BrowseStudyContainer";
 
 function Home() {
   return (
-    <div className="px-[16px] md:px-[24px] bg-f-bg pb-[40px] lg:pb-[160px]">
+    <div className="h-screen px-[16px] md:px-[24px] bg-f-bg pb-[40px] lg:pb-[160px]">
       <Header isCreateButton={true} />
       <RecentViewedStudyContainer />
       <BrowseStudyContainer />

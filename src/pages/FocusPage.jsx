@@ -29,6 +29,7 @@ function FocusPage() {
   const [currentPoints, setCurrentPoints] = useState(0);
   const [studyId, setStudyId] = useState(location.state.studyData.id);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isPointsUpdateLoading, setIsPointsUpdateLoading] = useState(false);
 
   // 초기 포인트 로딩, 포인트 업데이트
   useEffect(() => {
@@ -36,6 +37,7 @@ function FocusPage() {
   }, [studyId]);
 
   const handlePointsUpdate = async () => {
+    setIsPointsUpdateLoading(true);
     const extraTime = Math.abs(timeLeft) / 60;
     const points = calculatePoints(extraTime);
     const { startTime, totalPauseTime, finishTime } = getTimerData();
@@ -62,6 +64,8 @@ function FocusPage() {
     } catch (error) {
       resetTimer();
       setErrorMessage("포인트 적립에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setIsPointsUpdateLoading(false);
     }
   };
 
@@ -158,8 +162,13 @@ function FocusPage() {
           <ErrorMessage message="집중이 중단되었습니다." isCompleted={false} />
         ) : isCompleted ? (
           <ErrorMessage
-            message={`${earnedPoints}포인트를 획득했습니다!`}
+            message={
+              isPointsUpdateLoading
+                ? "포인트 적립 중...🌱"
+                : `${earnedPoints}포인트를 획득했습니다!`
+            }
             isCompleted={true}
+            isLoading={isPointsUpdateLoading}
           />
         ) : null}
       </div>
