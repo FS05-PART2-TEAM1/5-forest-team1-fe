@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Footer } from "@/common/layout/Footer";
 import StudyDetailPage from "./pages/StudyDetailPage";
 import StudyCreatePage from "./pages/StudyCreatePage";
+import StudyModifyPage from "./pages/StudyModifyPage";
 import FocusPage from "./pages/FocusPage";
 import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
