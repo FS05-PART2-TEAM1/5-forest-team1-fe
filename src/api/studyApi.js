@@ -38,3 +38,17 @@ export const createStudy = async (studyData) => {
     throw error;
   }
 };
+
+export const patchStudy = async (studyId, updatedData) => {
+  try {
+    const response = await axios.patch(
+      // `${BASE_URL}/studies/${studyId}`,
+      "https://five-forest-team1.onrender.com/api/studies",
+      updatedData
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating study:", error);
+    throw error;
+  }
+};
