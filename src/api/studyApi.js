@@ -2,17 +2,8 @@ import axiosClient from "./axios";
 
 export async function getStudy(studyId) {
   try {
-<<<<<<< HEAD
-    const response = await fetch(
-      // `http://localhost:5004/api/studies/${studyId}`
-      "https://five-forest-team1.onrender.com/api/studies"
-    );
-    const studyData = await response.json();
-    return studyData;
-=======
     const response = await axiosClient.get(`/api/studies/${studyId}`);
     return response.data;
->>>>>>> fb6640b15d539b746c45b7c6ac0eaaa873a2c0e9
   } catch (err) {
     throw err;
   }
@@ -20,7 +11,6 @@ export async function getStudy(studyId) {
 
 export async function verifyPassword(studyId, password) {
   try {
-
     const response = await axiosClient.post(`/api/studies/verify-password`, {
       studyId,
       password,

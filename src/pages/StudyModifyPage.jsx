@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { getStudy, patchStudy } from "@/api/studyApi";
+import { createStudy } from "@/api/studyApi";
 import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
 import selectBtn from "../assets/icons/ic_selected.png";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getStudy } from "@/api/studyApi";
 
-//TO DO: 수정페이지 작업, 리팩토링 & 컴포넌트 분리,
+const colorMap = {
+  "#EED3D9": "pink",
+  "#F5E8DD": "yellow",
+  "#CCD3CA": "green",
+  "#B5C0D0": "blue",
+};
 
 const backgrounds = [
   { type: "color", content: "#EED3D9" },
@@ -35,76 +41,84 @@ const backgrounds = [
       "https://fastly.picsum.photos/id/657/200/200.jpg?hmac=6vrgINA0qije4LsZMVl1Rea_OtagocnfsCfETPr0_Hc",
   },
 ];
-function StudyModifyPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const studyId = location.state?.studyId;
 
-  const [nickname, setNickname] = useState(""); //닉네임도 수정 가능?
+function StudyCreatePage() {
+  const [nickname, setNickname] = useState("");
   const [studyName, setStudyName] = useState("");
   const [studyDesc, setStudyDesc] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
-
-  useEffect(() => {
-    if (studyId) {
-      getStudy(studyId).then((data) => {
-        setNickname(data.nickname);
-        setStudyName(data.title);
-        setStudyDesc(data.description);
-        setPassword(data.password);
-        setConfirmPassword(data.password);
-        const selectedIndex = backgrounds.findIndex(
-          (bg) =>
-            bg.type === data.backgroundType &&
-            bg.content === data.backgroundContent
-        );
-        setHasSelected(selectedIndex);
-      });
-    }
-  }, [studyId]);
+  const [errors, setErrors] = useState({
+    nickname: true,
+    studyName: true,
+    studyDesc: true,
+    password: true,
+    confirmPassword: true,
+  });
+  const navigate = useNavigate();
 
   const handleImageClick = (index) => {
     setHasSelected(index);
   };
 
+  const location = useLocation();
+  const studyData = useState(location.state?.studyId);
+  console.log(location.state?.studyId);
+
+  const handleValidation = (field, error) => {
+    setErrors((prev) => ({ ...prev, [field]: !!error }));
+  };
+
   const handleSubmit = async () => {
-    if (password.trim() !== confirmPassword.trim()) {
+    // 비밀번호 일치 여부 체크
+    if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
+    // 배경 이미지 선택 여부 체크
     if (hasSelected === null) {
       alert("배경을 선택해주세요.");
       return;
     }
+    const isFormValid =
+      Object.values(errors).every((error) => !error) && hasSelected !== null;
+    if (!isFormValid) {
+      alert("모든 입력란을 올바르게 채워주세요.");
+      return;
+    }
 
     const background = backgrounds[hasSelected];
+    let backgroundContent = background.content;
+
+    // hex 코드를 문자열로 변환
+    if (background.type === "color") {
+      backgroundContent = colorMap[backgroundContent] || backgroundContent;
+    }
     try {
-      await patchStudy(studyId, {
+      const response = await createStudy({
         nickname,
         title: studyName,
         description: studyDesc,
         backgroundType: background.type,
-        backgroundContent: background.content,
+        backgroundContent,
         password,
+        passwordConfirm: confirmPassword,
       });
-      navigate(`/study/${studyId}`);
+
+      // 스터디 생성 후 StudyDetailPage로 라우팅
+      navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
     } catch (error) {
       console.error(
-        "스터디 수정 실패:",
+        "스터디 생성 실패:",
         error.response ? error.response.data : error.message
       );
     }
   };
-  const isFormValid =
-    [nickname, studyName, studyDesc, password, confirmPassword].every(
-      Boolean
-    ) && hasSelected !== null;
 
   return (
     <div className="bg-f-bg">
-      <Header isCreateButton={true} />
+      <Header />
       <div className="flex justify-center items-center">
         <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:min-h-[1171px] w-[344px] min-h-[1423px] bg-white  p-4">
           <div className="mt-1">
@@ -113,21 +127,21 @@ function StudyModifyPage() {
                 <div className="mb-4">
                   <h1 className="text-2xl font-bold">스터디 수정하기</h1>
                 </div>
-                <form className="flex flex-col mb-4 gap-2">
+                <div className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
                     id="nickname"
                     label="닉네임"
                     placeholder="닉네임을 입력해 주세요"
                     validateFn={(value) =>
-                      value.length >= 3 && value.length <= 10
+                      value.length >= 2 && value.length <= 10
                         ? null
-                        : "닉네임은 3~10자여야 합니다."
+                        : "닉네임은 2~10자여야 합니다."
                     }
-                    onChange={setNickname}
-                    value={nickname} // <- 초기 값 적용
-                  ></StudyFormValidation>
-                </form>
-                <form className="flex flex-col mb-4 gap-2">
+                    onChange={(e) => setNickname(e.target.value)}
+                    onValidate={(error) => handleValidation("nickname", error)}
+                  />
+                </div>
+                <div className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
                     id="studyName"
                     label="스터디 이름"
@@ -138,12 +152,12 @@ function StudyModifyPage() {
                         : "스터디 이름은 3~10자여야 합니다."
                     }
                     onChange={(e) => setStudyName(e.target.value)}
-                  ></StudyFormValidation>
-                </form>
-                <form className="flex flex-col mb-6 gap-2">
+                    onValidate={(error) => handleValidation("studyName", error)}
+                  />
+                </div>
+                <div className="flex flex-col mb-6 gap-2">
                   <StudyFormValidation
                     label="소개"
-                    // className="border border-gray-300 p-3 h-24 rounded-xl  leading-7"
                     placeholder="스터디에 대한 소개를 10자 이상 300자 이하로 입력해주세요."
                     validateFn={(value) =>
                       value.length >= 10 && value.length <= 300
@@ -151,9 +165,10 @@ function StudyModifyPage() {
                         : "소개는 10~300자여야 합니다."
                     }
                     onChange={(e) => setStudyDesc(e.target.value)}
+                    onValidate={(error) => handleValidation("studyDesc", error)}
                     isTextarea
                   />
-                </form>
+                </div>
                 <div className=" mb-4 ">
                   <h3 className="text-lg font-semibold mb-3">
                     배경을 선택해주세요
@@ -191,7 +206,7 @@ function StudyModifyPage() {
                   </div>
                 </div>
               </div>
-              <form className="flex flex-col mb-4 gap-2">
+              <div className="flex flex-col mb-4 gap-2">
                 <PasswordValidation
                   id="password"
                   label="비밀번호"
@@ -202,8 +217,9 @@ function StudyModifyPage() {
                       : "비밀번호는 6자 이상이어야 합니다."
                   }
                   onChange={(e) => setPassword(e.target.value)}
+                  onValidate={(error) => handleValidation("password", error)}
                 />
-              </form>
+              </div>
 
               <div className="flex flex-col mb-5 md:mb-6 gap-2">
                 <PasswordValidation
@@ -214,10 +230,19 @@ function StudyModifyPage() {
                     value === password ? null : "비밀번호가 일치하지 않습니다."
                   }
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  onValidate={(error) =>
+                    handleValidation("confirmPassword", error)
+                  }
                 />
               </div>
             </div>
-            <PrimaryButton onClick={handleSubmit} disabled={!isFormValid}>
+            <PrimaryButton
+              onClick={handleSubmit}
+              disabled={
+                Object.values(errors).some((error) => error) ||
+                hasSelected === null
+              }
+            >
               수정 완료
             </PrimaryButton>
           </div>
@@ -227,4 +252,4 @@ function StudyModifyPage() {
   );
 }
 
-export default StudyModifyPage;
+export default StudyCreatePage;
