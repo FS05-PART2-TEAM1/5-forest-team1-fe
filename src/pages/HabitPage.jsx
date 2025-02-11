@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
+// import { getStudy, getHabits } from "@/api/habitApi";
+import habitApi from "../api/habitApi";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -30,17 +32,40 @@ const TimeBox = () => {
   }, []);
 
   return (
-    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[200px] font-pretendard font-medium shadow-xl mt-2">
+    <div className="border border-gray-400 px-2 py-1 rounded-[50px] text-[#000000] text-[16px] text-center w-[200px] font-pretendard font-medium">
       {currentTime}
     </div>
   );
 };
 
 function HabitPage() {
+  const location = useLocation();
+  const { studyData, password } = location.state || {};
+  const [title, setTitle] = useState(studyData?.title || "");
+  const [nickname, setNickname] = useState(studyData?.nickname || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(
+    studyData?.habits?.map((habit) => habit.name) || []
+  );
   const [selectedHabits, setSelectedHabits] = useState([]);
-  const maxHabitCount = 5;
+  const maxHabitCount = 8;
+
+  useEffect(() => {
+    if (studyData?.habits) {
+      setHabits(studyData.habits.map((habit) => habit.name));
+    }
+  }, [studyData]);
+
+  useEffect(() => {
+    async function fetchHabits() {
+      const studyId = studyData?.id;
+      if (studyId) {
+        const habitList = await habitApi.getHabits(studyId);
+        setHabits(habitList);
+      }
+    }
+    fetchHabits();
+  }, [studyData]);
 
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
@@ -49,7 +74,7 @@ function HabitPage() {
         setHabits([...habits, newHabit]);
       }
     } else {
-      alert("습관은 최대 n개까지만 추가할 수 있습니다.");
+      alert("습관은 최대 10개까지만 추가할 수 있습니다.");
     }
   };
 
@@ -60,8 +85,8 @@ function HabitPage() {
     setSelectedHabits(selectedHabits.filter((_, i) => i !== index));
   };
 
-  const onSave = () => {
-    setIsModalOpen(false);
+  const onSave = async (updatedHabits) => {
+    setHabits([...updatedHabits]);
   };
 
   const onToggleHabit = (index) => {
@@ -71,7 +96,6 @@ function HabitPage() {
       setSelectedHabits([...selectedHabits, index]);
     }
   };
-
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF] pt-4">
@@ -79,9 +103,13 @@ function HabitPage() {
         <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
           <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold mb-4">스터디 이름</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                {nickname && title
+                  ? `${nickname} 의 ${title}`
+                  : "스터디 정보 없음"}
+              </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus">
+                <Link to="/focus" state={{ studyData, password }}>
                   <button className="border py-2 pl-[10px] pr-[6px] md:py-3 md:pl-6 md:pr-[16px] rounded-xl text-[#818181] md:w-[144px] md:h-[48px] w-[120px] h-[40px] ">
                     오늘의 집중 <span>&gt;</span>
                   </button>
@@ -149,6 +177,7 @@ function HabitPage() {
         onAddHabit={onAddHabit}
         onRemoveHabit={onRemoveHabit}
         maxHabitCount={maxHabitCount}
+        userId={"439420f4-4631-43a7-962a-cf1ec7b7ce53"}
       />
     </>
   );
