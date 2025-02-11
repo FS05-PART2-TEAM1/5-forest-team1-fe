@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
 import ModalButton from "../buttons/ModalButton";
-import axios from "axios";
-import { createHabit, updateStudy } from "../../api/habitApi";
+// import { createHabit, updateStudy } from "../../api/habitApi";
 
 const HabitListModal = ({
   isOpen,
