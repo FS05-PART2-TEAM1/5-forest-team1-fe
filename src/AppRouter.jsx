@@ -8,6 +8,7 @@ import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
 import TestPage from "./pages/TestPage";
+import LandingPage from "./pages/LandingPage";
 
 function AppRouter() {
   return (
@@ -15,7 +16,8 @@ function AppRouter() {
       <div className="min-h-screen flex flex-col">
         <div className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/study">
               <Route path="create" element={<StudyCreatePage />} />
               <Route path=":studyId" element={<StudyDetailPage />} />
@@ -29,6 +31,17 @@ function AppRouter() {
         </div>
         <Footer />
       </div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/study">
+          <Route path="create" element={<StudyCreatePage />} />
+          <Route path=":studyId" element={<StudyDetailPage />} />
+        </Route>
+        <Route path="/focus" element={<FocusPage />} />
+        <Route path="/habit" element={<HabitPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </BrowserRouter>
   );
 }
