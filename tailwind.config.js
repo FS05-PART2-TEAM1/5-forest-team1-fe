@@ -17,7 +17,7 @@ export default {
         "f-green-text": "#578246",
         "f-yellow-bg": "#fff1cc",
         "f-yellow-text": "#c18e1b",
-        "f-blue-blue": "#e0f1f5",
+        "f-blue-bg": "#e0f1f5",
         "f-blue-text": "#418099",
         "f-pink-bg": "#fde0e9",
         "f-pink-text": "#bc3c6a",

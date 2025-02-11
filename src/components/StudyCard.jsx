@@ -4,11 +4,12 @@ import {
 } from "@/common/EarnedPointsBox";
 import EmojiTag from "@/common/EmojiTag";
 import clsx from "clsx";
+import dayjs from "dayjs";
 
 const backgroundColors = {
   green: "bg-f-green-bg",
   yellow: "bg-f-yellow-bg",
-  blue: "bg-f-blue-blue",
+  blue: "bg-f-blue-bg",
   pink: "bg-f-pink-bg",
 };
 const textColors = {
@@ -45,9 +46,8 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
   const infoTextColor = isImage ? "text-f-gray-100" : "text-f-black";
   const descriptionTextColor = isImage ? "text-[#ffffff]" : "text-f-black";
 
-  const now = new Date();
-  const studyCreatedAt = new Date(study.createdAt);
-  const day = Math.ceil((now - studyCreatedAt) / (1000 * 60 * 60 * 24));
+  const now = dayjs();
+  const day = now.diff(dayjs(study.createdAt), "day") + 1;
 
   return (
     <div
