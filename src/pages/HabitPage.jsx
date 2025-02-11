@@ -39,7 +39,7 @@ const TimeBox = () => {
 
 function HabitPage() {
   const location = useLocation();
-  const { studyData } = location.state || {};
+  const { studyData, password } = location.state || {};
   const [title, setTitle] = useState(studyData?.title || "");
   const [nickname, setNickname] = useState(studyData?.nickname || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,7 +108,7 @@ function HabitPage() {
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus">
+                <Link to="/focus" state={{ studyData, password }}>
                   <button className="border py-2 pl-[10px] pr-[6px] md:py-3 md:pl-6 md:pr-[16px] rounded-xl text-[#818181] md:w-[144px] md:h-[48px] w-[120px] h-[40px] ">
                     오늘의 집중 <span>&gt;</span>
                   </button>
