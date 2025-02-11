@@ -64,11 +64,7 @@ function StudyCreatePage() {
 
   const location = useLocation();
   const studyData = useState(location.state?.studyId);
-<<<<<<< HEAD
-  console.log(location.state?.studyId);
-=======
   console.log(studyData);
->>>>>>> 72901c9333cbb6dd8efff4401e00173a50cd9c90
 
   const handleValidation = (field, error) => {
     setErrors((prev) => ({ ...prev, [field]: !!error }));
