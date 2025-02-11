@@ -8,6 +8,8 @@ import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import { patchStudy } from "@/api/studyApi";
 
+//TO DO: 입력란 유효성 검증 후 PATCH API 전송
+
 const colorMap = {
   "#EED3D9": "pink",
   "#F5E8DD": "yellow",
@@ -48,7 +50,6 @@ function StudyModifyPage() {
   const [studyDesc, setStudyDesc] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [hasSelected, setHasSelected] = useState(null);
   const [errors, setErrors] = useState({
     nickname: true,
@@ -57,17 +58,13 @@ function StudyModifyPage() {
     password: true,
     confirmPassword: true,
   });
+
   const navigate = useNavigate();
-
-  const handleImageClick = (index) => {
-    setHasSelected(index);
-  };
-
   const location = useLocation();
   const { studyData } = location.state || {};
 
-  console.log(studyData);
   useEffect(() => {
+    console.log(studyData);
     if (studyData) {
       setNickname(studyData.nickname || "");
       setStudyName(studyData.title || "");
@@ -75,14 +72,16 @@ function StudyModifyPage() {
       setPassword(studyData.password || "");
       setConfirmPassword(studyData.password || "");
 
-      // 선택된 배경 이미지가 있다면 상태 설정
-      const selectedBackgroundIndex = backgrounds.findIndex(
-        (background) =>
-          background.content === studyData.backgroundContent ||
-          (background.type === "color" &&
-            background.content.toLowerCase() ===
-              studyData.backgroundContent.toLowerCase())
-      );
+      const selectedBackgroundIndex = backgrounds.findIndex((background) => {
+        if (background.type === "color") {
+          return colorMap[background.content] === studyData.backgroundContent;
+        }
+        return (
+          background.type === studyData.backgroundType &&
+          background.content.toLowerCase() ===
+            studyData.backgroundContent.toLowerCase()
+        );
+      });
 
       setHasSelected(
         selectedBackgroundIndex >= 0 ? selectedBackgroundIndex : null
@@ -90,23 +89,29 @@ function StudyModifyPage() {
     }
   }, [studyData]);
 
-  const handleValidation = (field, error) => {
-    setErrors((prev) => ({ ...prev, [field]: !!error }));
+  const handleImageClick = (index) => {
+    setHasSelected(index);
   };
-
+  const handleValidation = (field, error) => {
+    setErrors((prev) => {
+      const updatedErrors = { ...prev, [field]: !!error };
+      return updatedErrors;
+    });
+  };
+  const isFormValid = !Object.values(errors).includes(true);
   const handleSubmit = async () => {
-    // 비밀번호 일치 여부 체크
     if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-    // 배경 이미지 선택 여부 체크
+
     if (hasSelected === null) {
       alert("배경을 선택해주세요.");
       return;
     }
-    const isFormValid =
-      Object.values(errors).every((error) => !error) && hasSelected !== null;
+
+    const isFormValid = !Object.values(errors).some((error) => error === true);
+
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
       return;
@@ -115,12 +120,11 @@ function StudyModifyPage() {
     const background = backgrounds[hasSelected];
     let backgroundContent = background.content;
 
-    // hex 코드를 문자열로 변환
     if (background.type === "color") {
       backgroundContent = colorMap[backgroundContent] || backgroundContent;
     }
     try {
-      const response = await createStudy({
+      const response = await patchStudy(studyData.id, {
         nickname,
         title: studyName,
         description: studyDesc,
@@ -130,7 +134,7 @@ function StudyModifyPage() {
         passwordConfirm: confirmPassword,
       });
 
-      // 스터디 생성 후 StudyDetailPage로 라우팅
+      // 스터디 수정 후 StudyDetailPage로 라우팅
       navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
     } catch (error) {
       console.error(
@@ -153,61 +157,55 @@ function StudyModifyPage() {
                 </div>
                 <div className="flex flex-col mb-4 gap-2">
                   <label htmlFor="nickname">닉네임</label>
-                  <input
+                  <StudyFormValidation
                     id="nickname"
                     placeholder="닉네임을 입력해 주세요"
-                    value={nickname} // value는 상태값을 직접 전달
-                    onChange={(e) => {
-                      setNickname(e.target.value);
-                      handleValidation(
-                        "nickname",
-                        e.target.value.length < 2 || e.target.value.length > 10
-                          ? "닉네임은 2~10자여야 합니다."
-                          : null
-                      );
-                    }}
+                    value={nickname} // 상태값을 직접 전달
+                    onChange={(e) => setNickname(e.target.value)} // 상태만 변경
+                    validateFn={(value) =>
+                      value.trim().length < 2
+                        ? "닉네임은 2자 이상이어야 합니다."
+                        : null
+                    }
+                    onValidate={(error) => handleValidation("nickname", error)} // 부모 상태 업데이트
                   />
                 </div>
                 <div className="flex flex-col mb-4 gap-2">
                   <label htmlFor="studyName">스터디 이름</label>
-                  <input
+                  <StudyFormValidation
                     id="studyName"
                     placeholder="스터디 이름을 입력해주세요"
                     value={studyName} // value는 상태값을 직접 전달
-                    onChange={(e) => {
-                      setStudyName(e.target.value);
-                      handleValidation(
-                        "studyName",
-                        e.target.value.length < 3 || e.target.value.length > 10
-                          ? "스터디 이름은 3~10자여야 합니다."
-                          : null
-                      );
-                    }}
+                    onChange={(e) => setStudyName(e.target.value)}
+                    validateFn={(value) =>
+                      value.length < 3 || value.length > 10
+                        ? "스터디 이름은 3~10자여야 합니다."
+                        : null
+                    }
+                    onValidate={(error) => handleValidation("studyName", error)}
                   />
                 </div>
                 <div className="flex flex-col mb-6 gap-2">
                   <label htmlFor="studyDesc">소개</label>
-                  <textarea
+                  <StudyFormValidation
                     id="studyDesc"
                     placeholder="스터디에 대한 소개를 10자 이상 300자 이하로 입력해주세요."
-                    value={studyDesc} // value는 상태값을 직접 전달
-                    onChange={(e) => {
-                      setStudyDesc(e.target.value);
-                      handleValidation(
-                        "studyDesc",
-                        e.target.value.length < 10 ||
-                          e.target.value.length > 300
-                          ? "소개는 10~300자여야 합니다."
-                          : null
-                      );
-                    }}
+                    value={studyDesc}
+                    isTextarea
+                    onChange={(e) => setStudyDesc(e.target.value)}
+                    validateFn={(value) =>
+                      value.length < 10 || value.length > 300
+                        ? "소개는 10~300자여야 합니다."
+                        : null
+                    }
+                    onValidate={(error) => handleValidation("studyDesc", error)}
                   />
                 </div>
-                <div className=" mb-4 ">
+                <div className="mb-4">
                   <h3 className="text-lg font-semibold mb-3">
                     배경을 선택해주세요
                   </h3>
-                  <div className="grid grid-cols-2  md:grid-cols-4 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
                     {backgrounds.map((background, index) => (
                       <div
                         key={index}
@@ -228,7 +226,12 @@ function StudyModifyPage() {
                             className="w-full h-full object-cover"
                           />
                         )}
-                        {hasSelected === index && (
+                        {/* 선택된 배경에 표시될 아이콘 */}
+                        {(hasSelected === index ||
+                          (studyData &&
+                            studyData.backgroundContent &&
+                            backgrounds[index].content ===
+                              studyData.backgroundContent)) && (
                           <img
                             src={selectBtn}
                             alt="Selected Icon"
@@ -241,49 +244,38 @@ function StudyModifyPage() {
                 </div>
               </div>
               <div className="flex flex-col mb-4 gap-2">
-                <label htmlFor="password">비밀번호</label>
-                <input
+                <PasswordValidation
                   id="password"
                   type="password"
+                  label="비밀번호"
                   placeholder="비밀번호를 입력해 주세요"
                   value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    handleValidation(
-                      "password",
-                      e.target.value.length < 6
-                        ? "비밀번호는 6자 이상이어야 합니다."
-                        : null
-                    );
-                  }}
+                  onChange={(e) => setPassword(e.target.value)}
+                  validateFn={(value) =>
+                    value.length < 6
+                      ? "비밀번호는 6자 이상이어야 합니다."
+                      : null
+                  }
                 />
               </div>
 
               <div className="flex flex-col mb-5 md:mb-6 gap-2">
-                <label htmlFor="confirmPassword">비밀번호 확인</label>
-                <input
+                <PasswordValidation
                   id="confirmPassword"
                   type="password"
+                  label="비밀번호 확인"
                   placeholder="비밀번호를 다시 입력해 주세요"
                   value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    handleValidation(
-                      "confirmPassword",
-                      e.target.value !== password
-                        ? "비밀번호가 일치하지 않습니다."
-                        : null
-                    );
-                  }}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  validateFn={(value) =>
+                    value !== password ? "비밀번호가 일치하지 않습니다." : null
+                  }
                 />
               </div>
             </div>
             <PrimaryButton
               onClick={handleSubmit}
-              disabled={
-                Object.values(errors).some((error) => error) ||
-                hasSelected === null
-              }
+              disabled={isFormValid === false}
             >
               수정 완료
             </PrimaryButton>
