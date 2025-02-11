@@ -28,8 +28,8 @@ function HabitTracker() {
     const fetchHabits = async () => {
       try {
         const studyId = "eb119bc0-57d9-4c6c-ad2b-1c3c05a7d12f";
-        const start = "2025-02-04";
-        const end = "2025-02-10";
+        const start = "2025-02-05";
+        const end = "2025-02-12";
         const data = await habitApi.getHabits(studyId, start, end);
         console.log("Raw Data from API:", data); // habitList 전체 확인
         setHabitList(data.habitList); // 여기서 데이터 설정!
