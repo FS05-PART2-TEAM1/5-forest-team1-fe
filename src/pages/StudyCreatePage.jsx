@@ -113,7 +113,7 @@ function StudyCreatePage() {
 
   return (
     <div className="bg-f-bg">
-      <Header isCreateButton={true} />
+      <Header />
       <div className="flex justify-center items-center">
         <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:min-h-[1171px] w-[344px] min-h-[1423px] bg-white  p-4">
           <div className="mt-1">
