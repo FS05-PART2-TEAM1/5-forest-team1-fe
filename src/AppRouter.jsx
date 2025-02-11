@@ -23,6 +23,7 @@ function AppRouter() {
             </Route>
             <Route path="/focus" element={<FocusPage />} />
             <Route path="/habit" element={<HabitPage />} />
+            <Route path="/modify" element={<StudyModifyPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

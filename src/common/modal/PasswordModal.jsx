@@ -24,7 +24,7 @@ const PasswordModal = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (buttonText === "수정하러 가기") setLink(`/study/`);
+    if (buttonText === "수정하러 가기") setLink(`/modify/`);
     if (buttonText === "스터디 삭제하기") setLink(`/`);
     if (buttonText === "오늘의 습관으로 가기") setLink(`/habit/`);
     if (buttonText === "오늘의 집중으로 가기") setLink(`/focus/`);

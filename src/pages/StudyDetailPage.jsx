@@ -9,6 +9,7 @@ import { getStudy } from "@/api/studyApi";
 import { EarnedPointsBoxMd } from "@/common/EarnedPointsBox";
 import ErrorMessage from "@/common/MessageBox";
 import ShareModal from "@/components/ShareModal";
+import HabitTracker from "@/components/HabitTracker";
 
 function StudyDetailPage() {
   const { studyId } = useParams();
@@ -31,6 +32,7 @@ function StudyDetailPage() {
     setButtonName(e.currentTarget.dataset.name);
     setIsModal(true);
   };
+  
   const disableModal = (e) => {
     setIsModal(false);
   };
@@ -44,7 +46,7 @@ function StudyDetailPage() {
   };
 
   return (
-    <div className="w-full h-screen bg-[#F6F4EF]">
+    <div className="w-full h-full bg-[#F6F4EF]">
       <Header />
       {!isLoading && (
         <div className="grid place-items-center mt-14">
@@ -113,6 +115,9 @@ function StudyDetailPage() {
                 <div className="mt-2">
                   <EarnedPointsBoxMd points={studyData.totalPoints} />
                 </div>
+                <div>
+                <HabitTracker />
+                </div>
               </>
             ) : (
               <div className="text-center text-32pt">
@@ -139,6 +144,7 @@ function StudyDetailPage() {
           description={studyData.description}
         />
       )}
+      
     </div>
   );
 }

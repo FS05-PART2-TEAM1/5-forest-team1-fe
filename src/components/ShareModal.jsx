@@ -5,13 +5,12 @@ import {
   EmailShareButton,
   FacebookIcon,
   FacebookShareButton,
-  InstapaperIcon,
-  InstapaperShareButton,
   LineIcon,
   LineShareButton,
   LinkedinIcon,
   LinkedinShareButton,
 } from "react-share";
+
 
 function ShareModal({ onClose, title, description }) {
   const currentUrl = window.location.href;
@@ -34,13 +33,21 @@ function ShareModal({ onClose, title, description }) {
           <EmailShareButton url={currentUrl} subject={title} body={description}>
             <EmailIcon size={72} round={true} />
           </EmailShareButton>
-          <FacebookShareButton url={currentUrl}>
+          <FacebookShareButton
+            url={currentUrl}
+            subject={title}
+            body={description}
+          >
             <FacebookIcon size={72} round={true} />
           </FacebookShareButton>
-          <LinkedinShareButton url={currentUrl}>
+          <LinkedinShareButton
+            url={currentUrl}
+            subject={title}
+            body={description}
+          >
             <LinkedinIcon size={72} round={true} />
           </LinkedinShareButton>
-          <LineShareButton url={currentUrl}>
+          <LineShareButton url={currentUrl} subject={title} body={description}>
             <LineIcon size={72} round={true} />
           </LineShareButton>
         </div>
