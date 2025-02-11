@@ -54,7 +54,7 @@ function HabitTracker() {
           <div className="min-w-[648px] grid grid-cols-9 gap-2 md:gap-4 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
             {days.map((day, index) => {
-              // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거
+              // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거ㅛ
               const date = new Date(2025, 1, 3 + index); // 1: 2월 (JS에서는 0부터 시작)
               const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // MM/DD 형식
               console.log(date);
