@@ -7,6 +7,13 @@ import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate } from "react-router-dom";
 
+const colorMap = {
+  "#EED3D9": "pink",
+  "#F5E8DD": "yellow",
+  "#CCD3CA": "green",
+  "#B5C0D0": "blue",
+};
+
 const backgrounds = [
   { type: "color", content: "#EED3D9" },
   { type: "color", content: "#F5E8DD" },
@@ -64,6 +71,11 @@ function StudyCreatePage() {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
+    // 배경 이미지 선택 여부 체크
+    if (hasSelected === null) {
+      alert("배경을 선택해주세요.");
+      return;
+    }
     const isFormValid =
       Object.values(errors).every((error) => !error) && hasSelected !== null;
     if (!isFormValid) {
@@ -72,14 +84,19 @@ function StudyCreatePage() {
     }
 
     const background = backgrounds[hasSelected];
+    let backgroundContent = background.content;
 
+    // hex 코드를 문자열로 변환
+    if (background.type === "color") {
+      backgroundContent = colorMap[backgroundContent] || backgroundContent;
+    }
     try {
       const response = await createStudy({
         nickname,
         title: studyName,
         description: studyDesc,
         backgroundType: background.type,
-        backgroundContent: background.content,
+        backgroundContent,
         password,
         passwordConfirm: confirmPassword,
       });
