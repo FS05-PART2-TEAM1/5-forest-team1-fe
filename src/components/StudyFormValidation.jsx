@@ -21,7 +21,7 @@ const StudyFormValidation = ({
     const newValue = e.target.value;
     setValue(newValue);
     if (error) setError("");
-    onChange?.(newValue); // onChange가 존재할 때만 호출
+    onChange?.(e);
   };
 
   return (

@@ -46,6 +46,14 @@ function EmojiForm({ studyId }) {
     setIsAddMod(false);
   };
 
+  useEffect(() => {
+    if (isChanged) {
+      const sortedEmojis = [...emojis].sort((a, b) => b.counts - a.counts);
+      setEmojis(sortedEmojis);
+      setIsChanged(false);
+    }
+  }, [isChanged]);
+
   return (
     <div className="flex gap-4">
       <div className="flex gap-1">
@@ -57,7 +65,11 @@ function EmojiForm({ studyId }) {
                 key={index}
                 onClick={() => onEmojiTagClick(element.emoji)}
               >
-                <EmojiTag emoji={element.emoji} count={element.counts} />
+                <EmojiTag
+                  emoji={element.emoji}
+                  count={element.counts}
+                  size={"base"}
+                />
               </div>
             );
         })}
@@ -84,7 +96,11 @@ function EmojiForm({ studyId }) {
                   className="h-10 flex items-center cursor-pointer "
                   onClick={() => onEmojiTagClick(element.emoji)}
                 >
-                  <EmojiTag emoji={element.emoji} count={element.counts} />
+                  <EmojiTag
+                    emoji={element.emoji}
+                    count={element.counts}
+                    size={"base"}
+                  />
                 </div>
               );
             })}
