@@ -8,6 +8,7 @@ const PasswordValidation = ({
   placeholder,
   validateFn,
   onChange,
+  onValidate,
 }) => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -17,6 +18,7 @@ const PasswordValidation = ({
     console.log("Validating value:", value);
     const validationError = validateFn(value);
     setError(validationError);
+    onValidate?.(validationError);
   };
 
   const handleChange = (e) => {
