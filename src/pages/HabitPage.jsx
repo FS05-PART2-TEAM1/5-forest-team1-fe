@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-import { getStudy, getHabits } from "@/api/habitApi";
+// import { getStudy, getHabits } from "@/api/habitApi";
+import habitApi from "../api/habitApi";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -59,7 +60,7 @@ function HabitPage() {
     async function fetchHabits() {
       const studyId = studyData?.id;
       if (studyId) {
-        const habitList = await getHabits(studyId);
+        const habitList = await habitApi.getHabits(studyId);
         setHabits(habitList);
       }
     }
