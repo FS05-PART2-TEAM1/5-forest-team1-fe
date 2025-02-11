@@ -18,22 +18,19 @@ function HabitTracker() {
 
   const getDayIndex = (dateString) => {
     const date = new Date(dateString);
-    date.setUTCHours(date.getUTCHours() + 9); // UTC+9 한국 시간으로 변환
-    const now = new Date();
-
-    const dayIndex = date.getDay(); // 0 (일요일) ~ 6 (토요일)
-    return dayIndex === 0 ? 6 : dayIndex - 1; // 월요일(0) ~ 일요일(6)로 맞춤
+    return (date.getDay() + 6) % 7; // 일요일(0) -> 6으로 변환
   };
+
   useEffect(() => {
     const fetchHabits = async () => {
       try {
         const studyId = "eb119bc0-57d9-4c6c-ad2b-1c3c05a7d12f";
-        const start = "2025-02-05";
-        const end = "2025-02-12";
+        const start = "2025-02-03";
+        const end = "2025-02-09";
+
         const data = await habitApi.getHabits(studyId, start, end);
-        console.log("Raw Data from API:", data); // habitList 전체 확인
+        console.log("Raw Data from API:", data);
         setHabitList(data.habitList); // 여기서 데이터 설정!
-        console.log(data.habitList);
       } catch (error) {
         console.error("API 호출 오류:", error);
       }
@@ -41,24 +38,13 @@ function HabitTracker() {
 
     fetchHabits();
   }, []);
-
-  const mappedDays = habitList.map((habit) =>
-    habit.dailyHabitCheck.map((entry) => ({
-      date: entry.date,
-      status: entry.status,
-      dayIndex: getDayIndex(entry.date),
-    }))
-  );
-
-  console.log(mappedDays);
-
-  // Habit-specific image mapping
+  console.log(new Date());
   const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
 
   return (
     <div className="flex justify-center items-center mt-5 mb-[171px]">
-      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 lg:max-w-[1120px] lg:h-[511px] md:max-w-[648px] h-[450px] max-w-[312px]  bg-white p-4 transition-all duration-300">
-        <h1 className="md:text-2xl text-lg font-bold ">습관 기록표</h1>
+      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 lg:max-w-[1120px] lg:h-[511px] md:max-w-[648px] h-[450px] max-w-[312px] bg-white p-4 transition-all duration-300">
+        <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
         <div
           ref={scrollRef}
@@ -67,14 +53,21 @@ function HabitTracker() {
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 md:gap-4 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
-            {days.map((day) => (
-              <div
-                key={day}
-                className="text-center text-gray-500 font-semibold"
-              >
-                {day}
-              </div>
-            ))}
+            {days.map((day, index) => {
+              // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거
+              const date = new Date(2025, 1, 3 + index); // 1: 2월 (JS에서는 0부터 시작)
+              const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // MM/DD 형식
+              console.log(date);
+              return (
+                <div
+                  key={day}
+                  className="text-center text-gray-500 font-semibold"
+                >
+                  {day}
+                  <div className="text-xs text-gray-400">{formattedDate}</div>
+                </div>
+              );
+            })}
           </div>
 
           {/* 습관 목록 */}
@@ -84,7 +77,7 @@ function HabitTracker() {
               className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px]"
             >
               {/* 습관 이름 */}
-              <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right  whitespace-normal max-w-[110px] md:max-w-[200px]">
+              <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
                 {habit.name}
               </div>
 
@@ -95,15 +88,23 @@ function HabitTracker() {
                     (check) => getDayIndex(check.date) === dayIndex
                   );
 
-                  // habitIndex를 사용해 해당 색상의 paw 이미지 선택
+                  const isDeletedForThisDay =
+                    habit.deletedAt &&
+                    new Date(habit.deletedAt) < new Date(habitStatus?.date);
+
+                  const isFalseAndDeleted =
+                    !habitStatus?.status && isDeletedForThisDay;
+
                   const pawImage = habitImages[habitIndex % habitImages.length];
 
                   return (
                     <img
                       key={dayIndex}
-                      src={habitStatus && habitStatus.status ? pawImage : paw} // status가 true면 컬러 paw, false면 기본 paw
+                      src={habitStatus?.status ? pawImage : paw}
                       alt="paw"
-                      className="w-9 h-9 mx-auto my-2"
+                      className={`w-9 h-9 mx-auto my-2 ${
+                        isFalseAndDeleted ? "opacity-40" : ""
+                      } ${isDeletedForThisDay ? "opacity-20  " : ""}`}
                     />
                   );
                 })}
