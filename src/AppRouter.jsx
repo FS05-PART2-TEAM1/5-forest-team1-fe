@@ -9,7 +9,7 @@ function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/studies">
+        <Route path="/study">
           <Route path="create" element={<StudyCreatePage />} />
           <Route path=":studyId" element={<StudyDetailPage />} />
         </Route>
