@@ -11,7 +11,6 @@ export async function getStudy(studyId) {
 
 export async function verifyPassword(studyId, password) {
   try {
-
     const response = await axiosClient.post(`/api/studies/verify-password`, {
       studyId,
       password,
