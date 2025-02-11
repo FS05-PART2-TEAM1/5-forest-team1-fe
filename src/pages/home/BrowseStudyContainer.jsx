@@ -42,7 +42,7 @@ const BrowseStudyContainer = () => {
 
   const handleClickStudyCard = (studyId) => {
     addRecentStudyId(studyId);
-    navigate(`studies/${studyId}`);
+    navigate(`study/${studyId}`);
   };
 
   const handleChangeSearchValue = (e) => {
