@@ -4,7 +4,7 @@ const habitApi = {
   getHabits: async (studyId, start, end) => {
     try {
       const response = await axiosClient.get(
-        `https://five-forest-team1.onrender.com/api/studies/${studyId}/habits?start=${start}&end=${end}`,
+        `/studies/${studyId}/habits?start=${start}&end=${end}`,
         { timeout: 10000 }
       );
       return response.data;
@@ -16,3 +16,4 @@ const habitApi = {
 };
 
 export default habitApi;
+
