@@ -11,27 +11,28 @@ const BASE_URL = "http://localhost:5000/api/studies";
 export async function getHabits(studyId) {
   try {
     const response = await fetch(`${BASE_URL}/${studyId}/habits`);
+    const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch habits: ${response.status} ${response.statusText}`
+    if (!data || !Array.isArray(data.habitList)) {
+      console.error(
+        "🚨 [getHabits 오류]: 서버 응답이 올바르지 않습니다!",
+        data
       );
+      return [];
     }
 
-    const habitData = await response.json();
-
-    // habitList가 배열인지 확인하고, 없으면 빈 배열 반환
-    if (!habitData.habitList || !Array.isArray(habitData.habitList)) {
-      throw new Error("Invalid habitList format");
-    }
-
-    // habitList에서 name 값만 추출하여 반환
-    return habitData.habitList.map((habit) => habit.name);
-  } catch (err) {
-    console.error("Error fetching habits:", err.message);
-    return []; // 오류 발생 시 빈 배열 반환
+    console.log("📌 [getHabits 반환 데이터]:", data.habitList);
+    return data.habitList.map((habit) => ({
+      id: habit.id,
+      name: habit.name,
+      deletedAt: habit.deletedAt,
+    }));
+  } catch (error) {
+    console.error("🚨 [getHabits 오류]:", error);
+    return [];
   }
 }
+
 export async function getStudy(studyId) {
   try {
     const response = await fetch(`${BASE_URL}/${studyId}`);
@@ -109,22 +110,24 @@ export async function createHabit(studyId, habitName) {
  * @param {object} studyData - Updated study data
  * @returns {Promise<object>} - Returns updated study data
  */
-export async function updateStudy(habitId, habitData) {
+export async function updateHabits(studyId, habitList) {
   try {
-    console.log(
-      "📌 [PATCH 요청] 습관 ID:",
-      habitId,
-      "데이터:",
-      JSON.stringify(habitData, null, 2)
-    );
+    if (!Array.isArray(habitList)) {
+      console.error(
+        "🚨 [updateHabits 오류]: habitList가 배열이 아닙니다!",
+        habitList
+      );
+      return null;
+    }
 
-    const response = await fetch(`${BASE_URL}/${habitId}`, {
-      // ✅ PATCH 요청 변경
+    console.log("📌 [PATCH 요청 데이터]:", habitList);
+
+    const response = await fetch(`${BASE_URL}/${studyId}/habits/modify`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(habitData),
+      body: JSON.stringify({ studyId, habits: habitList }),
     });
 
     const responseData = await response.json();

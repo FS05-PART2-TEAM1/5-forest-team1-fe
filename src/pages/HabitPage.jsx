@@ -3,6 +3,7 @@ import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
 import { getStudy, getHabits } from "@/api/habitApi";
+import { updateHabits } from "@/api/habitApi";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -39,32 +40,73 @@ const TimeBox = () => {
 
 function HabitPage() {
   const location = useLocation();
-  const { studyData, password } = location.state || {};
+  const [studyData, setStudyData] = useState(location.state?.studyData || null);
   const [title, setTitle] = useState(studyData?.title || "");
   const [nickname, setNickname] = useState(studyData?.nickname || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [habits, setHabits] = useState(
     studyData?.habits?.map((habit) => habit.name) || []
   );
+
+  const [originalHabits, setOriginalHabits] = useState([]); // ✅ 원래 습관 목록 저장
   const [selectedHabits, setSelectedHabits] = useState([]);
+  const [loading, setLoading] = useState(true);
   const maxHabitCount = 8;
 
   useEffect(() => {
-    if (studyData?.habits) {
-      setHabits(studyData.habits.map((habit) => habit.name));
+    async function fetchStudyData() {
+      if (!studyData) {
+        const studyId = new URLSearchParams(location.search).get("studyId");
+        if (studyId) {
+          const fetchedStudyData = await getStudy(studyId);
+          setStudyData(fetchedStudyData);
+        }
+      }
     }
-  }, [studyData]);
+    fetchStudyData();
+  }, [location, studyData]);
 
   useEffect(() => {
     async function fetchHabits() {
-      const studyId = studyData?.id;
-      if (studyId) {
-        const habitList = await getHabits(studyId);
-        setHabits(habitList);
+      if (studyData?.id) {
+        const habitList = await getHabits(studyData.id);
+        setHabits(habitList.map((habit) => habit.name));
+        setLoading(false); // ✅ 데이터 로드 완료
       }
     }
-    fetchHabits();
+    if (studyData) {
+      fetchHabits();
+    }
   }, [studyData]);
+
+  if (loading) {
+    return <div>습관을 불러오는 중...</div>; // ✅ 로딩 메시지 표시
+  }
+
+  const openModal = () => {
+    if (!Array.isArray(habits) || habits.length === 0) {
+      console.error("🚨 [openModal 오류]: habits가 비어 있습니다!", habits);
+      return;
+    }
+
+    setOriginalHabits([...habits]); // ✅ 기존 상태 저장
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    console.log("📌 [handleCancel 호출됨] originalHabits:", originalHabits);
+
+    if (!Array.isArray(originalHabits) || originalHabits.length === 0) {
+      console.error(
+        "🚨 [handleCancel 오류]: originalHabits가 비어 있습니다!",
+        originalHabits
+      );
+      return;
+    }
+
+    setHabits([...originalHabits]); // ✅ 원래 습관 목록 복원
+    setIsModalOpen(false); // ✅ 모달 닫기
+  };
 
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
@@ -85,7 +127,23 @@ function HabitPage() {
   };
 
   const onSave = async (updatedHabits) => {
-    setHabits([...updatedHabits]);
+    console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabits);
+
+    if (!Array.isArray(updatedHabits) || updatedHabits.length === 0) {
+      console.error(
+        "🚨 [onSave 오류]: updatedHabits가 비어 있습니다!",
+        updatedHabits
+      );
+      return;
+    }
+
+    try {
+      await updateHabits(studyData.id, updatedHabits);
+      setHabits([...updatedHabits]); // ✅ UI 업데이트
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("🚨 습관 저장 중 오류 발생:", error);
+    }
   };
 
   const onToggleHabit = (index) => {
@@ -108,7 +166,7 @@ function HabitPage() {
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus" state={{ studyData, password }}>
+                <Link to="/focus">
                   <button className="border py-2 pl-[10px] pr-[6px] md:py-3 md:pl-6 md:pr-[16px] rounded-xl text-[#818181] md:w-[144px] md:h-[48px] w-[120px] h-[40px] ">
                     오늘의 집중 <span>&gt;</span>
                   </button>
@@ -132,7 +190,7 @@ function HabitPage() {
 
                 <button
                   className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={openModal}
                 >
                   목록 수정
                 </button>
@@ -151,6 +209,7 @@ function HabitPage() {
                               : "bg-[#EEEEEE]"
                           }`}
                         onClick={() => onToggleHabit(index)}
+                        style={{ userSelect: "none", cursor: "default" }}
                       >
                         {habit}
                       </li>
@@ -170,7 +229,7 @@ function HabitPage() {
 
       <HabitListModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCancel}
         onSave={onSave}
         habits={habits}
         onAddHabit={onAddHabit}
