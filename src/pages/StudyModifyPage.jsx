@@ -139,10 +139,10 @@ function StudyModifyPage() {
       });
       console.log(response);
       // 스터디 수정 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.data.id}`); // response.id =생성된 스터디 ID
+      navigate(`/study/${response.study.id}`); // response.id =생성된 스터디 ID
     } catch (error) {
       console.error(
-        "스터디 생성 실패:",
+        "스터디 수정 실패:",
         error.response ? error.response.data : error.message
       );
     }
