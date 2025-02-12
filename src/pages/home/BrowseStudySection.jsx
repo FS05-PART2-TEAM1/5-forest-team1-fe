@@ -1,8 +1,8 @@
 import StudyCard from "@/components/StudyCard";
 import clsx from "clsx";
 import icSearch from "@assets/icons/ic_search.png";
-import icToggle from "@assets/icons/ic_toggle.png";
 import Select from "@/components/Select";
+import SkeletonStudyCard from "@/components/Skeleton.studycard";
 
 const BrowseStudySection = ({ children }) => {
   return (
@@ -50,7 +50,7 @@ BrowseStudySection.Filter = ({
   );
 };
 
-BrowseStudySection.Content = ({ studies, handleClickStudyCard }) => {
+BrowseStudySection.Content = ({ studies, error, handleClickStudyCard }) => {
   const hasBrowseStudy = studies?.studies?.length > 0;
 
   return (
@@ -71,7 +71,9 @@ BrowseStudySection.Content = ({ studies, handleClickStudyCard }) => {
         ))
       ) : (
         <div className="text-16pt md:text-20pt font-regular text-f-gray-500">
-          아직 둘러 볼 스터디가 없어요
+          {!error
+            ? "아직 둘러 볼 스터디가 없어요"
+            : "서버에 문제가 발생했습니다 😥"}
         </div>
       )}
     </div>
@@ -119,6 +121,23 @@ BrowseStudySection.Pagination = ({
       >
         다음
       </button>
+    </div>
+  );
+};
+
+BrowseStudySection.Loading = ({}) => {
+  return (
+    <div
+      className={clsx(
+        "min-h-[405px] md:min-h-[510px] mb-[30px] md:mb-[60px] grid md:grid-rows-2 md:grid-cols-2 lg:grid-cols-3 gap-y-[16px] md:gap-[24px]"
+      )}
+    >
+      <SkeletonStudyCard />
+      <SkeletonStudyCard />
+      <SkeletonStudyCard />
+      <SkeletonStudyCard />
+      <SkeletonStudyCard />
+      <SkeletonStudyCard />
     </div>
   );
 };
