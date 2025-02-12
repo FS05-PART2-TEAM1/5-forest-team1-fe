@@ -191,7 +191,7 @@ function HabitPage() {
         <Header />
         <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
           <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-6">
               <h2 className="text-2xl font-semibold mb-4">
                 {nickname && title
                   ? `${nickname} 의 ${title}`
@@ -204,7 +204,7 @@ function HabitPage() {
                   </button>
                 </Link>
                 <Link to="/">
-                  <button className="border py-2 px-4 rounded-xl text-[#818181]">
+                  <button className="border py-2 px-4 rounded-xl text-[#818181] ">
                     홈 <span>&gt;</span>
                   </button>
                 </Link>
@@ -213,13 +213,13 @@ function HabitPage() {
             <TimeBox />
             <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
               <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] font-bold text-[#414141]">
-                오늘의 습관
+                오늘의&nbsp; 습관
               </h3>
               <button
-                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline"
+                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline mt-[7px]"
                 onClick={openModal}
               >
-                목록 수정
+                목록&nbsp; 수정
               </button>
               <div className="h-[498px] flex justify-center items-center w-full">
                 {habits.length > 0 ? (
@@ -244,7 +244,8 @@ function HabitPage() {
                   </ul>
                 ) : (
                   <div className="text-[#818181] text-[20px] text-center">
-                    아직 생성된 목록이 없어요.
+                    아직 생성된 목록이 없어요. <br /> 목록 수정을 눌러 습관을
+                    생성해주세요
                   </div>
                 )}
               </div>
