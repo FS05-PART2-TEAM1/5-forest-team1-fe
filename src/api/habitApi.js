@@ -1,4 +1,5 @@
 import axiosClient from "./axios";
+import { startOfDay, endOfDay } from "date-fns";
 
 const habitApi = {
   /**
@@ -33,15 +34,27 @@ const habitApi = {
   },
   toggleHabitCompletion: async (studyId, habitId, status) => {
     try {
-      const response = await axiosClient.post(
+      const start = startOfDay(new Date()).toISOString();
+      const end = endOfDay(new Date()).toISOString();
+
+      console.log(`📌 [POST 요청]:`, { studyId, habitId, start, end, status });
+
+      await axiosClient.post(
         `/api/studies/${studyId}/habits/${habitId}/check/today`,
-        { status }
+        {
+          start,
+          end,
+          status,
+        }
       );
-      console.log("✅ [습관 완료 상태 변경 성공]:", response.data);
-      return response.data;
+
+      console.log(`✅ [습관 ${status ? "완료" : "취소"} 요청 성공]:`, {
+        studyId,
+        habitId,
+        status,
+      });
     } catch (error) {
       console.error("❌ [습관 완료 상태 변경 실패]:", error);
-      throw error;
     }
   },
   /**
