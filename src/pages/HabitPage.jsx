@@ -66,15 +66,16 @@ function HabitPage() {
     async function fetchHabits() {
       if (studyData?.id) {
         const habitList = await habitApi.getHabitsList(studyData.id);
-        setHabits(habitList.map((habit) => habit.name));
+
+        // ✅ deletedAt이 없는 습관만 필터링하여 상태 업데이트
+        const activeHabits = habitList.filter((habit) => !habit.deletedAt);
+
+        setHabits(activeHabits.map((habit) => habit.name));
         setOriginalHabits(
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
+          activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
         );
         setLoading(false);
-        console.log(
-          "📌 [originalHabits 설정 완료]:",
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
+        console.log("📌 [originalHabits 설정 완료]:", activeHabits);
       }
     }
     if (studyData) {
