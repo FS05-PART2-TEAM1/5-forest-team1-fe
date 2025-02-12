@@ -244,12 +244,13 @@ function StudyCreatePage() {
             </div>
             <PrimaryButton
               onClick={handleSubmit}
-              disabled={
-                Object.values(errors).some((error) => error) ||
-                hasSelected === null
-              }
+              // disabled={
+              //   Object.values(errors).some((error) => error) ||
+              //   hasSelected === null
+              // }
+              disabled={isSubmitting}
             >
-              만들기
+              {isSubmitting ? "생성 중..." : "만들기"}
             </PrimaryButton>
           </div>
         </div>
