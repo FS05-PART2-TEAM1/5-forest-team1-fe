@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-import { getStudy, getHabits, updateHabits } from "@/api/habitApi";
+import habitApi from "@/api/habitApi";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -54,7 +54,7 @@ function HabitPage() {
       if (!studyData) {
         const studyId = new URLSearchParams(location.search).get("studyId");
         if (studyId) {
-          const fetchedStudyData = await getStudy(studyId);
+          const fetchedStudyData = await habitApi.getStudy(studyId);
           setStudyData(fetchedStudyData);
         }
       }
@@ -65,16 +65,17 @@ function HabitPage() {
   useEffect(() => {
     async function fetchHabits() {
       if (studyData?.id) {
-        const habitList = await getHabits(studyData.id);
-        setHabits(habitList.map((habit) => habit.name));
+        const habitList = await habitApi.getHabitsList(studyData.id);
+
+        // ✅ deletedAt이 없는 습관만 필터링하여 상태 업데이트
+        const activeHabits = habitList.filter((habit) => !habit.deletedAt);
+
+        setHabits(activeHabits.map((habit) => habit.name));
         setOriginalHabits(
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
+          activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
         );
         setLoading(false);
-        console.log(
-          "📌 [originalHabits 설정 완료]:",
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
+        console.log("📌 [originalHabits 설정 완료]:", activeHabits);
       }
     }
     if (studyData) {
@@ -92,18 +93,23 @@ function HabitPage() {
   };
 
   const onSave = async (updatedHabitNames) => {
-    console.log(" updatedHabits:", updatedHabitNames);
+    console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
     console.log("📌 [originalHabits 데이터 확인]:", originalHabits);
 
     if (!Array.isArray(updatedHabitNames)) {
-      console.error(" updatedHabits가 배열이 아닙니다!", updatedHabitNames);
+      console.error(
+        "🚨 [onSave 오류]: updatedHabits가 배열이 아닙니다!",
+        updatedHabitNames
+      );
       return;
     }
 
+    // ✅ 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
 
+    // ✅ 기존 습관이 아닌 새로운 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -111,18 +117,32 @@ function HabitPage() {
         name,
       }));
 
-    const formattedHabits = [...newHabits];
+    // ✅ 삭제된 습관 필터링
+    const deletedHabits = originalHabits
+      .filter((habit) => !updatedHabitNames.includes(habit.name)) // 기존 습관인데 목록에서 사라진 경우
+      .map((habit) => ({
+        id: habit.id,
+        name: habit.name,
+        deletedAt: new Date().toISOString(),
+      }));
 
+    // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
+    const formattedHabits = [...newHabits, ...deletedHabits];
+
+    // ✅ 변경된 데이터가 없다면 요청하지 않음
     if (formattedHabits.length === 0) {
-      console.log(" 변경된 습관 없음, PATCH 요청 안함.");
+      console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
       setIsModalOpen(false);
       return;
     }
 
-    console.log("[PATCH 요청 데이터]:", formattedHabits);
+    console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      const response = await updateHabits(studyData.id, formattedHabits);
+      const response = await habitApi.updateHabits(
+        studyData.id,
+        formattedHabits
+      );
 
       if (response) {
         setHabits(response.map((habit) => habit.name));
@@ -130,15 +150,16 @@ function HabitPage() {
           response.map((habit) => ({ id: habit.id, name: habit.name }))
         );
         console.log(
-          " [습관 목록 업데이트 완료]:",
+          "📌 [습관 목록 업데이트 완료]:",
           response.map((habit) => habit.name)
         );
         setIsModalOpen(false);
       }
     } catch (error) {
-      console.error(" 습관 저장 중 오류 발생:", error);
+      console.error("🚨 습관 저장 중 오류 발생:", error);
     }
   };
+
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
       const newHabit = prompt("새로운 습관을 입력하세요:");
@@ -150,12 +171,17 @@ function HabitPage() {
     }
   };
   const onRemoveHabit = (index) => {
-    setHabits((prevHabits) =>
-      prevHabits.map((habit, i) =>
-        i === index ? { ...habit, deletedAt: new Date().toISOString() } : habit
-      )
-    );
+    setHabits((prevHabits) => {
+      const updatedHabits = [...prevHabits];
+      updatedHabits[index] = {
+        ...updatedHabits[index],
+        deletedAt: new Date().toISOString(),
+      };
+
+      return updatedHabits.filter((habit) => !habit.deletedAt); // ✅ UI에서 즉시 숨김
+    });
   };
+
   const onToggleHabit = (index) => {
     if (selectedHabits.includes(index)) {
       setSelectedHabits(selectedHabits.filter((i) => i !== index));
@@ -176,7 +202,7 @@ function HabitPage() {
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus">
+                <Link to="/focus" state={{ studyData }}>
                   <button className="border py-2 px-4 rounded-xl text-[#818181]">
                     오늘의 집중 <span>&gt;</span>
                   </button>

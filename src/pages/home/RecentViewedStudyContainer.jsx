@@ -4,7 +4,8 @@ import RecentViewedStudySection from "./RecentViewedStudySection";
 
 const RecentViewedStudyContainer = () => {
   const navigate = useNavigate();
-  const [viewedStudies, addRecentStudyId] = useFetchRecentViewedStudies();
+  const [viewedStudies, loading, error, addRecentStudyId] =
+    useFetchRecentViewedStudies();
 
   const handleClickStudyCard = (studyId) => {
     addRecentStudyId(studyId);
@@ -14,6 +15,8 @@ const RecentViewedStudyContainer = () => {
   return (
     <RecentViewedStudySection
       studies={viewedStudies}
+      loading={loading}
+      error={error}
       onClickCard={(id) => handleClickStudyCard(id)}
     />
   );

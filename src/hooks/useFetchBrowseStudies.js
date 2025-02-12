@@ -9,17 +9,30 @@ const useFetchBrowseStudies = (initialParams) => {
     totalPages: 1,
   });
   const [params, setParams] = useState(initialParams);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchStudies = async () => {
-      const response = await axiosClient.get("/api/studies", { params });
-      setStudies({ ...response.data });
+      axiosClient
+        .get("/api/studies", { params })
+        .then((response) => {
+          setTimeout(() => {
+            setStudies({ ...response.data });
+            setLoading(false);
+          }, 400);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
     };
 
     fetchStudies();
   }, [params]);
 
-  return [studies, setParams];
+  return [studies, loading, error, setParams];
 };
 
 export default useFetchBrowseStudies;
