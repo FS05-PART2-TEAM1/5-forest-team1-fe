@@ -32,7 +32,7 @@ function StudyDetailPage() {
     setButtonName(e.currentTarget.dataset.name);
     setIsModal(true);
   };
-  
+
   const disableModal = (e) => {
     setIsModal(false);
   };
@@ -46,7 +46,7 @@ function StudyDetailPage() {
   };
 
   return (
-    <div className="w-full h-full bg-[#F6F4EF]">
+    <div className="w-full min-h-screen bg-f-bg flex flex-col">
       <Header />
       {!isLoading && (
         <div className="grid place-items-center mt-14">
@@ -116,7 +116,7 @@ function StudyDetailPage() {
                   <EarnedPointsBoxMd points={studyData.totalPoints} />
                 </div>
                 <div>
-                <HabitTracker />
+                  <HabitTracker />
                 </div>
               </>
             ) : (
@@ -144,7 +144,6 @@ function StudyDetailPage() {
           description={studyData.description}
         />
       )}
-      
     </div>
   );
 }
