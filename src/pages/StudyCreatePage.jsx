@@ -6,7 +6,6 @@ import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate } from "react-router-dom";
-import useDebounceCallback from "@/hooks/useDebounceCallback"; // 임포트 추가
 
 const colorMap = {
   "#FDE0E9": "pink",
@@ -66,21 +65,30 @@ function StudyCreatePage() {
     setErrors((prev) => ({ ...prev, [field]: !!error }));
   };
 
-  const debouncedSubmit = useDebounceCallback(async () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return; // 🔹 중복 요청 방지
+
+    setIsSubmitting(true); // 🔹 요청 시작 시 버튼 비활성화
     // 비밀번호 일치 여부 체크
     if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
+      setIsSubmitting(false);
       return;
     }
     // 배경 이미지 선택 여부 체크
     if (hasSelected === null) {
       alert("배경을 선택해주세요.");
+      setIsSubmitting(false);
       return;
     }
     const isFormValid =
       Object.values(errors).every((error) => !error) && hasSelected !== null;
+
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -91,6 +99,7 @@ function StudyCreatePage() {
     if (background.type === "color") {
       backgroundContent = colorMap[backgroundContent] || backgroundContent;
     }
+
     try {
       const response = await createStudy({
         nickname,
@@ -102,21 +111,22 @@ function StudyCreatePage() {
         passwordConfirm: confirmPassword,
       });
 
-      // 스터디 생성 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.id}`); // response.id = 생성된 스터디 ID
+      navigate(`/study/${response.id}`);
     } catch (error) {
       console.error(
         "스터디 생성 실패:",
         error.response ? error.response.data : error.message
       );
+    } finally {
+      setIsSubmitting(false); // 🔹 요청 완료 후 다시 버튼 활성화
     }
-  }, 500); // 500ms delay
+  };
 
   return (
-    <div className="bg-f-bg">
+    <div className=" bg-f-bg ">
       <Header />
-      <div className="flex justify-center items-center">
-        <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:min-h-[1171px] w-[344px] min-h-[1423px] bg-white  p-4">
+      <div className="flex justify-center min-h-screen py-20 md:py-10">
+        <div className=" flex justify-center rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[696px]  mb-20 lg:w-[696px] md:w-[696px] w-[344px] bg-white mx-auto">
           <div className="mt-1">
             <div>
               <div className=" md:w-[648px] ">
@@ -233,13 +243,13 @@ function StudyCreatePage() {
               </div>
             </div>
             <PrimaryButton
-              onClick={debouncedSubmit} // 변경된 부분
-              disabled={
-                Object.values(errors).some((error) => error) ||
-                hasSelected === null
-              }
+              onClick={handleSubmit}
+              // disabled={
+              //   Object.values(errors).some((error) => error) ||
+              //   hasSelected === null
+              // }
             >
-              만들기
+              {isSubmitting ? "생성 중..." : "만들기"}
             </PrimaryButton>
           </div>
         </div>
