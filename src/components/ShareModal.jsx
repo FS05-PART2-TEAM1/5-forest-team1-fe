@@ -15,6 +15,7 @@ import {
 function ShareModal({ onClose, title, description }) {
   const currentUrl = window.location.href;
   const [copied, setCopied] = useState(false);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
       <div className="bg-white rounded-[20px] shadow-xl p-6 w-full max-w-[648px] h-[369px] font-sans relative flex flex-col mx-[19px]">
@@ -30,7 +31,7 @@ function ShareModal({ onClose, title, description }) {
         </div>
 
         <div className="mt-14 flex justify-center gap-6">
-          <EmailShareButton url={currentUrl} subject={title} body={description}>
+          <EmailShareButton subject={title} body={`${description}\n\n${currentUrl}`}>
             <EmailIcon size={72} round={true} />
           </EmailShareButton>
           <FacebookShareButton
