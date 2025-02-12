@@ -9,13 +9,41 @@ const habitApi = {
   getHabitsList: async (studyId) => {
     try {
       const response = await axiosClient.get(`/api/studies/${studyId}/habits`);
-      return response.data.habitList || [];
+      if (!response.data || !Array.isArray(response.data.habitList)) {
+        console.error(
+          "🚨 [getHabits 오류]: 서버 응답이 올바르지 않습니다!",
+          response.data
+        );
+        return [];
+      }
+
+      return response.data.habitList
+        .filter((habit) => habit.deletedAt === null)
+        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        .map((habit) => ({
+          id: habit.id,
+          name: habit.name,
+          createdAt: habit.createdAt,
+          deletedAt: habit.deletedAt,
+        }));
     } catch (error) {
       console.error("❌ [getHabits 오류]:", error);
       return [];
     }
   },
-
+  toggleHabitCompletion: async (studyId, habitId, status) => {
+    try {
+      const response = await axiosClient.post(
+        `/api/studies/${studyId}/habits/${habitId}/check/today`,
+        { status }
+      );
+      console.log("✅ [습관 완료 상태 변경 성공]:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ [습관 완료 상태 변경 실패]:", error);
+      throw error;
+    }
+  },
   /**
    * Fetch study details by studyId
    * @param {string} studyId - The ID of the study
