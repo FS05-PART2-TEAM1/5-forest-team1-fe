@@ -2,7 +2,6 @@ import { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import {
   EmailIcon,
-  EmailShareButton,
   FacebookIcon,
   FacebookShareButton,
   LineIcon,
@@ -15,6 +14,12 @@ import {
 function ShareModal({ onClose, title, description }) {
   const currentUrl = window.location.href;
   const [copied, setCopied] = useState(false);
+  const mailBody = encodeURIComponent(`${description}\n\n${currentUrl}`)
+  const mailLink = `mailto:?subject=${title}&body=${mailBody}`
+
+  const handleEmailShare = () => {
+    window.open(mailLink, "_blank");
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
@@ -23,7 +28,7 @@ function ShareModal({ onClose, title, description }) {
           <h2 className="text-[24px] max-[743px]:text-[18px] font-extrabold text-center flex-1">
             공유하기
           </h2>
-          <div className="hidden min-[744px]:block absolute right-0  mt-4 text-[#578246] hover:text-green-700 ">
+          <div className="min-[744px]:block absolute right-0  mt-4 text-[#578246] hover:text-green-700 ">
             <button onClick={onClose} isCancel>
               나가기
             </button>
@@ -31,24 +36,18 @@ function ShareModal({ onClose, title, description }) {
         </div>
 
         <div className="mt-14 flex justify-center gap-6">
-          <EmailShareButton subject={title} body={`${description}\n\n${currentUrl}`}>
-            <EmailIcon size={72} round={true} />
-          </EmailShareButton>
+          <div onClick={handleEmailShare} className="cursor-pointer"><EmailIcon size={72} round={true} /></div>
           <FacebookShareButton
             url={currentUrl}
-            subject={title}
-            body={description}
           >
             <FacebookIcon size={72} round={true} />
           </FacebookShareButton>
           <LinkedinShareButton
             url={currentUrl}
-            subject={title}
-            body={description}
           >
             <LinkedinIcon size={72} round={true} />
           </LinkedinShareButton>
-          <LineShareButton url={currentUrl} subject={title} body={description}>
+          <LineShareButton url={currentUrl}>
             <LineIcon size={72} round={true} />
           </LineShareButton>
         </div>
