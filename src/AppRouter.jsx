@@ -8,7 +8,7 @@ import HabitPage from "./pages/HabitPage";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
 import TestPage from "./pages/TestPage";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/LandingPage.jsx";
 
 function AppRouter() {
   return (
@@ -31,17 +31,6 @@ function AppRouter() {
         </div>
         <Footer />
       </div>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/study">
-          <Route path="create" element={<StudyCreatePage />} />
-          <Route path=":studyId" element={<StudyDetailPage />} />
-        </Route>
-        <Route path="/focus" element={<FocusPage />} />
-        <Route path="/habit" element={<HabitPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
     </BrowserRouter>
   );
 }
