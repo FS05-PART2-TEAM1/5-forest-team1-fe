@@ -55,65 +55,6 @@ export async function getStudy(studyId) {
   }
 }
 
-/**
- * Fetch all studies (if needed)
- * @returns {Promise<object[]>} - Returns a list of studies
- */
-export async function getAllStudies() {
-  try {
-    const response = await fetch(BASE_URL);
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch studies: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const studies = await response.json();
-    return studies;
-  } catch (err) {
-    console.error("Error fetching studies:", err.message);
-    return [];
-  }
-}
-
-/**
- * Create a new study
- * @param {object} studyData - The study data to create
- * @returns {Promise<object>} - Returns created study data
- */
-export async function createHabit(studyId, habitName) {
-  try {
-    const response = await fetch(`${BASE_URL}/${studyId}/habits`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        studyId,
-        name: habitName,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to create habit: ${response.status} ${response.statusText}`
-      );
-    }
-
-    return await response.json();
-  } catch (err) {
-    console.error("Error creating habit:", err.message);
-    return null;
-  }
-}
-
-/**
- * Update an existing study
- * @param {string} studyId - The ID of the study to update
- * @param {object} studyData - Updated study data
- * @returns {Promise<object>} - Returns updated study data
- */
 export async function updateHabits(studyId, habitList) {
   try {
     if (!Array.isArray(habitList) || habitList.length === 0) {
@@ -126,11 +67,10 @@ export async function updateHabits(studyId, habitList) {
 
     // ✅ 변경된 데이터만 PATCH 요청
     const formattedHabitList = habitList.map((habit) => ({
-      id: habit.id || null, // ✅ 기존 ID 유지, 새로운 습관이면 null
+      id: habit.id || null, // 기존 ID 유지, 새로운 습관이면 null
       name: habit.name || "",
       studyId: studyId,
-      deletedAt: habit.deletedAt || null,
-      createdAt: habit.createdAt || new Date().toISOString(),
+      deletedAt: habit.deletedAt || null, // 삭제된 습관 반영
       updatedAt: new Date().toISOString(),
     }));
 
@@ -138,14 +78,11 @@ export async function updateHabits(studyId, habitList) {
 
     const response = await fetch(`${BASE_URL}/${studyId}/habits/modify`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ studyId, habits: formattedHabitList }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ habits: formattedHabitList }),
     });
 
     const responseData = await response.json();
-
     if (!response.ok) {
       throw new Error(
         `❌ [PATCH 요청 실패] ${response.status} ${response.statusText} - ${
@@ -155,34 +92,10 @@ export async function updateHabits(studyId, habitList) {
     }
 
     console.log("✅ [PATCH 요청 성공]:", responseData);
-    return responseData; // ✅ UI 업데이트를 위해 반환
-  } catch (err) {
-    console.error("❌ [PATCH 요청 중 오류 발생]:", err.message);
-    return null;
-  }
-}
-
-/**
- * Delete a study
- * @param {string} studyId - The ID of the study to delete
- * @returns {Promise<boolean>} - Returns true if deletion was successful
- */
-export async function deleteStudy(studyId) {
-  try {
-    const response = await fetch(`${BASE_URL}/${studyId}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to delete study: ${response.status} ${response.statusText}`
-      );
-    }
-
-    return true; // ✅ 삭제 성공 시 true 반환
+    return responseData;
   } catch (error) {
-    console.error("❌ [deleteStudy 오류]:", error.message);
-    return false; // ✅ 삭제 실패 시 false 반환
+    console.error("❌ [PATCH 요청 중 오류 발생]:", error.message);
+    return null;
   }
 }
 

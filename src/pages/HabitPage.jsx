@@ -92,18 +92,23 @@ function HabitPage() {
   };
 
   const onSave = async (updatedHabitNames) => {
-    console.log(" updatedHabits:", updatedHabitNames);
+    console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
     console.log("📌 [originalHabits 데이터 확인]:", originalHabits);
 
     if (!Array.isArray(updatedHabitNames)) {
-      console.error(" updatedHabits가 배열이 아닙니다!", updatedHabitNames);
+      console.error(
+        "🚨 [onSave 오류]: updatedHabits가 배열이 아닙니다!",
+        updatedHabitNames
+      );
       return;
     }
 
+    // ✅ 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
 
+    // ✅ 기존 습관이 아닌 새로운 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -111,15 +116,26 @@ function HabitPage() {
         name,
       }));
 
-    const formattedHabits = [...newHabits];
+    // ✅ 삭제된 습관 필터링
+    const deletedHabits = originalHabits
+      .filter((habit) => !updatedHabitNames.includes(habit.name)) // 기존 습관인데 목록에서 사라진 경우
+      .map((habit) => ({
+        id: habit.id,
+        name: habit.name,
+        deletedAt: new Date().toISOString(),
+      }));
 
+    // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
+    const formattedHabits = [...newHabits, ...deletedHabits];
+
+    // ✅ 변경된 데이터가 없다면 요청하지 않음
     if (formattedHabits.length === 0) {
-      console.log(" 변경된 습관 없음, PATCH 요청 안함.");
+      console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
       setIsModalOpen(false);
       return;
     }
 
-    console.log("[PATCH 요청 데이터]:", formattedHabits);
+    console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
       const response = await updateHabits(studyData.id, formattedHabits);
@@ -130,15 +146,16 @@ function HabitPage() {
           response.map((habit) => ({ id: habit.id, name: habit.name }))
         );
         console.log(
-          " [습관 목록 업데이트 완료]:",
+          "📌 [습관 목록 업데이트 완료]:",
           response.map((habit) => habit.name)
         );
         setIsModalOpen(false);
       }
     } catch (error) {
-      console.error(" 습관 저장 중 오류 발생:", error);
+      console.error("🚨 습관 저장 중 오류 발생:", error);
     }
   };
+
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
       const newHabit = prompt("새로운 습관을 입력하세요:");
@@ -150,12 +167,17 @@ function HabitPage() {
     }
   };
   const onRemoveHabit = (index) => {
-    setHabits((prevHabits) =>
-      prevHabits.map((habit, i) =>
-        i === index ? { ...habit, deletedAt: new Date().toISOString() } : habit
-      )
-    );
+    setHabits((prevHabits) => {
+      const updatedHabits = [...prevHabits];
+      updatedHabits[index] = {
+        ...updatedHabits[index],
+        deletedAt: new Date().toISOString(),
+      };
+
+      return updatedHabits.filter((habit) => !habit.deletedAt); // ✅ UI에서 즉시 숨김
+    });
   };
+
   const onToggleHabit = (index) => {
     if (selectedHabits.includes(index)) {
       setSelectedHabits(selectedHabits.filter((i) => i !== index));
