@@ -35,7 +35,7 @@ const StudyFormValidation = ({
   };
 
   return (
-    <div className="flex flex-col space-y-1">
+    <div className="flex flex-col space-y-1 w-full ">
       <label className="text-lg font-semibold" htmlFor={id}>
         {label}
       </label>
@@ -46,7 +46,7 @@ const StudyFormValidation = ({
           placeholder={!value ? placeholder : ""}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`border rounded-xl p-3 leading-7 resize-none ${
+          className={`border rounded-xl p-3 leading-7 resize-none w-full ${
             error ? "border-f-error" : "border-gray-200"
           } h-[100px]`}
           style={{
@@ -62,7 +62,7 @@ const StudyFormValidation = ({
           placeholder={!value ? placeholder : ""}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`border h-12 rounded-xl p-3 ${
+          className={`border h-12 rounded-xl p-3 w-full ${
             error ? "border-f-error" : "border-gray-200"
           }`}
         />
