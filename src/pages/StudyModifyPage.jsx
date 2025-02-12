@@ -52,11 +52,11 @@ function StudyModifyPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
   const [errors, setErrors] = useState({
-    nickname: true,
-    studyName: true,
-    studyDesc: true,
-    password: true,
-    confirmPassword: true,
+    nickname: false,
+    studyName: false,
+    studyDesc: false,
+    password: false,
+    confirmPassword: false,
   });
 
   const navigate = useNavigate();
@@ -98,7 +98,13 @@ function StudyModifyPage() {
       return updatedErrors;
     });
   };
-  const isFormValid = !Object.values(errors).includes(true);
+
+  const isFormValidNow = !Object.values(errors).includes(true);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    setIsFormValid(isFormValidNow);
+  }, [errors]);
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
@@ -109,8 +115,6 @@ function StudyModifyPage() {
       alert("배경을 선택해주세요.");
       return;
     }
-
-    const isFormValid = !Object.values(errors).some((error) => error === true);
 
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
@@ -133,9 +137,9 @@ function StudyModifyPage() {
         password,
         passwordConfirm: confirmPassword,
       });
-
+      console.log(response);
       // 스터디 수정 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
+      navigate(`/study/${response.data.id}`); // response.id =생성된 스터디 ID
     } catch (error) {
       console.error(
         "스터디 생성 실패:",
