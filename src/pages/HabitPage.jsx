@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-import { getStudy, getHabits, updateHabits } from "@/api/habitApi";
+import habitApi from "@/api/habitApi";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -54,7 +54,7 @@ function HabitPage() {
       if (!studyData) {
         const studyId = new URLSearchParams(location.search).get("studyId");
         if (studyId) {
-          const fetchedStudyData = await getStudy(studyId);
+          const fetchedStudyData = await habitApi.getStudy(studyId);
           setStudyData(fetchedStudyData);
         }
       }
@@ -65,16 +65,17 @@ function HabitPage() {
   useEffect(() => {
     async function fetchHabits() {
       if (studyData?.id) {
-        const habitList = await getHabits(studyData.id);
-        setHabits(habitList.map((habit) => habit.name));
+        const habitList = await habitApi.getHabitsList(studyData.id);
+
+        // ✅ deletedAt이 없는 습관만 필터링하여 상태 업데이트
+        const activeHabits = habitList.filter((habit) => !habit.deletedAt);
+
+        setHabits(activeHabits.map((habit) => habit.name));
         setOriginalHabits(
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
+          activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
         );
         setLoading(false);
-        console.log(
-          "📌 [originalHabits 설정 완료]:",
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
+        console.log("📌 [originalHabits 설정 완료]:", activeHabits);
       }
     }
     if (studyData) {
@@ -138,7 +139,10 @@ function HabitPage() {
     console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      const response = await updateHabits(studyData.id, formattedHabits);
+      const response = await habitApi.updateHabits(
+        studyData.id,
+        formattedHabits
+      );
 
       if (response) {
         setHabits(response.map((habit) => habit.name));
@@ -198,7 +202,7 @@ function HabitPage() {
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus">
+                <Link to="/focus" state={{ studyData }}>
                   <button className="border py-2 px-4 rounded-xl text-[#818181]">
                     오늘의 집중 <span>&gt;</span>
                   </button>
