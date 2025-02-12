@@ -42,13 +42,13 @@ function HabitTracker() {
   const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
 
   return (
-    <div className="flex justify-center items-center mt-5 mb-[171px]">
-      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 lg:max-w-[1120px] lg:h-[511px] md:max-w-[648px] h-[450px] max-w-[312px] bg-white p-4 transition-all duration-300">
+    <div className="w-full items-center mt-5">
+      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 w-full lg:h-[511px]  h-[450px] min-w-[312px] bg-white p-4 transition-all duration-100">
         <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
         <div
           ref={scrollRef}
-          className="mt-2 overflow-x-auto overflow-y-scroll max-h-[380px] md:max-h-[430px]"
+          className="mt-2 overflow-x-auto overflow-y-auto max-h-[380px] md:max-h-[430px]"
         >
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 md:gap-4 items-center sm:text-[14px] md:text-[18px] mb-4">
@@ -90,8 +90,7 @@ function HabitTracker() {
 
                   const isDeletedForThisDay =
                     habit.deletedAt &&
-                    new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
-                      new Date(habitStatus?.date).setHours(0, 0, 0, 0);
+                    new Date(habit.deletedAt) < new Date(habitStatus?.date);
 
                   const isFalseAndDeleted =
                     !habitStatus?.status && isDeletedForThisDay;
