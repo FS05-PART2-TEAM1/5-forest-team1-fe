@@ -41,7 +41,10 @@ export const createStudy = async (studyData) => {
 
 export const patchStudy = async (studyId, updatedData) => {
   try {
-    const response = await axios.patch(`/api/studies/${studyId}`, updatedData);
+    const response = await axiosClient.patch(
+      `/api/studies/${studyId}`,
+      updatedData
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating study:", error);

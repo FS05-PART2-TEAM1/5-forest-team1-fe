@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import paw from "../assets/icons/ic_paw.png";
+import PawDelete from "../assets/icons/paw_delete.png";
 import Paw1 from "../assets/icons/paws/paw01.png";
 import Paw2 from "../assets/icons/paws/paw02.png";
 import Paw3 from "../assets/icons/paws/paw03.png";
@@ -8,6 +8,7 @@ import Paw5 from "../assets/icons/paws/paw05.png";
 import Paw6 from "../assets/icons/paws/paw06.png";
 import Paw7 from "../assets/icons/paws/paw07.png";
 import Paw8 from "../assets/icons/paws/paw08.png";
+import paw from "@assets/icons/paws/paw.png";
 import useWheelScroll from "@/hooks/useWheelScroll";
 import habitApi from "../api/habitApi";
 import { startOfWeek } from "date-fns";
@@ -30,6 +31,7 @@ function HabitTracker({ studyId }) {
         const weekStart = startOfWeek(today, { weekStartsOn: 1 }); //월요일부터
         const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); //일요일까지
         console.log("weekStart: ", weekStart, "weekEnd", weekEnd);
+        console.log(studyId);
         const data = await habitApi.getHabits(studyId, weekStart, weekEnd);
         console.log(studyId);
         console.log("Raw Data from API:", data);
@@ -96,19 +98,21 @@ function HabitTracker({ studyId }) {
                     new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
                       new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
-                  const isFalseAndDeleted =
-                    !habitStatus?.status && isDeletedForThisDay;
-
                   const pawImage = habitImages[habitIndex % habitImages.length];
 
                   return (
                     <img
                       key={dayIndex}
-                      src={habitStatus?.status ? pawImage : paw}
+                      src={
+                        isDeletedForThisDay ||
+                        (habitStatus === undefined && habit.deletedAt)
+                          ? PawDelete
+                          : habitStatus?.status
+                          ? pawImage
+                          : paw
+                      }
                       alt="paw"
-                      className={`w-9 h-9 mx-auto my-2 ${
-                        isFalseAndDeleted ? "opacity-40" : ""
-                      } ${isDeletedForThisDay ? "opacity-20  " : ""}`}
+                      className={`w-9 h-9 mx-auto my-2`}
                     />
                   );
                 })}
