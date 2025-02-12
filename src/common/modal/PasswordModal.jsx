@@ -23,6 +23,10 @@ const PasswordModal = ({
 
   const navigate = useNavigate();
 
+  async function handleInputKey(e) {
+    if(e.key === 'Enter') await onVerify();
+  }
+
   useEffect(() => {
     if (buttonText === "수정하러 가기") setLink(`/modify/`);
     if (buttonText === "스터디 삭제하기") setLink(`/`);
@@ -94,6 +98,7 @@ const PasswordModal = ({
               placeholder="비밀번호를 입력해 주세요"
               value={password}
               onChange={onPasswordChange}
+              onKeyDown={handleInputKey}
             />
             <button
               type="button"
