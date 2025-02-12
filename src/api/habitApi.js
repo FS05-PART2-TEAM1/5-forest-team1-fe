@@ -103,7 +103,7 @@ const habitApi = {
   getHabits: async (studyId, start, end) => {
     try {
       const response = await axiosClient.get(
-        `api/studies/${studyId.studyId}/habits?start=${start}&end=${end}`,
+        `api/studies/${studyId}/habits?start=${start}&end=${end}`,
         { timeout: 10000 }
       );
       return response.data;
