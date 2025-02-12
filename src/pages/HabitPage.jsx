@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
-import { getStudy, getHabits, updateHabits } from "@/api/habitApi";
+import habitApi from "@/api/habitApi";
+import { startOfWeek, endOfWeek } from "date-fns";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -54,7 +55,7 @@ function HabitPage() {
       if (!studyData) {
         const studyId = new URLSearchParams(location.search).get("studyId");
         if (studyId) {
-          const fetchedStudyData = await getStudy(studyId);
+          const fetchedStudyData = await habitApi.getStudy(studyId);
           setStudyData(fetchedStudyData);
         }
       }
@@ -64,27 +65,53 @@ function HabitPage() {
 
   useEffect(() => {
     async function fetchHabits() {
-      if (studyData?.id) {
-        const habitList = await getHabits(studyData.id);
-        setHabits(habitList.map((habit) => habit.name));
-        setOriginalHabits(
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
+      if (!studyData?.id) return;
+
+      try {
+        const today = new Date();
+        const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // 월요일부터 시작
+        const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); // 일요일까지
+
+        console.log("🗓️ [주간 데이터 범위]:", { weekStart, weekEnd });
+
+        // ✅ API에서 주간 데이터 가져오기
+        const habitData = await habitApi.getHabits(
+          studyData.id,
+          weekStart,
+          weekEnd
         );
+
+        console.log("📌 [불러온 습관 데이터]:", habitData);
+
+        // ✅ deletedAt이 없는 습관만 필터링
+        const activeHabits = habitData.habitList.filter(
+          (habit) => !habit.deletedAt
+        );
+
+        setHabits(activeHabits);
+        setOriginalHabits(activeHabits);
+
+        // ✅ status가 true인 habitId만 selectedHabits에 추가
+        const completedHabitIds = activeHabits
+          .filter(
+            (habit) =>
+              habit.dailyHabitCheck &&
+              Array.isArray(habit.dailyHabitCheck) &&
+              habit.dailyHabitCheck.some((check) => check.status === true) // ✅ 상태 체크
+          )
+          .map((habit) => habit.id);
+
+        console.log("✅ [초기 완료된 습관 ID]:", completedHabitIds);
+        setSelectedHabits(completedHabitIds);
+      } catch (error) {
+        console.error("❌ [습관 데이터 불러오기 오류]:", error);
+      } finally {
         setLoading(false);
-        console.log(
-          "📌 [originalHabits 설정 완료]:",
-          habitList.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
       }
     }
-    if (studyData) {
-      fetchHabits();
-    }
-  }, [studyData]);
 
-  if (loading) {
-    return <div>습관을 불러오는 중...</div>;
-  }
+    fetchHabits();
+  }, [studyData]);
 
   const openModal = () => {
     console.log("[현재 originalHabits]:", originalHabits);
@@ -93,7 +120,6 @@ function HabitPage() {
 
   const onSave = async (updatedHabitNames) => {
     console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
-    console.log("📌 [originalHabits 데이터 확인]:", originalHabits);
 
     if (!Array.isArray(updatedHabitNames)) {
       console.error(
@@ -103,12 +129,11 @@ function HabitPage() {
       return;
     }
 
-    // ✅ 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
 
-    // ✅ 기존 습관이 아닌 새로운 습관 필터링
+    // 추가된 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -116,19 +141,18 @@ function HabitPage() {
         name,
       }));
 
-    // ✅ 삭제된 습관 필터링
+    // 삭제된 습관 필터링
     const deletedHabits = originalHabits
-      .filter((habit) => !updatedHabitNames.includes(habit.name)) // 기존 습관인데 목록에서 사라진 경우
+      .filter((habit) => !updatedHabitNames.includes(habit.name))
       .map((habit) => ({
         id: habit.id,
         name: habit.name,
         deletedAt: new Date().toISOString(),
       }));
 
-    // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
+    //  PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
     const formattedHabits = [...newHabits, ...deletedHabits];
 
-    // ✅ 변경된 데이터가 없다면 요청하지 않음
     if (formattedHabits.length === 0) {
       console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
       setIsModalOpen(false);
@@ -138,19 +162,20 @@ function HabitPage() {
     console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      const response = await updateHabits(studyData.id, formattedHabits);
+      //  1. 습관 업데이트 요청
+      await habitApi.updateHabits(studyData.id, formattedHabits);
 
-      if (response) {
-        setHabits(response.map((habit) => habit.name));
-        setOriginalHabits(
-          response.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
-        console.log(
-          "📌 [습관 목록 업데이트 완료]:",
-          response.map((habit) => habit.name)
-        );
-        setIsModalOpen(false);
-      }
+      //  2. 서버에서 최신 습관 리스트 다시 가져오기
+      const updatedHabits = await habitApi.getHabitsList(studyData.id);
+      const activeHabits = updatedHabits.filter((habit) => !habit.deletedAt);
+
+      //  3. 상태 업데이트 (서버 데이터 반영)
+      setHabits(activeHabits.map((habit) => habit.name));
+      setOriginalHabits(
+        activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
+      );
+
+      setIsModalOpen(false);
     } catch (error) {
       console.error("🚨 습관 저장 중 오류 발생:", error);
     }
@@ -174,15 +199,31 @@ function HabitPage() {
         deletedAt: new Date().toISOString(),
       };
 
-      return updatedHabits.filter((habit) => !habit.deletedAt); // ✅ UI에서 즉시 숨김
+      return updatedHabits.filter((habit) => !habit.deletedAt);
     });
   };
 
-  const onToggleHabit = (index) => {
-    if (selectedHabits.includes(index)) {
-      setSelectedHabits(selectedHabits.filter((i) => i !== index));
-    } else {
-      setSelectedHabits([...selectedHabits, index]);
+  const onToggleHabit = async (habitId) => {
+    const isCompleted = !selectedHabits.includes(habitId);
+    const studyId = studyData.id;
+
+    //  UI 먼저 업데이트
+    setSelectedHabits((prevSelected) =>
+      isCompleted
+        ? [...prevSelected, habitId]
+        : prevSelected.filter((id) => id !== habitId)
+    );
+
+    try {
+      await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted);
+      console.log(`[습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
+        studyId,
+        habitId,
+        status: isCompleted,
+      });
+    } catch (error) {
+      console.error("❌ [습관 완료 상태 변경 실패]:", error);
+      setSelectedHabits((prevSelected) => [...prevSelected]);
     }
   };
   return (
@@ -191,20 +232,20 @@ function HabitPage() {
         <Header />
         <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
           <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-6">
               <h2 className="text-2xl font-semibold mb-4">
                 {nickname && title
                   ? `${nickname} 의 ${title}`
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
-                <Link to="/focus">
+                <Link to="/focus" state={{ studyData }}>
                   <button className="border py-2 px-4 rounded-xl text-[#818181]">
                     오늘의 집중 <span>&gt;</span>
                   </button>
                 </Link>
                 <Link to="/">
-                  <button className="border py-2 px-4 rounded-xl text-[#818181]">
+                  <button className="border py-2 px-4 rounded-xl text-[#818181] ">
                     홈 <span>&gt;</span>
                   </button>
                 </Link>
@@ -213,36 +254,39 @@ function HabitPage() {
             <TimeBox />
             <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
               <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] font-bold text-[#414141]">
-                오늘의 습관
+                오늘의&nbsp; 습관
               </h3>
               <button
-                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline"
+                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline mt-[7px]"
                 onClick={openModal}
               >
-                목록 수정
+                목록&nbsp; 수정
               </button>
               <div className="h-[498px] flex justify-center items-center w-full">
                 {habits.length > 0 ? (
                   <ul className="flex flex-col gap-3 text-center">
-                    {habits.map((habit, index) => (
+                    {habits.map((habit) => (
                       <li
-                        key={index}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] rounded-[20px] flex items-center justify-center cursor-pointer
-                        ${
-                          selectedHabits.includes(index)
-                            ? "bg-[#99C08E] text-white"
-                            : "bg-[#EEEEEE]"
-                        }`}
-                        onClick={() => onToggleHabit(index)}
-                        style={{ userSelect: "none", cursor: "default" }}
+                        key={habit.id}
+                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
+                                 rounded-[20px] flex items-center justify-center 
+                                 cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
+                                 ${
+                                   selectedHabits.includes(habit.id)
+                                     ? "bg-[#99C08E] text-white" // ✅ 완료 상태 (초록색)
+                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]" // ✅ 미완료 상태 (회색)
+                                 }`}
+                        onClick={() => onToggleHabit(habit.id)}
+                        style={{ userSelect: "none" }}
                       >
-                        {habit}
+                        {habit.name}
                       </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="text-[#818181] text-[20px] text-center">
-                    아직 생성된 목록이 없어요.
+                    아직 생성된 목록이 없어요. <br /> 목록 수정을 눌러 습관을
+                    생성해주세요
                   </div>
                 )}
               </div>

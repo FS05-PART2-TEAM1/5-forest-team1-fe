@@ -105,7 +105,9 @@ function HabitTracker({ studyId }) {
                       key={dayIndex}
                       src={
                         isDeletedForThisDay ||
-                        (habitStatus === undefined && habit.deletedAt)
+                        (habitStatus === undefined &&
+                          habit.deletedAt &&
+                          new Date(habit.deletedAt).getDay() <= dayIndex + 1)
                           ? PawDelete
                           : habitStatus?.status
                           ? pawImage
