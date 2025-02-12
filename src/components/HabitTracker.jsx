@@ -90,7 +90,8 @@ function HabitTracker() {
 
                   const isDeletedForThisDay =
                     habit.deletedAt &&
-                    new Date(habit.deletedAt) < new Date(habitStatus?.date);
+                    new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
+                      new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
                   const isFalseAndDeleted =
                     !habitStatus?.status && isDeletedForThisDay;
