@@ -10,8 +10,10 @@ import Paw7 from "../assets/icons/paws/paw07.png";
 import Paw8 from "../assets/icons/paws/paw08.png";
 import useWheelScroll from "@/hooks/useWheelScroll";
 import habitApi from "../api/habitApi";
+import { startOfWeek } from "date-fns";
+import { endOfWeek } from "date-fns";
 
-function HabitTracker() {
+function HabitTracker(studyId) {
   const [habitList, setHabitList] = useState([]);
   const days = ["월", "화", "수", "목", "금", "토", "일"];
   const { scrollRef } = useWheelScroll();
@@ -24,11 +26,11 @@ function HabitTracker() {
   useEffect(() => {
     const fetchHabits = async () => {
       try {
-        const studyId = "eb119bc0-57d9-4c6c-ad2b-1c3c05a7d12f";
-        const start = "2025-02-03T00:00:00.000Z";
-        const end = "2025-02-09T00:00:00.000Z";
-
-        const data = await habitApi.getHabits(studyId, start, end);
+        const today = new Date();
+        const weekStart = startOfWeek(today, { weekStartsOn: 1 }); //월요일부터
+        const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); //일요일까지
+        console.log("weekStart: ", weekStart, "weekEnd", weekEnd);
+        const data = await habitApi.getHabits(studyId, weekStart, weekEnd);
         console.log("Raw Data from API:", data);
         setHabitList(data.habitList); // 여기서 데이터 설정!
       } catch (error) {
@@ -56,15 +58,15 @@ function HabitTracker() {
             {days.map((day, index) => {
               // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거
               const date = new Date(2025, 1, 3 + index); // 1: 2월 (JS에서는 0부터 시작)
-              const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // MM/DD 형식
-              console.log(date);
+              // const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // MM/DD 형식
+              // console.log(date);
               return (
                 <div
                   key={day}
                   className="text-center text-gray-500 font-semibold"
                 >
                   {day}
-                  <div className="text-xs text-gray-400">{formattedDate}</div>
+                  {/* <div className="text-xs text-gray-400">{formattedDate}</div> */}
                 </div>
               );
             })}
