@@ -99,8 +99,7 @@ function HabitTracker({ studyId }) {
                       new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
                   const pawImage = habitImages[habitIndex % habitImages.length];
-                  console.log(habitImages.length);
-                  console.log(habitIndex);
+
                   return (
                     <img
                       key={dayIndex}
