@@ -116,7 +116,7 @@ function StudyDetailPage() {
                   <EarnedPointsBoxMd points={studyData.totalPoints} />
                 </div>
                 <div className="mt-4 flex-grow">
-                  <HabitTracker />
+                  <HabitTracker studyId={studyId} />
                 </div>
               </>
             ) : (

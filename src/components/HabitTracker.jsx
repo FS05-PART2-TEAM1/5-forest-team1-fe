@@ -13,7 +13,7 @@ import habitApi from "../api/habitApi";
 import { startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns";
 
-function HabitTracker(studyId) {
+function HabitTracker({ studyId }) {
   const [habitList, setHabitList] = useState([]);
   const days = ["월", "화", "수", "목", "금", "토", "일"];
   const { scrollRef } = useWheelScroll();
@@ -31,6 +31,7 @@ function HabitTracker(studyId) {
         const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); //일요일까지
         console.log("weekStart: ", weekStart, "weekEnd", weekEnd);
         const data = await habitApi.getHabits(studyId, weekStart, weekEnd);
+        console.log(studyId);
         console.log("Raw Data from API:", data);
         setHabitList(data.habitList); // 여기서 데이터 설정!
       } catch (error) {
@@ -92,7 +93,8 @@ function HabitTracker(studyId) {
 
                   const isDeletedForThisDay =
                     habit.deletedAt &&
-                    new Date(habit.deletedAt) < new Date(habitStatus?.date);
+                    new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
+                      new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
                   const isFalseAndDeleted =
                     !habitStatus?.status && isDeletedForThisDay;
