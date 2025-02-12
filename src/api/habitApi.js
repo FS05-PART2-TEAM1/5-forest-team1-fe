@@ -17,14 +17,13 @@ const habitApi = {
         return [];
       }
 
-      // ✅ 삭제되지 않은 습관만 반환 (createdAt 기준 정렬 추가)
       return response.data.habitList
         .filter((habit) => habit.deletedAt === null)
         .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         .map((habit) => ({
           id: habit.id,
           name: habit.name,
-          createdAt: habit.createdAt, // 정렬을 위해 유지
+          createdAt: habit.createdAt,
           deletedAt: habit.deletedAt,
         }));
     } catch (error) {
@@ -32,11 +31,11 @@ const habitApi = {
       return [];
     }
   },
-  toggleHabitCompletion: async (studyId, habitId, isCompleted) => {
+  toggleHabitCompletion: async (studyId, habitId, status) => {
     try {
       const response = await axiosClient.post(
         `/api/studies/${studyId}/habits/${habitId}/check/today`,
-        { status: isCompleted }
+        { status }
       );
       console.log("✅ [습관 완료 상태 변경 성공]:", response.data);
       return response.data;

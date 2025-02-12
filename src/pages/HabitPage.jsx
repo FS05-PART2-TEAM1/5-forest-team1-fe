@@ -3,6 +3,7 @@ import { Header } from "@/common/layout/Header";
 import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
 import habitApi from "@/api/habitApi";
+import { startOfWeek, endOfWeek } from "date-fns";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -64,32 +65,53 @@ function HabitPage() {
 
   useEffect(() => {
     async function fetchHabits() {
-      if (studyData?.id) {
-        const habitList = await habitApi.getHabitsList(studyData.id);
+      if (!studyData?.id) return;
 
-        // ✅ deletedAt이 없는 습관만 필터링하여 상태 업데이트
-        const activeHabits = habitList.filter((habit) => !habit.deletedAt);
+      try {
+        const today = new Date();
+        const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // 월요일부터 시작
+        const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); // 일요일까지
 
-        setHabits(activeHabits.map((habit) => habit.name));
-        setOriginalHabits(
-          activeHabits.map((habit) => ({
-            id: habit.id,
-            name: habit.name,
-            dailyHabitCheck: habit.dailyHabitCheck,
-          }))
+        console.log("🗓️ [주간 데이터 범위]:", { weekStart, weekEnd });
+
+        // ✅ API에서 주간 데이터 가져오기
+        const habitData = await habitApi.getHabits(
+          studyData.id,
+          weekStart,
+          weekEnd
         );
+
+        console.log("📌 [불러온 습관 데이터]:", habitData);
+
+        // ✅ deletedAt이 없는 습관만 필터링
+        const activeHabits = habitData.habitList.filter(
+          (habit) => !habit.deletedAt
+        );
+
+        setHabits(activeHabits);
+        setOriginalHabits(activeHabits);
+
+        // ✅ status가 true인 habitId만 selectedHabits에 추가
+        const completedHabitIds = activeHabits
+          .filter(
+            (habit) =>
+              habit.dailyHabitCheck &&
+              Array.isArray(habit.dailyHabitCheck) &&
+              habit.dailyHabitCheck.some((check) => check.status === true) // ✅ 상태 체크
+          )
+          .map((habit) => habit.id);
+
+        console.log("✅ [초기 완료된 습관 ID]:", completedHabitIds);
+        setSelectedHabits(completedHabitIds);
+      } catch (error) {
+        console.error("❌ [습관 데이터 불러오기 오류]:", error);
+      } finally {
         setLoading(false);
-        console.log("📌 [originalHabits 설정 완료]:", activeHabits);
       }
     }
-    if (studyData) {
-      fetchHabits();
-    }
-  }, [studyData]);
 
-  if (loading) {
-    return <div>습관을 불러오는 중...</div>;
-  }
+    fetchHabits();
+  }, [studyData]);
 
   const openModal = () => {
     console.log("[현재 originalHabits]:", originalHabits);
@@ -107,7 +129,6 @@ function HabitPage() {
       return;
     }
 
-    // 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
@@ -182,29 +203,29 @@ function HabitPage() {
     });
   };
 
-  const onToggleHabit = async (index) => {
-    const updatedHabits = [...selectedHabits];
-    const habit = habits[index];
+  const onToggleHabit = async (habitId) => {
+    const isCompleted = !selectedHabits.includes(habitId);
     const studyId = studyData.id;
-    const habitId = habit.id;
-    const isCompleted = !updatedHabits.includes(index, 1); // ✅ 토글 상태 반전
 
-    if (isCompleted) {
-      updatedHabits.push(index);
-    } else {
-      updatedHabits.splice(updatedHabits.indexOf(index), 1);
-    }
-
-    setSelectedHabits(updatedHabits); // ✅ UI 먼저 변경
+    //  UI 먼저 업데이트
+    setSelectedHabits((prevSelected) =>
+      isCompleted
+        ? [...prevSelected, habitId]
+        : prevSelected.filter((id) => id !== habitId)
+    );
 
     try {
-      await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted); // ✅ API 호출
+      await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted);
+      console.log(`[습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
+        studyId,
+        habitId,
+        status: isCompleted,
+      });
     } catch (error) {
       console.error("❌ [습관 완료 상태 변경 실패]:", error);
-      setSelectedHabits([...selectedHabits]); // ✅ 오류 시 기존 상태 복원
+      setSelectedHabits((prevSelected) => [...prevSelected]);
     }
   };
-
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF]">
@@ -244,21 +265,21 @@ function HabitPage() {
               <div className="h-[498px] flex justify-center items-center w-full">
                 {habits.length > 0 ? (
                   <ul className="flex flex-col gap-3 text-center">
-                    {habits.map((habit, index) => (
+                    {habits.map((habit) => (
                       <li
-                        key={index}
+                        key={habit.id}
                         className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
-                                   rounded-[20px] flex items-center justify-center 
-                                   cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
-                                   ${
-                                     selectedHabits.includes(index)
-                                       ? "bg-[#99C08E] text-white"
-                                       : "bg-[#EEEEEE] hover:bg-[#deeed5]"
-                                   }`}
-                        onClick={() => onToggleHabit(index)}
+                                 rounded-[20px] flex items-center justify-center 
+                                 cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
+                                 ${
+                                   selectedHabits.includes(habit.id)
+                                     ? "bg-[#99C08E] text-white" // ✅ 완료 상태 (초록색)
+                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]" // ✅ 미완료 상태 (회색)
+                                 }`}
+                        onClick={() => onToggleHabit(habit.id)}
                         style={{ userSelect: "none" }}
                       >
-                        {habit}
+                        {habit.name}
                       </li>
                     ))}
                   </ul>
