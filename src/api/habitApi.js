@@ -1,4 +1,4 @@
-
+import axiosClient from "./axios";
 const BASE_URL = "http://localhost:5000/api/studies";
 
 /**
@@ -176,8 +176,15 @@ export async function deleteStudy(studyId) {
     if (!response.ok) {
       throw new Error(
         `Failed to delete study: ${response.status} ${response.statusText}`
+      );
+    }
 
-import axiosClient from "./axios";
+    return true; // ✅ 삭제 성공 시 true 반환
+  } catch (error) {
+    console.error("❌ [deleteStudy 오류]:", error.message);
+    return false; // ✅ 삭제 실패 시 false 반환
+  }
+}
 
 const habitApi = {
   getHabits: async (studyId, start, end) => {
