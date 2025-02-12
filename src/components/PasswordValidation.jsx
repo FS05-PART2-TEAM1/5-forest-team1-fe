@@ -6,7 +6,7 @@ const PasswordValidation = ({
   id,
   label,
   placeholder,
-  validateFn,
+  validateFn = () => "", // 기본값
   onChange,
   onValidate,
 }) => {

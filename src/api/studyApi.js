@@ -41,11 +41,7 @@ export const createStudy = async (studyData) => {
 
 export const patchStudy = async (studyId, updatedData) => {
   try {
-    const response = await axios.patch(
-      // `${BASE_URL}/studies/${studyId}`,
-      "https://five-forest-team1.onrender.com/api/studies",
-      updatedData
-    );
+    const response = await axios.patch(`/api/studies/${studyId}`, updatedData);
     return response.data;
   } catch (error) {
     console.error("Error updating study:", error);
