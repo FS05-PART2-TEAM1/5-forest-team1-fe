@@ -118,73 +118,29 @@ function HabitPage() {
     setIsModalOpen(true);
   };
 
-  const onSave = async (updatedHabitNames) => {
-    console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
-
-    if (!Array.isArray(updatedHabitNames)) {
-      console.error(
-        "🚨 [onSave 오류]: updatedHabits가 배열이 아닙니다!",
-        updatedHabitNames
-      );
-      return;
-    }
-
-    const originalHabitsMap = new Map(
-      originalHabits.map((habit) => [habit.name, habit])
-    );
-
-    // 추가된 습관 필터링
-    const newHabits = updatedHabitNames
-      .filter((name) => !originalHabitsMap.has(name))
-      .map((name) => ({
-        studyId: studyData.id,
-        name,
-      }));
-
-    // 삭제된 습관 필터링
-    const deletedHabits = originalHabits
-      .filter((habit) => !updatedHabitNames.includes(habit.name))
-      .map((habit) => ({
-        id: habit.id,
-        name: habit.name,
-        deletedAt: new Date().toISOString(),
-      }));
-
-    //  PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
-    const formattedHabits = [...newHabits, ...deletedHabits];
-
-    if (formattedHabits.length === 0) {
-      console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
-      setIsModalOpen(false);
-      return;
-    }
-
-    console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
+  const onSave = async (updatedHabits) => {
+    const formattedHabits = updatedHabits.map((habit) => ({
+      id: habit.id || null,
+      name: habit.name || "",
+      studyId: studyData.id,
+      deletedAt: habit.deletedAt || null,
+    }));
 
     try {
-      //  1. 습관 업데이트 요청
       await habitApi.updateHabits(studyData.id, formattedHabits);
-
-      //  2. 서버에서 최신 습관 리스트 다시 가져오기
-      const updatedHabits = await habitApi.getHabitsList(studyData.id);
-      const activeHabits = updatedHabits.filter((habit) => !habit.deletedAt);
-
-      //  3. 상태 업데이트 (서버 데이터 반영)
-      setHabits(activeHabits.map((habit) => habit.name));
-      setOriginalHabits(
-        activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
-      );
-
+      const updatedList = await habitApi.getHabitsList(studyData.id);
+      setHabits(updatedList.filter((h) => !h.deletedAt));
+      setOriginalHabits(updatedList);
       setIsModalOpen(false);
     } catch (error) {
       console.error("🚨 습관 저장 중 오류 발생:", error);
     }
   };
-
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
-      const newHabit = prompt("새로운 습관을 입력하세요:");
-      if (newHabit) {
+      const newHabitName = prompt("새로운 습관을 입력하세요:");
+      if (newHabitName) {
+        const newHabit = { id: null, name: newHabitName, deletedAt: null };
         setHabits([...habits, newHabit]);
       }
     } else {
@@ -192,22 +148,15 @@ function HabitPage() {
     }
   };
   const onRemoveHabit = (index) => {
-    setHabits((prevHabits) => {
-      const updatedHabits = [...prevHabits];
-      updatedHabits[index] = {
-        ...updatedHabits[index],
-        deletedAt: new Date().toISOString(),
-      };
-
-      return updatedHabits.filter((habit) => !habit.deletedAt);
-    });
+    setEditableHabits((prevEditable) =>
+      prevEditable.filter((_, i) => i !== index)
+    );
   };
 
   const onToggleHabit = async (habitId) => {
-    const isCompleted = !selectedHabits.includes(habitId);
     const studyId = studyData.id;
+    const isCompleted = !selectedHabits.includes(habitId);
 
-    //  UI 먼저 업데이트
     setSelectedHabits((prevSelected) =>
       isCompleted
         ? [...prevSelected, habitId]
@@ -216,16 +165,16 @@ function HabitPage() {
 
     try {
       await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted);
-      console.log(`[습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
+      console.log(`✅ [습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
         studyId,
         habitId,
         status: isCompleted,
       });
     } catch (error) {
       console.error("❌ [습관 완료 상태 변경 실패]:", error);
-      setSelectedHabits((prevSelected) => [...prevSelected]);
     }
   };
+
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF]">
@@ -273,8 +222,8 @@ function HabitPage() {
                                  cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
                                  ${
                                    selectedHabits.includes(habit.id)
-                                     ? "bg-[#99C08E] text-white" // ✅ 완료 상태 (초록색)
-                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]" // ✅ 미완료 상태 (회색)
+                                     ? "bg-[#99C08E] text-white"
+                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]"
                                  }`}
                         onClick={() => onToggleHabit(habit.id)}
                         style={{ userSelect: "none" }}
