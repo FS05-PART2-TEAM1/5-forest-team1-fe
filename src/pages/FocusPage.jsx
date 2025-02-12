@@ -118,7 +118,7 @@ function FocusPage() {
   return (
     <div className="bg-f-bg">
       <Header />
-      <div className="min-h-screen bg-f-bg py-10 md:py-20">
+      <div className="min-h-screen py-10 md:py-20">
         <div className="w-[95%] min-w-[380px] mx-auto bg-white rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
           <FocusHeader />
           <PointsDisplay currentPoints={currentPoints} />
