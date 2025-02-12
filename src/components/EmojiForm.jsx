@@ -78,7 +78,7 @@ function EmojiForm({ studyId }) {
         {emojis.length > 3 && (
           <div className="lg:block hidden">
             <div
-              className="cursor-pointer flex gap-1 p-2 rounded-[50px] items-center text-[14px] text-white bg-black opacity-30"
+              className="cursor-pointer flex gap-1 p-2 h-8 rounded-[50px] items-center text-[14px] text-white bg-black opacity-20"
               onClick={onShowAllClick}
             >
               <img src={plusImg} />
@@ -88,7 +88,7 @@ function EmojiForm({ studyId }) {
         )}
         {isShowAll && (
           <div
-            className="lg:visible invisible pl-5 -translate-x-72 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] "
+            className="lg:visible invisible pl-5 -translate-x-52 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] "
           >
             {emojis.map((element, index) => {
               return (
@@ -109,7 +109,7 @@ function EmojiForm({ studyId }) {
       </div>
       <div>
         <div
-          className="border flex lg:w-[80px] md:w-[65px] text-16pt gap-2 items-center lg:p-1 p-1 rounded-[50px] cursor-pointer"
+          className="border flex lg:w-[70px] md:w-[65px] h-8 text-16pt gap-2 items-center lg:p-1 p-1 rounded-[50px] cursor-pointer"
           onClick={() => setIsAddMod(!isAddMod)}
         >
           <img src={emojiCreateImg} />
