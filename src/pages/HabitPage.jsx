@@ -72,7 +72,11 @@ function HabitPage() {
 
         setHabits(activeHabits.map((habit) => habit.name));
         setOriginalHabits(
-          activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
+          activeHabits.map((habit) => ({
+            id: habit.id,
+            name: habit.name,
+            dailyHabitCheck: habit.dailyHabitCheck,
+          }))
         );
         setLoading(false);
         console.log("📌 [originalHabits 설정 완료]:", activeHabits);
@@ -178,13 +182,29 @@ function HabitPage() {
     });
   };
 
-  const onToggleHabit = (index) => {
-    if (selectedHabits.includes(index)) {
-      setSelectedHabits(selectedHabits.filter((i) => i !== index));
+  const onToggleHabit = async (index) => {
+    const updatedHabits = [...selectedHabits];
+    const habit = habits[index];
+    const studyId = studyData.id;
+    const habitId = habit.id;
+    const isCompleted = !updatedHabits.includes(index, 1); // ✅ 토글 상태 반전
+
+    if (isCompleted) {
+      updatedHabits.push(index);
     } else {
-      setSelectedHabits([...selectedHabits, index]);
+      updatedHabits.splice(updatedHabits.indexOf(index), 1);
+    }
+
+    setSelectedHabits(updatedHabits); // ✅ UI 먼저 변경
+
+    try {
+      await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted); // ✅ API 호출
+    } catch (error) {
+      console.error("❌ [습관 완료 상태 변경 실패]:", error);
+      setSelectedHabits([...selectedHabits]); // ✅ 오류 시 기존 상태 복원
     }
   };
+
   return (
     <>
       <div className="min-h-screen bg-[#F6F4EF]">
