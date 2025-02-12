@@ -94,7 +94,6 @@ function HabitPage() {
 
   const onSave = async (updatedHabitNames) => {
     console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
-    console.log("📌 [originalHabits 데이터 확인]:", originalHabits);
 
     if (!Array.isArray(updatedHabitNames)) {
       console.error(
@@ -109,7 +108,7 @@ function HabitPage() {
       originalHabits.map((habit) => [habit.name, habit])
     );
 
-    // ✅ 기존 습관이 아닌 새로운 습관 필터링
+    // ✅ 추가된 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -119,7 +118,7 @@ function HabitPage() {
 
     // ✅ 삭제된 습관 필터링
     const deletedHabits = originalHabits
-      .filter((habit) => !updatedHabitNames.includes(habit.name)) // 기존 습관인데 목록에서 사라진 경우
+      .filter((habit) => !updatedHabitNames.includes(habit.name))
       .map((habit) => ({
         id: habit.id,
         name: habit.name,
@@ -129,7 +128,6 @@ function HabitPage() {
     // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
     const formattedHabits = [...newHabits, ...deletedHabits];
 
-    // ✅ 변경된 데이터가 없다면 요청하지 않음
     if (formattedHabits.length === 0) {
       console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
       setIsModalOpen(false);
@@ -139,22 +137,21 @@ function HabitPage() {
     console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      const response = await habitApi.updateHabits(
-        studyData.id,
-        formattedHabits
+      // ✅ 1. 습관 업데이트 요청
+      await habitApi.updateHabits(studyData.id, formattedHabits);
+
+      // ✅ 2. 서버에서 최신 습관 리스트 다시 가져오기
+      const updatedHabits = await habitApi.getHabitsList(studyData.id);
+      const activeHabits = updatedHabits.filter((habit) => !habit.deletedAt);
+
+      // ✅ 3. 상태 업데이트 (서버 데이터 반영)
+      setHabits(activeHabits.map((habit) => habit.name));
+      setOriginalHabits(
+        activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
       );
 
-      if (response) {
-        setHabits(response.map((habit) => habit.name));
-        setOriginalHabits(
-          response.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
-        console.log(
-          "📌 [습관 목록 업데이트 완료]:",
-          response.map((habit) => habit.name)
-        );
-        setIsModalOpen(false);
-      }
+      // ✅ 4. 모달 닫기
+      setIsModalOpen(false);
     } catch (error) {
       console.error("🚨 습관 저장 중 오류 발생:", error);
     }
