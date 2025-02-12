@@ -65,21 +65,30 @@ function StudyCreatePage() {
     setErrors((prev) => ({ ...prev, [field]: !!error }));
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async () => {
+    if (isSubmitting) return; // 🔹 중복 요청 방지
+
+    setIsSubmitting(true); // 🔹 요청 시작 시 버튼 비활성화
     // 비밀번호 일치 여부 체크
     if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
+      setIsSubmitting(false);
       return;
     }
     // 배경 이미지 선택 여부 체크
     if (hasSelected === null) {
       alert("배경을 선택해주세요.");
+      setIsSubmitting(false);
       return;
     }
     const isFormValid =
       Object.values(errors).every((error) => !error) && hasSelected !== null;
+
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -90,6 +99,7 @@ function StudyCreatePage() {
     if (background.type === "color") {
       backgroundContent = colorMap[backgroundContent] || backgroundContent;
     }
+
     try {
       const response = await createStudy({
         nickname,
@@ -101,13 +111,14 @@ function StudyCreatePage() {
         passwordConfirm: confirmPassword,
       });
 
-      // 스터디 생성 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
+      navigate(`/study/${response.id}`);
     } catch (error) {
       console.error(
         "스터디 생성 실패:",
         error.response ? error.response.data : error.message
       );
+    } finally {
+      setIsSubmitting(false); // 🔹 요청 완료 후 다시 버튼 활성화
     }
   };
 
