@@ -99,14 +99,14 @@ function HabitTracker({ studyId }) {
                       new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
                   const pawImage = habitImages[habitIndex % habitImages.length];
-                  console.log(habitImages.length);
-                  console.log(habitIndex);
                   return (
                     <img
                       key={dayIndex}
                       src={
                         isDeletedForThisDay ||
-                        (habitStatus === undefined && habit.deletedAt)
+                        (habitStatus === undefined &&
+                          habit.deletedAt &&
+                          new Date(habit.deletedAt).getDay() <= dayIndex + 1)
                           ? PawDelete
                           : habitStatus?.status
                           ? pawImage
