@@ -43,7 +43,7 @@ function HabitTracker() {
 
   return (
     <div className="w-full items-center mt-5">
-      <div className="rounded-xl border lg:mt-[27px] lg:mb-32 w-full lg:h-[511px]  h-[450px] min-w-[312px] bg-white p-4 transition-all duration-100">
+      <div className="rounded-xl border lg:mt-[27px] lg:mb-5 w-full lg:max-h-[511px] min-w-[312px] bg-white p-6 py-5 transition-all duration-100">
         <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
         <div
@@ -51,7 +51,7 @@ function HabitTracker() {
           className="mt-2 overflow-x-auto overflow-y-auto max-h-[380px] md:max-h-[430px]"
         >
           {/* 요일 헤더 */}
-          <div className="min-w-[648px] grid grid-cols-9 gap-2 md:gap-4 items-center sm:text-[14px] md:text-[18px] mb-4">
+          <div className="min-w-[648px] grid grid-cols-9 gap-2 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
             {days.map((day, index) => {
               // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거
@@ -82,7 +82,7 @@ function HabitTracker() {
               </div>
 
               {/* paw 이미지 */}
-              <div className="col-span-7 grid grid-cols-7 gap-4">
+              <div className="col-span-7 grid grid-cols-7 gap-2">
                 {days.map((_, dayIndex) => {
                   const habitStatus = habit.dailyHabitCheck.find(
                     (check) => getDayIndex(check.date) === dayIndex

@@ -50,7 +50,7 @@ function StudyDetailPage() {
       <Header />
       {!isLoading && (
         <div className="grid place-items-center mt-14 mb-[40px]">
-          <div className="bg-white mb-0 lg:max-w-[1200px] lg:w-9/12 md:w-10/12 w-11/12 md: rounded-[20px] lg:px-10 lg:pb-4 lg:pt-8 md:p-6 p-4">
+          <div className="bg-white lg:max-w-[1200px] lg:w-9/12 md:w-10/12 w-11/12 md: rounded-[20px] lg:px-10 lg:pb-4 lg:pt-8 md:p-6 p-4">
             {studyData.title ? (
               <>
                 <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
@@ -115,7 +115,7 @@ function StudyDetailPage() {
                 <div className="mt-2">
                   <EarnedPointsBoxMd points={studyData.totalPoints} />
                 </div>
-                <div>
+                <div className="mt-4 flex-grow">
                   <HabitTracker />
                 </div>
               </>
