@@ -94,7 +94,6 @@ function HabitPage() {
 
   const onSave = async (updatedHabitNames) => {
     console.log("📌 [onSave 호출됨] updatedHabits:", updatedHabitNames);
-    console.log("📌 [originalHabits 데이터 확인]:", originalHabits);
 
     if (!Array.isArray(updatedHabitNames)) {
       console.error(
@@ -104,12 +103,12 @@ function HabitPage() {
       return;
     }
 
-    // ✅ 기존 습관을 Map 형태로 변환
+    // 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
 
-    // ✅ 기존 습관이 아닌 새로운 습관 필터링
+    // 추가된 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -117,19 +116,18 @@ function HabitPage() {
         name,
       }));
 
-    // ✅ 삭제된 습관 필터링
+    // 삭제된 습관 필터링
     const deletedHabits = originalHabits
-      .filter((habit) => !updatedHabitNames.includes(habit.name)) // 기존 습관인데 목록에서 사라진 경우
+      .filter((habit) => !updatedHabitNames.includes(habit.name))
       .map((habit) => ({
         id: habit.id,
         name: habit.name,
         deletedAt: new Date().toISOString(),
       }));
 
-    // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
+    //  PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
     const formattedHabits = [...newHabits, ...deletedHabits];
 
-    // ✅ 변경된 데이터가 없다면 요청하지 않음
     if (formattedHabits.length === 0) {
       console.log("✅ 변경된 습관 없음, PATCH 요청 안함.");
       setIsModalOpen(false);
@@ -139,22 +137,20 @@ function HabitPage() {
     console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      const response = await habitApi.updateHabits(
-        studyData.id,
-        formattedHabits
+      //  1. 습관 업데이트 요청
+      await habitApi.updateHabits(studyData.id, formattedHabits);
+
+      //  2. 서버에서 최신 습관 리스트 다시 가져오기
+      const updatedHabits = await habitApi.getHabitsList(studyData.id);
+      const activeHabits = updatedHabits.filter((habit) => !habit.deletedAt);
+
+      //  3. 상태 업데이트 (서버 데이터 반영)
+      setHabits(activeHabits.map((habit) => habit.name));
+      setOriginalHabits(
+        activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
       );
 
-      if (response) {
-        setHabits(response.map((habit) => habit.name));
-        setOriginalHabits(
-          response.map((habit) => ({ id: habit.id, name: habit.name }))
-        );
-        console.log(
-          "📌 [습관 목록 업데이트 완료]:",
-          response.map((habit) => habit.name)
-        );
-        setIsModalOpen(false);
-      }
+      setIsModalOpen(false);
     } catch (error) {
       console.error("🚨 습관 저장 중 오류 발생:", error);
     }
@@ -178,7 +174,7 @@ function HabitPage() {
         deletedAt: new Date().toISOString(),
       };
 
-      return updatedHabits.filter((habit) => !habit.deletedAt); // ✅ UI에서 즉시 숨김
+      return updatedHabits.filter((habit) => !habit.deletedAt);
     });
   };
 
@@ -231,14 +227,16 @@ function HabitPage() {
                     {habits.map((habit, index) => (
                       <li
                         key={index}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] rounded-[20px] flex items-center justify-center cursor-pointer
-                        ${
-                          selectedHabits.includes(index)
-                            ? "bg-[#99C08E] text-white"
-                            : "bg-[#EEEEEE]"
-                        }`}
+                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
+                                   rounded-[20px] flex items-center justify-center 
+                                   cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
+                                   ${
+                                     selectedHabits.includes(index)
+                                       ? "bg-[#99C08E] text-white"
+                                       : "bg-[#EEEEEE] hover:bg-[#deeed5]"
+                                   }`}
                         onClick={() => onToggleHabit(index)}
-                        style={{ userSelect: "none", cursor: "default" }}
+                        style={{ userSelect: "none" }}
                       >
                         {habit}
                       </li>
