@@ -14,19 +14,17 @@ const HabitListModal = ({
 }) => {
   if (!isOpen) return null;
 
-  // ✅ 모달에서 수정할 습관 목록
   const [editableHabits, setEditableHabits] = useState([...habits]);
-  const [deletedHabits, setDeletedHabits] = useState([]); // 삭제된 습관 저장
+  const [deletedHabits, setDeletedHabits] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setEditableHabits([...habits]); // habits 변경 시 editableHabits 동기화
+    setEditableHabits([...habits]);
   }, [habits]);
 
-  // ✅ 습관 삭제 함수 (UI에서도 즉시 반영 & 삭제된 습관 저장)
   const handleRemoveHabit = (index) => {
     const habitToRemove = editableHabits[index];
 
-    // ✅ 기존 습관이라면 삭제 리스트에 추가 (서버에서 삭제 요청 필요)
     if (habitToRemove.id) {
       setDeletedHabits((prev) => [
         ...prev,
@@ -34,13 +32,10 @@ const HabitListModal = ({
       ]);
     }
 
-    // ✅ UI에서 즉시 삭제 반영
     setEditableHabits((prevEditable) =>
       prevEditable.filter((_, i) => i !== index)
     );
   };
-
-  // ✅ 습관 추가
   const handleAddHabit = () => {
     if (editableHabits.length < maxHabitCount) {
       const newHabitName = prompt("새로운 습관을 입력하세요:");
@@ -55,11 +50,12 @@ const HabitListModal = ({
     }
   };
 
-  // ✅ 수정 완료 버튼 클릭 시 실행
-  const handleSave = () => {
-    onSave([...editableHabits, ...deletedHabits]); // ✅ 삭제된 습관도 함께 전송
+  const handleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    await onSave([...editableHabits, ...deletedHabits]);
+    setIsSaving(false);
   };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
       <div className="bg-white rounded-[20px] shadow-xl p-6 w-[698px] max-h-[90vh] font-sans flex flex-col">
@@ -128,7 +124,7 @@ const HabitListModal = ({
             닫기
           </ModalButton>
           <ModalButton
-            onClick={handleSave} // ✅ 삭제된 습관도 포함하여 저장
+            onClick={handleSave}
             className="px-5 py-3 bg-[#99C08E] text-white rounded-lg w-1/2"
           >
             수정완료
