@@ -23,7 +23,7 @@ function ShareModal({ onClose, title, description }) {
           <h2 className="text-[24px] max-[743px]:text-[18px] font-extrabold text-center flex-1">
             공유하기
           </h2>
-          <div className="hidden min-[744px]:block absolute right-0  mt-4 text-[#578246] hover:text-green-700 ">
+          <div className="min-[744px]:block absolute right-0  mt-4 text-[#578246] hover:text-green-700 ">
             <button onClick={onClose} isCancel>
               나가기
             </button>
