@@ -34,7 +34,7 @@ const StudyCard = ({ study, type = "browse", onClick }) => {
   // 카드 사이즈 및 배경 관련 클래스들
   const typeStyle = type === "viewed" ? "md:min-w-[358px]" : "";
   const baseStyle =
-    " bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300 flex flex-col justify-between";
+    "bg-cover bg-center rounded-[20px] relative cursor-pointer transition-transform transform hover:-translate-y-1 hover:shadow-lg ease-in-out duration-300 flex flex-col justify-between";
   const mobileStyle = "h-[180px] min-w-[240px] p-[16px]";
   const tabletStyle = "md:h-[243px] md:p-[30px]";
 
