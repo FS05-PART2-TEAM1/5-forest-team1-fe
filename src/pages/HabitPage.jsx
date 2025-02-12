@@ -103,12 +103,12 @@ function HabitPage() {
       return;
     }
 
-    // ✅ 기존 습관을 Map 형태로 변환
+    // 기존 습관을 Map 형태로 변환
     const originalHabitsMap = new Map(
       originalHabits.map((habit) => [habit.name, habit])
     );
 
-    // ✅ 추가된 습관 필터링
+    // 추가된 습관 필터링
     const newHabits = updatedHabitNames
       .filter((name) => !originalHabitsMap.has(name))
       .map((name) => ({
@@ -116,7 +116,7 @@ function HabitPage() {
         name,
       }));
 
-    // ✅ 삭제된 습관 필터링
+    // 삭제된 습관 필터링
     const deletedHabits = originalHabits
       .filter((habit) => !updatedHabitNames.includes(habit.name))
       .map((habit) => ({
@@ -125,7 +125,7 @@ function HabitPage() {
         deletedAt: new Date().toISOString(),
       }));
 
-    // ✅ PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
+    //  PATCH 요청할 데이터 (새로운 습관 + 삭제된 습관)
     const formattedHabits = [...newHabits, ...deletedHabits];
 
     if (formattedHabits.length === 0) {
@@ -137,20 +137,19 @@ function HabitPage() {
     console.log("📌 [PATCH 요청 데이터]:", formattedHabits);
 
     try {
-      // ✅ 1. 습관 업데이트 요청
+      //  1. 습관 업데이트 요청
       await habitApi.updateHabits(studyData.id, formattedHabits);
 
-      // ✅ 2. 서버에서 최신 습관 리스트 다시 가져오기
+      //  2. 서버에서 최신 습관 리스트 다시 가져오기
       const updatedHabits = await habitApi.getHabitsList(studyData.id);
       const activeHabits = updatedHabits.filter((habit) => !habit.deletedAt);
 
-      // ✅ 3. 상태 업데이트 (서버 데이터 반영)
+      //  3. 상태 업데이트 (서버 데이터 반영)
       setHabits(activeHabits.map((habit) => habit.name));
       setOriginalHabits(
         activeHabits.map((habit) => ({ id: habit.id, name: habit.name }))
       );
 
-      // ✅ 4. 모달 닫기
       setIsModalOpen(false);
     } catch (error) {
       console.error("🚨 습관 저장 중 오류 발생:", error);
@@ -175,7 +174,7 @@ function HabitPage() {
         deletedAt: new Date().toISOString(),
       };
 
-      return updatedHabits.filter((habit) => !habit.deletedAt); // ✅ UI에서 즉시 숨김
+      return updatedHabits.filter((habit) => !habit.deletedAt);
     });
   };
 

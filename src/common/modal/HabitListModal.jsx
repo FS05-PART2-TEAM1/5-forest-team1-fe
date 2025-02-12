@@ -16,12 +16,10 @@ const HabitListModal = ({
   if (!isOpen) return null;
   const [editableHabits, setEditableHabits] = useState([...habits]);
 
-  // ✅ habits 변경 시 editableHabits 동기화
   useEffect(() => {
     setEditableHabits([...habits]);
   }, [habits]);
 
-  // ✅ 습관 이름 변경 핸들러
   const handleHabitChange = (index, newName) => {
     const updatedHabits = [...editableHabits];
     updatedHabits[index] = newName;
