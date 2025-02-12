@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const StudyFormValidation = ({
   id,
   label,
   placeholder,
-  validateFn,
+  validateFn = () => null, // 기본값을 함수로 설정
   type = "text",
   onChange,
   onValidate,
   isTextarea = false,
+  value: initialValue = "", // value를 props로 받고 기본값은 ""
 }) => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setValue(initialValue); // 외부에서 받은 값이 변경될 경우 상태 업데이트
+  }, [initialValue]);
 
   const handleBlur = () => {
     const validationError = validateFn(value);
@@ -38,7 +43,7 @@ const StudyFormValidation = ({
         <textarea
           id={id}
           value={value}
-          placeholder={placeholder}
+          placeholder={!value ? placeholder : ""}
           onChange={handleChange}
           onBlur={handleBlur}
           className={`border rounded-xl p-3 leading-7 resize-none ${
@@ -54,7 +59,7 @@ const StudyFormValidation = ({
           id={id}
           type={type}
           value={value}
-          placeholder={placeholder}
+          placeholder={!value ? placeholder : ""}
           onChange={handleChange}
           onBlur={handleBlur}
           className={`border h-12 rounded-xl p-3 ${
