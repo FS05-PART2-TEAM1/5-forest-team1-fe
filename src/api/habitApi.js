@@ -1,3 +1,4 @@
+
 const BASE_URL = "http://localhost:5000/api/studies";
 
 /**
@@ -175,12 +176,14 @@ export async function deleteStudy(studyId) {
     if (!response.ok) {
       throw new Error(
         `Failed to delete study: ${response.status} ${response.statusText}`
-      );
-    }
 
-    return true;
-  } catch (err) {
-    console.error("Error deleting study:", err.message);
-    return false;
-  }
-}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("습관 데이터를 불러오는 중 오류 발생:", error);
+      throw error;
+    }
+  },
+};
+
+export default habitApi;

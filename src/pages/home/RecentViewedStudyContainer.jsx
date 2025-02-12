@@ -8,7 +8,7 @@ const RecentViewedStudyContainer = () => {
 
   const handleClickStudyCard = (studyId) => {
     addRecentStudyId(studyId);
-    navigate(`studies/${studyId}`);
+    navigate(`study/${studyId}`);
   };
 
   return (

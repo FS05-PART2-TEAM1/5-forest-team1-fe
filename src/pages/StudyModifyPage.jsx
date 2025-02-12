@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createStudy } from "@/api/studyApi";
 import PrimaryButton from "../common/buttons/PrimaryButton.jsx";
 import selectBtn from "../assets/icons/ic_selected.png";
 import StudyFormValidation from "@/components/StudyFormValidation.jsx";
 import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getStudy } from "@/api/studyApi";
 
 const colorMap = {
   "#EED3D9": "pink",
@@ -60,6 +61,10 @@ function StudyCreatePage() {
   const handleImageClick = (index) => {
     setHasSelected(index);
   };
+
+  const location = useLocation();
+  const studyData = useState(location.state?.studyId);
+  console.log(studyData);
 
   const handleValidation = (field, error) => {
     setErrors((prev) => ({ ...prev, [field]: !!error }));
@@ -120,7 +125,7 @@ function StudyCreatePage() {
             <div>
               <div className=" md:w-[648px] ">
                 <div className="mb-4">
-                  <h1 className="text-2xl font-bold">스터디 만들기</h1>
+                  <h1 className="text-2xl font-bold">스터디 수정하기</h1>
                 </div>
                 <div className="flex flex-col mb-4 gap-2">
                   <StudyFormValidation
@@ -238,7 +243,7 @@ function StudyCreatePage() {
                 hasSelected === null
               }
             >
-              만들기
+              수정 완료
             </PrimaryButton>
           </div>
         </div>
