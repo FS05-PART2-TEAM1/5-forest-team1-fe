@@ -228,14 +228,16 @@ function HabitPage() {
                     {habits.map((habit, index) => (
                       <li
                         key={index}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] rounded-[20px] flex items-center justify-center cursor-pointer
-                        ${
-                          selectedHabits.includes(index)
-                            ? "bg-[#99C08E] text-white"
-                            : "bg-[#EEEEEE]"
-                        }`}
+                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
+                                   rounded-[20px] flex items-center justify-center 
+                                   cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
+                                   ${
+                                     selectedHabits.includes(index)
+                                       ? "bg-[#99C08E] text-white"
+                                       : "bg-[#EEEEEE] hover:bg-[#deeed5]"
+                                   }`}
                         onClick={() => onToggleHabit(index)}
-                        style={{ userSelect: "none", cursor: "default" }}
+                        style={{ userSelect: "none" }}
                       >
                         {habit}
                       </li>

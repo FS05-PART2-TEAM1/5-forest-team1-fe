@@ -1,5 +1,5 @@
 // HabitListModal.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
 import ModalButton from "../buttons/ModalButton";
@@ -14,7 +14,19 @@ const HabitListModal = ({
   maxHabitCount,
 }) => {
   if (!isOpen) return null;
+  const [editableHabits, setEditableHabits] = useState([...habits]);
 
+  // ✅ habits 변경 시 editableHabits 동기화
+  useEffect(() => {
+    setEditableHabits([...habits]);
+  }, [habits]);
+
+  // ✅ 습관 이름 변경 핸들러
+  const handleHabitChange = (index, newName) => {
+    const updatedHabits = [...editableHabits];
+    updatedHabits[index] = newName;
+    setEditableHabits(updatedHabits);
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
       <div className="bg-white rounded-[20px] shadow-xl p-6 w-[698px] max-h-[90vh] font-sans flex flex-col">
@@ -30,9 +42,13 @@ const HabitListModal = ({
                   key={index}
                   className="relative flex items-center justify-center bg-[#EEEEEE] rounded-[20px] h-[54px]"
                 >
-                  <span className="text-[16px] text-[#818181] underline">
-                    {habit}
-                  </span>
+                  <input
+                    type="text"
+                    className="text-[16px] text-[#818181] underline select-none text-center w-full bg-transparent border-none outline-none"
+                    value={editableHabits[index]}
+                    onChange={(e) => handleHabitChange(index, e.target.value)}
+                    style={{ userSelect: "none" }}
+                  ></input>
                   {onRemoveHabit && (
                     <button
                       onClick={() => onRemoveHabit(index)}
@@ -73,7 +89,7 @@ const HabitListModal = ({
             닫기
           </ModalButton>
           <ModalButton
-            onClick={() => onSave(habits)}
+            onClick={() => onSave(editableHabits)}
             className="px-5 py-3 bg-[#99C08E] text-white rounded-lg w-1/2"
           >
             수정완료
