@@ -177,6 +177,14 @@ export async function deleteStudy(studyId) {
       throw new Error(
         `Failed to delete study: ${response.status} ${response.statusText}`
 
+import axiosClient from "./axios";
+
+const habitApi = {
+  getHabits: async (studyId, start, end) => {
+    try {
+      const response = await axiosClient.get(
+        `api/studies/${studyId.studyId}/habits?start=${start}&end=${end}`,
+        { timeout: 10000 }
       );
       return response.data;
     } catch (error) {
