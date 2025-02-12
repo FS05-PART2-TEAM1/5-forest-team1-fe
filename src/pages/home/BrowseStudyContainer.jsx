@@ -4,16 +4,17 @@ import useFetchRecentViewedStudies from "@/hooks/useFetchRecentViewedStudies";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BrowseStudySection from "./BrowseStudySection";
+import SkeletionStudyCard from "@/components/Skeleton.studycard";
 
 const BrowseStudyContainer = () => {
   const navigate = useNavigate();
-  const [_, addRecentStudyId] = useFetchRecentViewedStudies();
+  const [, , , addRecentStudyId] = useFetchRecentViewedStudies();
 
   const [localKeyword, setLocalKeyword] = useState("");
   const [selectedOption, setSelectedOption] = useState("newest");
   const [totalPage, setTotalPage] = useState(1);
 
-  const [studies, setParams] = useFetchBrowseStudies({
+  const [studies, loading, error, setParams] = useFetchBrowseStudies({
     page: 1,
     pageSize: 6,
     keyword: "",
@@ -73,7 +74,13 @@ const BrowseStudyContainer = () => {
           handleChangeSelectedOption,
         }}
       />
-      <BrowseStudySection.Content {...{ studies, handleClickStudyCard }} />
+      {loading ? (
+        <BrowseStudySection.Loading />
+      ) : (
+        <BrowseStudySection.Content
+          {...{ studies, error, handleClickStudyCard }}
+        />
+      )}
       <BrowseStudySection.Pagination
         {...{
           currentPage,

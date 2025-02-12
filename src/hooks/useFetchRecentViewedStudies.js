@@ -13,19 +13,37 @@ const useFetchRecentViewedStudies = () => {
     studies: [],
     total: 0,
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (viewedStudyIds.length <= 0) return;
+    if (viewedStudyIds.length <= 0) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 400);
+      return;
+    }
 
     const fetchViewedStudies = async () => {
       const ids = viewedStudyIds.join(",");
-      const response = await axiosClient.get(
-        `/api/studies/recent?studyIds=${ids}`
-      );
-      const sortedStudies = viewedStudyIds
-        .map((id) => response.data.studies.find((study) => study.id === id))
-        .filter(Boolean);
-      setViewedStudies({ ...response.data, studies: sortedStudies });
+
+      axiosClient
+        .get(`/api/studies/recent?studyIds=${ids}`)
+        .then((response) => {
+          setTimeout(() => {
+            const sortedStudies = viewedStudyIds
+              .map((id) =>
+                response.data.studies.find((study) => study.id === id)
+              )
+              .filter(Boolean);
+            setViewedStudies({ ...response.data, studies: sortedStudies });
+            setLoading(false);
+          }, 400);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setError(error.message);
+        });
     };
 
     fetchViewedStudies();
@@ -38,7 +56,7 @@ const useFetchRecentViewedStudies = () => {
     });
   };
 
-  return [viewedStudies, addRecentStudyId];
+  return [viewedStudies, loading, error, addRecentStudyId];
 };
 
 export default useFetchRecentViewedStudies;

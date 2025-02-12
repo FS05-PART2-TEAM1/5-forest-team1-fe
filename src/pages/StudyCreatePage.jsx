@@ -8,17 +8,17 @@ import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate } from "react-router-dom";
 
 const colorMap = {
-  "#EED3D9": "pink",
-  "#F5E8DD": "yellow",
-  "#CCD3CA": "green",
-  "#B5C0D0": "blue",
+  "#FDE0E9": "pink",
+  "#FFF1CC": "yellow",
+  "#E1EDDE": "green",
+  "#E0F1F5": "blue",
 };
 
 const backgrounds = [
-  { type: "color", content: "#EED3D9" },
-  { type: "color", content: "#F5E8DD" },
-  { type: "color", content: "#CCD3CA" },
-  { type: "color", content: "#B5C0D0" },
+  { type: "color", content: "#FDE0E9" },
+  { type: "color", content: "#FFF1CC" },
+  { type: "color", content: "#E1EDDE" },
+  { type: "color", content: "#E0F1F5" },
   {
     type: "image",
     content:
