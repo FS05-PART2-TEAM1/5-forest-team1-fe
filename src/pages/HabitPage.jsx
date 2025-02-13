@@ -218,7 +218,7 @@ function HabitPage() {
       <div className="min-h-screen bg-[#F6F4EF]">
         <Header />
         <main className="p-[20px] sm:p-[20px_24px] md:p-[20px_24px]">
-          <div className="bg-white rounded-[20px] shadow p-10 min-[1200px]:w-[1150px] mx-auto">
+          <div className="bg-white rounded-[20px] shadow p-4 md:p-6 lg:p-10 min-[1200px]:w-[1150px] mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start mb-4">
               <h2 className="text-[24px] font-extrabold mb-4 md:text-[32px] weight-800 ">
                 {nickname && title
