@@ -4,6 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
 import habitApi from "@/api/habitApi";
 import { startOfWeek, endOfWeek } from "date-fns";
+import arrowImg from "../assets/icons/ic_arrow.png";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+import con from "../assets/animations/Animation - 1739412951712.gif";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -49,6 +53,10 @@ function HabitPage() {
   const [originalHabits, setOriginalHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const maxHabitCount = 8;
+  const [isAllCompleted, setIsAllCompleted] = useState(false);
+  const { width, height } = useWindowSize();
+  const [habitCelebrations, setHabitCelebrations] = useState({});
+  const [disabledHabits, setDisabledHabits] = useState({});
 
   useEffect(() => {
     async function fetchStudyData() {
@@ -157,19 +165,49 @@ function HabitPage() {
     const studyId = studyData.id;
     const isCompleted = !selectedHabits.includes(habitId);
 
-    setSelectedHabits((prevSelected) =>
-      isCompleted
-        ? [...prevSelected, habitId]
-        : prevSelected.filter((id) => id !== habitId)
-    );
+    const updatedSelectedHabits = isCompleted
+      ? [...selectedHabits, habitId]
+      : selectedHabits.filter((id) => id !== habitId);
+
+    setSelectedHabits(updatedSelectedHabits);
+
+    if (isCompleted) {
+      // ✅ 습관 클릭 비활성화 5초 설정
+      setDisabledHabits((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      // ✅ 축하 GIF 띄우기
+      setHabitCelebrations((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      setTimeout(() => {
+        setDisabledHabits((prev) => ({
+          ...prev,
+          [habitId]: false,
+        }));
+      }, 3000);
+
+      // ✅ 1.5초 후 축하 GIF 숨기기
+      setTimeout(() => {
+        setHabitCelebrations((prev) => ({
+          ...prev,
+          [habitId]: false,
+        }));
+      }, 3000);
+    }
+
+    // 전부 완료 체크는 기존 유지
+    if (updatedSelectedHabits.length === habits.length) {
+      setIsAllCompleted(true);
+      setTimeout(() => setIsAllCompleted(false), 5000);
+    }
 
     try {
       await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted);
-      console.log(`✅ [습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
-        studyId,
-        habitId,
-        status: isCompleted,
-      });
     } catch (error) {
       console.error("❌ [습관 완료 상태 변경 실패]:", error);
     }
@@ -179,63 +217,98 @@ function HabitPage() {
     <>
       <div className="min-h-screen bg-[#F6F4EF]">
         <Header />
-        <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
-          <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start mb-6">
-              <h2 className="text-2xl font-semibold mb-4">
+        <main className="p-[20px] sm:p-[20px_24px] md:p-[20px_24px]">
+          <div className="bg-white rounded-[20px] shadow p-6 min-[1200px]:w-[1150px] mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-10">
+              <h2 className="text-[24px] font-extrabold mb-4 md:text-[32px] weight-800 ">
                 {nickname && title
                   ? `${nickname} 의 ${title}`
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
                 <Link to="/focus" state={{ studyData }}>
-                  <button className="border py-2 px-4 rounded-xl text-[#818181]">
-                    오늘의 집중 <span>&gt;</span>
+                  <button className="border py-2 px-2 md:py-3 md:pl-6 md:pr-5 rounded-[15px] text-[#818181] w-[120px] md:w-[144px] flex items-center justify-center font-medium">
+                    오늘의 집중
+                    <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
                 <Link to="/">
-                  <button className="border py-2 px-4 rounded-xl text-[#818181] ">
-                    홈 <span>&gt;</span>
+                  <button className="border py-2 px-4 md:py-3 md:pl-6 md:pr-5  rounded-[15px] text-[#818181] w-[82px] flex items-center justify-center font-medium">
+                    홈<img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
               </div>
             </div>
+            <div className="text-[18px] text-[#818181] mb-[8px] font-normal">
+              현재시간
+            </div>
             <TimeBox />
-            <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
-              <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] font-bold text-[#414141]">
+            <div className="border rounded-[20px] mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
+              <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px]  text-[#414141] font-extrabold">
                 오늘의&nbsp; 습관
               </h3>
               <button
-                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline mt-[7px]"
+                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181]  mt-[7px] font-medium"
                 onClick={openModal}
               >
                 목록&nbsp; 수정
               </button>
               <div className="h-[498px] flex justify-center items-center w-full">
                 {habits.length > 0 ? (
-                  <ul className="flex flex-col gap-3 text-center">
+                  <ul className="flex flex-col gap-3 text-center relative">
                     {habits.map((habit) => (
-                      <li
-                        key={habit.id}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
-                                 rounded-[20px] flex items-center justify-center 
-                                 cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
-                                 ${
-                                   selectedHabits.includes(habit.id)
-                                     ? "bg-[#99C08E] text-white"
-                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]"
-                                 }`}
-                        onClick={() => onToggleHabit(habit.id)}
-                        style={{ userSelect: "none" }}
-                      >
-                        {habit.name}
-                      </li>
+                      <div key={habit.id} className="relative">
+                        <li
+                          className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] font-bold text-[#414141]
+                        rounded-[20px] flex items-center justify-center 
+                        transition-all duration-200 ease-in-out transform ${
+                          disabledHabits[habit.id]
+                            ? ""
+                            : "cursor-pointer hover:-translate-y-1"
+                        }
+                        ${
+                          selectedHabits.includes(habit.id)
+                            ? "bg-[#99C08E] text-white"
+                            : "bg-[#EEEEEE] hover:bg-[#deeed5]"
+                        }`}
+                          onClick={() => {
+                            if (!disabledHabits[habit.id]) {
+                              onToggleHabit(habit.id);
+                            }
+                          }}
+                          style={{ userSelect: "none" }}
+                        >
+                          {habit.name}
+                          {habitCelebrations[habit.id] && (
+                            <img
+                              src={con}
+                              alt="축하 박수"
+                              className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20  pointer-events-none"
+                            />
+                          )}
+                        </li>
+
+                        {/* ✅ li와 완전히 독립적으로 GIF 띄우기 */}
+                      </div>
                     ))}
                   </ul>
                 ) : (
                   <div className="text-[#818181] text-[20px] text-center">
                     아직 생성된 목록이 없어요. <br /> 목록 수정을 눌러 습관을
                     생성해주세요
+                  </div>
+                )}
+                {isAllCompleted && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center animate-fadeOut">
+                    <Confetti width={width} height={height} />
+                    <img
+                      src={con}
+                      alt="축하 박수"
+                      className="w-40 h-40 mb-4 animate-bounce"
+                    />
+                    <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
+                      쉽네ㅋ👏
+                    </h2>
                   </div>
                 )}
               </div>
