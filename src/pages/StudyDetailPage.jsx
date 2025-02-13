@@ -103,7 +103,7 @@ function StudyDetailPage() {
                   </div>
                 </div>
                 <div className="mt-4 ">
-                  <div className="text-[#818181] md:text-18pt text-16pt">
+                  <div className="text-[#818181] md:text-18pt text-16pt text-wrap">
                     소개
                   </div>
                   <div className="mt-2 md:text-18pt text-16pt">
