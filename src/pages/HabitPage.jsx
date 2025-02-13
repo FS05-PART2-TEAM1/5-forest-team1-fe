@@ -7,6 +7,7 @@ import { startOfWeek, endOfWeek } from "date-fns";
 import arrowImg from "../assets/icons/ic_arrow.png";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import con from "../assets/animations/Animation - 1739412951712.gif";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -54,6 +55,8 @@ function HabitPage() {
   const maxHabitCount = 8;
   const [isAllCompleted, setIsAllCompleted] = useState(false);
   const { width, height } = useWindowSize();
+  const [habitCelebrations, setHabitCelebrations] = useState({});
+  const [disabledHabits, setDisabledHabits] = useState({});
 
   useEffect(() => {
     async function fetchStudyData() {
@@ -168,10 +171,39 @@ function HabitPage() {
 
     setSelectedHabits(updatedSelectedHabits);
 
-    // ✅ 습관 전부 완료되었는지 확인하는 부분!
+    if (isCompleted) {
+      // ✅ 습관 클릭 비활성화 5초 설정
+      setDisabledHabits((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      // ✅ 축하 GIF 띄우기
+      setHabitCelebrations((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      setTimeout(() => {
+        setDisabledHabits((prev) => ({
+          ...prev,
+          [habitId]: false,
+        }));
+      }, 5000);
+
+      // ✅ 1.5초 후 축하 GIF 숨기기
+      setTimeout(() => {
+        setHabitCelebrations((prev) => ({
+          ...prev,
+          [habitId]: false,
+        }));
+      }, 1500);
+    }
+
+    // 전부 완료 체크는 기존 유지
     if (updatedSelectedHabits.length === habits.length) {
       setIsAllCompleted(true);
-      setTimeout(() => setIsAllCompleted(false), 5000); // 5초 뒤 사라지게
+      setTimeout(() => setIsAllCompleted(false), 5000);
     }
 
     try {
@@ -223,23 +255,41 @@ function HabitPage() {
               </button>
               <div className="h-[498px] flex justify-center items-center w-full">
                 {habits.length > 0 ? (
-                  <ul className="flex flex-col gap-3 text-center">
+                  <ul className="flex flex-col gap-3 text-center relative">
                     {habits.map((habit) => (
-                      <li
-                        key={habit.id}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] font-bold  text-[#414141]
-                                 rounded-[20px] flex items-center justify-center 
-                                 cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
-                                 ${
-                                   selectedHabits.includes(habit.id)
-                                     ? "bg-[#99C08E] text-white"
-                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]"
-                                 }`}
-                        onClick={() => onToggleHabit(habit.id)}
-                        style={{ userSelect: "none" }}
-                      >
-                        {habit.name}
-                      </li>
+                      <div key={habit.id} className="relative">
+                        <li
+                          className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] font-bold text-[#414141]
+                        rounded-[20px] flex items-center justify-center 
+                        transition-all duration-200 ease-in-out transform ${
+                          disabledHabits[habit.id]
+                            ? ""
+                            : "cursor-pointer hover:-translate-y-1"
+                        }
+                        ${
+                          selectedHabits.includes(habit.id)
+                            ? "bg-[#99C08E] text-white"
+                            : "bg-[#EEEEEE] hover:bg-[#deeed5]"
+                        }`}
+                          onClick={() => {
+                            if (!disabledHabits[habit.id]) {
+                              onToggleHabit(habit.id);
+                            }
+                          }}
+                          style={{ userSelect: "none" }}
+                        >
+                          {habit.name}
+                        </li>
+
+                        {/* ✅ li와 완전히 독립적으로 GIF 띄우기 */}
+                        {habitCelebrations[habit.id] && (
+                          <img
+                            src={con}
+                            alt="축하 박수"
+                            className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20  pointer-events-none"
+                          />
+                        )}
+                      </div>
                     ))}
                   </ul>
                 ) : (
@@ -249,10 +299,15 @@ function HabitPage() {
                   </div>
                 )}
                 {isAllCompleted && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center animate-fadeOut">
                     <Confetti width={width} height={height} />
-                    <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-8 animate-bounce">
-                      🎉 오늘의 습관 완료! 🎉
+                    <img
+                      src={con}
+                      alt="축하 박수"
+                      className="w-40 h-40 mb-4 animate-bounce"
+                    />
+                    <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
+                      축하합니다! 습관 완료! 👏👏
                     </h2>
                   </div>
                 )}
