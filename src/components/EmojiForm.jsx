@@ -32,7 +32,7 @@ function EmojiForm({ studyId }) {
     setIsChanged(true);
   }, 200);
 
-  const onEmojiClick = async (emojiData) => {
+  const onEmojiClick = useDebounceCallback(async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
     if (isEmoji) {
       const patchData = { counts: 1 };
@@ -44,7 +44,7 @@ function EmojiForm({ studyId }) {
     }
     setIsChanged(true);
     setIsAddMod(false);
-  };
+  },200);
 
   useEffect(() => {
     if (isChanged) {
@@ -116,7 +116,7 @@ function EmojiForm({ studyId }) {
           <div className="md:text-sm lg:text-lg">추가</div>
         </div>
         {isAddMod && (
-          <div className="absolute mt-3 md:translate-x-0 -translate-x-48">
+          <div className="absolute mt-3 md:translate-x-0 -translate-x-48 z-20">
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
