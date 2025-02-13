@@ -84,12 +84,12 @@ function HabitTracker({ studyId }) {
             >
               {/* 습관 이름 */}
               <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
-                {new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) && habit.name}
+                {(new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) || !habit.deletedAt) && habit.name}
               </div>
 
               {/* paw 이미지 */}
               <div className="col-span-7 grid grid-cols-7 gap-2">
-                {new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) && days.map((_, dayIndex) => {
+                {(new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) || !habit.deletedAt)&& days.map((_, dayIndex) => {
                   const habitStatus = habit.dailyHabitCheck.find(
                     (check) => getDayIndex(check.date) === dayIndex
                   );
