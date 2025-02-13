@@ -18,7 +18,8 @@ export function Header({ isCreateButton = false }) {
           </Link>
         </div>
       ) : (
-        <div className="lg:ml-48 md:ml-8 ml-2 pt-4 mb-8 md:w-[182px] w-[106px] md:h-[60px] h-[35px]">
+        <div className="2xl:ml-40 lg:ml-8 md:ml-8 ml-2 pt-4 mb-8 md:w-[182px] w-[106px] md:h-[60px] h-[35px]">
+          {/* flex  2xl:ml-40 lg:ml-8 md:ml-8 ml-2 pt-4 2xl:mr-40 lg:mr-8 md:mr-8 mr-2 lg:mb-8 mb-4 justify-between items-center */}
           <Link to="/home">
             <img
               className="md:w-[182px] w-[106px] md:h-[60px] h-[35px]"
