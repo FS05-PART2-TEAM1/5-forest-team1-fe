@@ -28,7 +28,7 @@ const PasswordValidation = ({
     onChange?.(e);
   };
   return (
-    <div className="flex flex-col space-y-1 relative">
+    <div className="flex flex-col space-y-1 relative w-full">
       <label className="text-lg font-semibold" htmlFor={id}>
         {label}
       </label>
@@ -39,7 +39,7 @@ const PasswordValidation = ({
         placeholder={placeholder}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`border h-12 rounded-xl p-3 ${
+        className={`border h-12 rounded-xl p-3 w-full ${
           error ? "border-f-error" : "border-gray-200"
         }`}
       />
