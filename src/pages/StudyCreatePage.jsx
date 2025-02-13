@@ -7,6 +7,27 @@ import PasswordValidation from "@/components/PasswordValidation.jsx";
 import { Header } from "@/common/layout/Header.jsx";
 import { useNavigate } from "react-router-dom";
 
+// 파일 업로드 API (Cloudinary 사용)
+const uploadImage = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "bg_type_image"); // Cloudinary의 업로드 프리셋
+  formData.append("cloud_name", "studyforest1"); // Cloudinary의 클라우드 이름
+
+  const response = await fetch(
+    "https://api.cloudinary.com/v1_1/studyforest1/image/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const data = await response.json();
+  // console.log(data);
+  // console.log(data.url);
+  return data.secure_url; // 업로드된 이미지 URL 반환
+};
+
 const colorMap = {
   "#FDE0E9": "pink",
   "#FFF1CC": "yellow",
@@ -48,6 +69,7 @@ function StudyCreatePage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [hasSelected, setHasSelected] = useState(null);
+  const [backgroundImage, setBackgroundImage] = useState(null); // 업로드된 배경 이미지 URL 상태 추가
   const [errors, setErrors] = useState({
     nickname: true,
     studyName: true,
@@ -59,6 +81,16 @@ function StudyCreatePage() {
 
   const handleImageClick = (index) => {
     setHasSelected(index);
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const uploadedUrl = await uploadImage(file);
+      setBackgroundImage(uploadedUrl); // 업로드된 URL을 상태에 저장
+
+      setHasSelected(null); // 선택된 이미지 초기화
+    }
   };
 
   const handleValidation = (field, error) => {
@@ -78,13 +110,14 @@ function StudyCreatePage() {
       return;
     }
     // 배경 이미지 선택 여부 체크
-    if (hasSelected === null) {
+    if (!backgroundImage && hasSelected === null) {
       alert("배경을 선택해주세요.");
       setIsSubmitting(false);
       return;
     }
     const isFormValid =
-      Object.values(errors).every((error) => !error) && hasSelected !== null;
+      Object.values(errors).every((error) => !error) &&
+      (hasSelected !== null || backgroundImage);
 
     if (!isFormValid) {
       alert("모든 입력란을 올바르게 채워주세요.");
@@ -93,11 +126,22 @@ function StudyCreatePage() {
     }
 
     const background = backgrounds[hasSelected];
-    let backgroundContent = background.content;
 
-    // hex 코드를 문자열로 변환
-    if (background.type === "color") {
-      backgroundContent = colorMap[backgroundContent] || backgroundContent;
+    let backgroundType, backgroundContent;
+
+    if (backgroundImage) {
+      backgroundType = "image";
+      backgroundContent = backgroundImage; // ✅ Cloudinary URL 사용
+    } else if (hasSelected !== null) {
+      backgroundType = background.type;
+      backgroundContent =
+        background.type === "color"
+          ? colorMap[background.content] || background.content // ✅ 색상이면 이름으로 변환
+          : background.content;
+    } else {
+      alert("배경을 선택하거나 업로드해 주세요.");
+      setIsSubmitting(false);
+      return;
     }
 
     try {
@@ -105,8 +149,8 @@ function StudyCreatePage() {
         nickname,
         title: studyName,
         description: studyDesc,
-        backgroundType: background.type,
-        backgroundContent,
+        backgroundType: "image", // ✅ 이미지 업로드 시
+        backgroundContent: backgroundImage, // ✅ 업로드된 Cloudinary URL
         password,
         passwordConfirm: confirmPassword,
       });
@@ -123,7 +167,7 @@ function StudyCreatePage() {
   };
 
   return (
-  <div className="w-full min-h-screen bg-f-bg flex flex-col">
+    <div className="w-full min-h-screen bg-f-bg flex flex-col">
       <Header />
       <div className="flex justify-center min-h-screen py-16 md:py-10">
         <div className="bg-white flex flex-wrap justify-center rounded-[20px] w-fit max-w-[696px] min-w-[344px] mx-10 lg:pb-8 lg:pt-8 md:p-6 p-4">
@@ -209,6 +253,36 @@ function StudyCreatePage() {
                         )}
                       </div>
                     ))}
+                    <div className="flex items-center justify-self-center gap-4 mx-auto">
+                      {/* 파일 업로드 카드 */}
+                      <label className="w-[150px] h-[150px] rounded-2xl flex flex-col items-center justify-center bg-gray-100 border-2 border-dashed border-[#578246] cursor-pointer hover:bg-gray-200 transition">
+                        <span className="text-[#578246] text-xl">📁</span>
+                        <span className="text-gray-600">이미지 업로드</span>
+                        <input
+                          type="file"
+                          onChange={handleImageUpload}
+                          accept="image/*"
+                          className="hidden"
+                        />
+                      </label>
+
+                      {/* 업로드된 이미지 미리보기 */}
+                      {backgroundImage && (
+                        <div className=" w-[150px] h-[150px] rounded-2xl overflow-hidden shadow-md border">
+                          <img
+                            src={backgroundImage}
+                            alt="Uploaded"
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            onClick={() => setBackgroundImage(null)}
+                            className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-75 transition"
+                          >
+                            ✖
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -227,7 +301,7 @@ function StudyCreatePage() {
                 />
               </div>
 
-              <div className="flex flex-col mb-5 md:mb-6 gap-2">
+              <form className="flex flex-col mb-5 md:mb-6 gap-2">
                 <PasswordValidation
                   id="confirmPassword"
                   label="비밀번호 확인"
@@ -240,7 +314,7 @@ function StudyCreatePage() {
                     handleValidation("confirmPassword", error)
                   }
                 />
-              </div>
+              </form>
             </div>
             <PrimaryButton
               onClick={handleSubmit}

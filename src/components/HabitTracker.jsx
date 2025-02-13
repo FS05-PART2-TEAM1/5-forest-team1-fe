@@ -69,7 +69,7 @@ function HabitTracker({ studyId }) {
                 className="relative flex items-center justify-center text-center text-gray-500 font-semibold p-2"
               >
                 {index === todayIndex && (
-                  <div className="absolute w-12 h-10 bg-yellow-200 rounded-full z-0"></div>
+                  <div className="absolute w-10 h-10 bg-yellow-200 rounded-full z-0"></div>
                 )}
                 <span className="relative z-10">{day}</span>
               </div>
@@ -84,42 +84,59 @@ function HabitTracker({ studyId }) {
             >
               {/* 습관 이름 */}
               <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
-                {(new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) || !habit.deletedAt) && habit.name}
+                {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
+                  startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  ) ||
+                  !habit.deletedAt) &&
+                  habit.name}
               </div>
 
               {/* paw 이미지 */}
               <div className="col-span-7 grid grid-cols-7 gap-2">
-                {(new Date(habit.deletedAt).setHours(0,0,0,0) >= startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(0,0,0,0) || !habit.deletedAt)&& days.map((_, dayIndex) => {
-                  const habitStatus = habit.dailyHabitCheck.find(
-                    (check) => getDayIndex(check.date) === dayIndex
-                  );
+                {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
+                  startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  ) ||
+                  !habit.deletedAt) &&
+                  days.map((_, dayIndex) => {
+                    const habitStatus = habit.dailyHabitCheck.find(
+                      (check) => getDayIndex(check.date) === dayIndex
+                    );
 
-                  const isDeletedForThisDay =
-                    habit.deletedAt &&
-                    new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
-                      new Date(habitStatus?.date).setHours(0, 0, 0, 0);
+                    const isDeletedForThisDay =
+                      habit.deletedAt &&
+                      new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
+                        new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
-                  const pawImage = habitImages[habitIndex % habitImages.length];
-                  const isToday = dayIndex === todayIndex; // 오늘 날짜인지 확인
+                    const pawImage =
+                      habitImages[habitIndex % habitImages.length];
+                    const isToday = dayIndex === todayIndex; // 오늘 날짜인지 확인
 
-                  return (
-                    <img
-                      key={dayIndex}
-                      src={
-                        isDeletedForThisDay ||
-                        (habitStatus === undefined &&
-                          habit.deletedAt &&
-                          new Date(habit.deletedAt).getDay() <= dayIndex + 1)
-                          ? PawDelete
-                          : habitStatus?.status
-                          ? pawImage
-                          : paw
-                      }
-                      alt="paw"
-                      className={`w-9 h-9 mx-auto my-2 transition-transform `}
-                    />
-                  );
-                })}
+                    return (
+                      <img
+                        key={dayIndex}
+                        src={
+                          isDeletedForThisDay ||
+                          (habitStatus === undefined &&
+                            habit.deletedAt &&
+                            new Date(habit.deletedAt).getDay() <= dayIndex + 1)
+                            ? PawDelete
+                            : habitStatus?.status
+                            ? pawImage
+                            : paw
+                        }
+                        alt="paw"
+                        className={`w-9 h-9 mx-auto my-2 transition-transform `}
+                      />
+                    );
+                  })}
               </div>
             </div>
           ))}
