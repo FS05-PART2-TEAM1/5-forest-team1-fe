@@ -123,7 +123,7 @@ function StudyCreatePage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-f-bg flex flex-col">
+  <div className="w-full min-h-screen bg-f-bg flex flex-col">
       <Header />
       <div className="flex justify-center min-h-screen py-16 md:py-10">
         <div className="bg-white flex flex-wrap justify-center rounded-[20px] w-fit max-w-[696px] min-w-[344px] mx-10 lg:pb-8 lg:pt-8 md:p-6 p-4">

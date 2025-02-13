@@ -48,7 +48,7 @@ function HabitTracker({ studyId }) {
 
   return (
     <div className="w-full items-center mt-5">
-      <div className="rounded-xl border lg:mt-[27px] lg:mb-5 w-full lg:max-h-[511px] min-w-[312px] bg-white p-6 py-5 transition-all duration-100">
+      <div className="rounded-xl border lg:mt-[27px] lg:mb-5 lg:max-h-[511px] w-full bg-white p-6 py-5 transition-all duration-100">
         <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
         <div
