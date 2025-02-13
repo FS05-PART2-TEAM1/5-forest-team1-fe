@@ -93,7 +93,8 @@ function EmojiForm({ studyId }) {
             {emojis.map((element, index) => {
               return (
                 <div
-                  className="h-10 flex items-center cursor-pointer "
+                  className="h-10 flex items-center cursor-pointer"
+                  draggable="false"
                   onClick={() => onEmojiTagClick(element.emoji)}
                 >
                   <EmojiTag
