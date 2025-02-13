@@ -4,6 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 import HabitListModal from "../common/modal/HabitListModal";
 import habitApi from "@/api/habitApi";
 import { startOfWeek, endOfWeek } from "date-fns";
+import arrowImg from "../assets/icons/ic_arrow.png";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+import con from "../assets/animations/Animation - 1739412951712.gif";
+import congtb from "../assets/animations/Celebrate In Love GIF by Max.gif";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -49,6 +54,10 @@ function HabitPage() {
   const [originalHabits, setOriginalHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const maxHabitCount = 8;
+  const [isAllCompleted, setIsAllCompleted] = useState(false);
+  const { width, height } = useWindowSize();
+  const [habitCelebrations, setHabitCelebrations] = useState({});
+  const [disabledHabits, setDisabledHabits] = useState({});
 
   useEffect(() => {
     async function fetchStudyData() {
@@ -69,21 +78,15 @@ function HabitPage() {
 
       try {
         const today = new Date();
-        const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // 월요일부터 시작
-        const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); // 일요일까지
+        const weekStart = startOfWeek(today, { weekStartsOn: 1 });
+        const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
 
-        console.log("🗓️ [주간 데이터 범위]:", { weekStart, weekEnd });
-
-        // ✅ API에서 주간 데이터 가져오기
         const habitData = await habitApi.getHabits(
           studyData.id,
           weekStart,
           weekEnd
         );
 
-        console.log("📌 [불러온 습관 데이터]:", habitData);
-
-        // ✅ deletedAt이 없는 습관만 필터링
         const activeHabits = habitData.habitList.filter(
           (habit) => !habit.deletedAt
         );
@@ -91,18 +94,22 @@ function HabitPage() {
         setHabits(activeHabits);
         setOriginalHabits(activeHabits);
 
-        // ✅ status가 true인 habitId만 selectedHabits에 추가
         const completedHabitIds = activeHabits
           .filter(
             (habit) =>
               habit.dailyHabitCheck &&
               Array.isArray(habit.dailyHabitCheck) &&
-              habit.dailyHabitCheck.some((check) => check.status === true) // ✅ 상태 체크
+              habit.dailyHabitCheck.some((check) => check.status === true)
           )
           .map((habit) => habit.id);
 
-        console.log("✅ [초기 완료된 습관 ID]:", completedHabitIds);
         setSelectedHabits(completedHabitIds);
+
+        const initialCelebrations = {};
+        completedHabitIds.forEach((id) => {
+          initialCelebrations[id] = true;
+        });
+        setHabitCelebrations(initialCelebrations);
       } catch (error) {
         console.error("❌ [습관 데이터 불러오기 오류]:", error);
       } finally {
@@ -139,7 +146,12 @@ function HabitPage() {
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
       const newHabitName = prompt("새로운 습관을 입력하세요:");
+
       if (newHabitName) {
+        if (newHabitName.length > 20) {
+          alert("습관 이름은 최대 20글자 입니다.");
+          return;
+        }
         const newHabit = { id: null, name: newHabitName, deletedAt: null };
         setHabits([...habits, newHabit]);
       }
@@ -157,19 +169,43 @@ function HabitPage() {
     const studyId = studyData.id;
     const isCompleted = !selectedHabits.includes(habitId);
 
-    setSelectedHabits((prevSelected) =>
-      isCompleted
-        ? [...prevSelected, habitId]
-        : prevSelected.filter((id) => id !== habitId)
-    );
+    const updatedSelectedHabits = isCompleted
+      ? [...selectedHabits, habitId]
+      : selectedHabits.filter((id) => id !== habitId);
+
+    setSelectedHabits(updatedSelectedHabits);
+
+    if (isCompleted) {
+      setDisabledHabits((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      setHabitCelebrations((prev) => ({
+        ...prev,
+        [habitId]: true,
+      }));
+
+      setTimeout(() => {
+        setDisabledHabits((prev) => ({
+          ...prev,
+          [habitId]: false,
+        }));
+      }, 3000);
+    } else {
+      setHabitCelebrations((prev) => ({
+        ...prev,
+        [habitId]: false,
+      }));
+    }
+
+    if (updatedSelectedHabits.length === habits.length) {
+      setIsAllCompleted(true);
+      setTimeout(() => setIsAllCompleted(false), 5000);
+    }
 
     try {
       await habitApi.toggleHabitCompletion(studyId, habitId, isCompleted);
-      console.log(`✅ [습관 ${isCompleted ? "완료" : "취소"} 요청 성공]:`, {
-        studyId,
-        habitId,
-        status: isCompleted,
-      });
     } catch (error) {
       console.error("❌ [습관 완료 상태 변경 실패]:", error);
     }
@@ -179,63 +215,109 @@ function HabitPage() {
     <>
       <div className="min-h-screen bg-[#F6F4EF]">
         <Header />
-        <main className="p-[20px] sm:p-[16px_24px] md:p-[16px_24px]">
-          <div className="bg-white rounded-lg shadow p-6 min-[1200px]:w-[1150px] mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start mb-6">
-              <h2 className="text-2xl font-semibold mb-4">
+        <main className="p-[20px] sm:p-[20px_24px] md:p-[20px_24px]">
+          <div className="bg-white rounded-[20px] shadow p-4 md:p-6 lg:p-10 min-[1200px]:w-[1150px] mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-4">
+              <h2 className="text-[24px] font-extrabold mb-4 md:text-[32px] weight-800 ">
                 {nickname && title
                   ? `${nickname} 의 ${title}`
                   : "스터디 정보 없음"}
               </h2>
               <div className="flex gap-4 items-center">
                 <Link to="/focus" state={{ studyData }}>
-                  <button className="border py-2 px-4 rounded-xl text-[#818181]">
-                    오늘의 집중 <span>&gt;</span>
+                  <button className="border py-2 px-2 md:py-3 md:pl-6 md:pr-5 rounded-[15px] text-[#818181] w-[120px] md:w-[144px] flex items-center justify-center font-medium">
+                    오늘의 집중
+                    <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
                 <Link to="/">
-                  <button className="border py-2 px-4 rounded-xl text-[#818181] ">
-                    홈 <span>&gt;</span>
+                  <button className="border py-2 px-4 md:py-3 md:pl-6 md:pr-5  rounded-[15px] text-[#818181] w-[82px] flex items-center justify-center font-medium">
+                    홈<img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
               </div>
             </div>
+            <div className="text-[18px] text-[#818181] mb-[8px] font-normal">
+              현재시간
+            </div>
             <TimeBox />
-            <div className="border rounded-lg mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
-              <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] font-bold text-[#414141]">
-                오늘의&nbsp; 습관
-              </h3>
-              <button
-                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181] underline mt-[7px]"
-                onClick={openModal}
-              >
-                목록&nbsp; 수정
-              </button>
-              <div className="h-[498px] flex justify-center items-center w-full">
+            <div className="border rounded-[20px] mt-8 w-full h-[680px] py-10 px-4 relative flex flex-col">
+              <div className="flex items-center justify-center relative mb-4">
+                <h3 className="text-[18px] md:text-[24px] text-[#414141] font-extrabold">
+                  오늘의 습관
+                </h3>
+                <button
+                  className="ml-4 text-[14px] text-[#818181] font-medium underline"
+                  onClick={openModal}
+                >
+                  목록 수정
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto flex flex-col justify-center items-center">
                 {habits.length > 0 ? (
-                  <ul className="flex flex-col gap-3 text-center">
+                  <ul className="flex flex-col gap-3 text-center items-center">
                     {habits.map((habit) => (
                       <li
                         key={habit.id}
-                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] 
-                                 rounded-[20px] flex items-center justify-center 
-                                 cursor-pointer transition-all duration-200 ease-in-out transform hover:-translate-y-1
-                                 ${
-                                   selectedHabits.includes(habit.id)
-                                     ? "bg-[#99C08E] text-white"
-                                     : "bg-[#EEEEEE] hover:bg-[#deeed5]"
-                                 }`}
-                        onClick={() => onToggleHabit(habit.id)}
+                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] min-h-[54px] font-bold text-[#414141]
+                      rounded-[20px] flex items-center justify-center relative
+                      transition-all duration-200 ease-in-out transform ${
+                        disabledHabits[habit.id]
+                          ? ""
+                          : "cursor-pointer hover:-translate-y-1"
+                      } ${
+                          selectedHabits.includes(habit.id)
+                            ? "bg-[#99C08E] text-white"
+                            : "bg-[#EEEEEE] hover:bg-[#deeed5]"
+                        }`}
+                        onClick={() => {
+                          if (!disabledHabits[habit.id]) {
+                            onToggleHabit(habit.id);
+                          }
+                        }}
                         style={{ userSelect: "none" }}
                       >
                         {habit.name}
+                        {habitCelebrations[habit.id] && (
+                          <div className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20 pointer-events-none flex items-center justify-center">
+                            <img
+                              src={con}
+                              alt="축하 박수"
+                              className="w-full h-full"
+                            />
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="text-[#818181] text-[20px] text-center">
                     아직 생성된 목록이 없어요. <br /> 목록 수정을 눌러 습관을
-                    생성해주세요
+                    생성해주세요.
+                  </div>
+                )}
+                {isAllCompleted && (
+                  <div className="fixed inset-0 bg-black bg-opacity-80 z-[100] flex flex-col items-center justify-center animate-fadeOut ">
+                    <Confetti width={width} height={height} />
+                    <img
+                      src={congtb}
+                      className="w-[1000px] opacity-90 "
+                      style={{
+                        maskImage:
+                          "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
+                        WebkitMaskImage:
+                          "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
+                        userSelect: "none",
+                      }}
+                      draggable="false"
+                    />
+                    <h2
+                      className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn"
+                      style={{ userSelect: "none" }}
+                    >
+                      쉽네ㅋ👏
+                    </h2>
                   </div>
                 )}
               </div>
