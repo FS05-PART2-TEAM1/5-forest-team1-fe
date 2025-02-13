@@ -32,7 +32,7 @@ function EmojiForm({ studyId }) {
     setIsChanged(true);
   }, 200);
 
-  const onEmojiClick = async (emojiData) => {
+  const onEmojiClick = useDebounceCallback(async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
     if (isEmoji) {
       const patchData = { counts: 1 };
@@ -44,7 +44,7 @@ function EmojiForm({ studyId }) {
     }
     setIsChanged(true);
     setIsAddMod(false);
-  };
+  },200);
 
   useEffect(() => {
     if (isChanged) {

@@ -151,8 +151,8 @@ function StudyModifyPage() {
   return (
     <div className="bg-f-bg">
       <Header />
-      <div className="flex justify-center items-center">
-        <div className=" flex justify-center rounded-xl lg:mt-[27px] lg:mb-32 md:mb-[197px] mt-5 mb-[171px] lg:w-[696px] lg:h-[1163px] md:w-[696px] md:min-h-[1171px] w-[344px] min-h-[1423px] bg-white  p-4">
+      <div className="flex justify-center min-h-screen py-20 md:py-10">
+        <div className=" flex justify-center rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[696px]  mb-20 lg:w-[696px] md:w-[696px] w-[344px] bg-white mx-auto">
           <div className="mt-1">
             <div>
               <div className=" md:w-[648px] ">
