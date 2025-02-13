@@ -39,10 +39,23 @@ const HabitListModal = ({
   const handleAddHabit = () => {
     if (editableHabits.length < maxHabitCount) {
       const newHabitName = prompt("새로운 습관을 입력하세요:");
-      if (newHabitName) {
+
+      if (newHabitName !== null) {
+        const trimmedName = newHabitName.trim();
+
+        if (trimmedName === "") {
+          alert("습관 이름을 입력해주세요.");
+          return;
+        }
+
+        if (trimmedName.length > 20) {
+          alert("습관 이름은 최대 20자까지 입력 가능합니다.");
+          return;
+        }
+
         setEditableHabits([
           ...editableHabits,
-          { id: null, name: newHabitName, deletedAt: null },
+          { id: null, name: trimmedName, deletedAt: null },
         ]);
       }
     } else {
@@ -78,10 +91,17 @@ const HabitListModal = ({
                         `"${habit.name}" 습관의 새 이름을 입력하세요:`,
                         habit.name
                       );
-                      if (newName !== null && newName.trim() !== "") {
-                        const updatedHabits = [...editableHabits];
-                        updatedHabits[index].name = newName;
-                        setEditableHabits(updatedHabits);
+                      if (newName !== null) {
+                        const trimmedName = newName.trim();
+                        if (trimmedName === "") {
+                          alert("습관 이름을 입력해주세요.");
+                        } else if (trimmedName.length > 20) {
+                          alert("습관 이름은 최대 20자까지 입력 가능합니다.");
+                        } else {
+                          const updatedHabits = [...editableHabits];
+                          updatedHabits[index].name = trimmedName;
+                          setEditableHabits(updatedHabits);
+                        }
                       }
                     }}
                   >
