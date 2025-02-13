@@ -146,7 +146,12 @@ function HabitPage() {
   const onAddHabit = () => {
     if (habits.length < maxHabitCount) {
       const newHabitName = prompt("새로운 습관을 입력하세요:");
+
       if (newHabitName) {
+        if (newHabitName.length > 20) {
+          alert("습관 이름은 최대 20글자 입니다.");
+          return;
+        }
         const newHabit = { id: null, name: newHabitName, deletedAt: null };
         setHabits([...habits, newHabit]);
       }
