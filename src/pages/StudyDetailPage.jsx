@@ -102,11 +102,11 @@ function StudyDetailPage() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 ">
-                  <div className="text-[#818181] md:text-18pt text-16pt text-wrap">
+                <div className="mt-4 text-wrap">
+                  <div className="text-[#818181] md:text-18pt text-16pt">
                     소개
                   </div>
-                  <div className="mt-2 md:text-18pt text-16pt">
+                  <div className="break-all mt-2 md:text-18pt text-16pt">
                     {studyData.description}
                   </div>
                 </div>
