@@ -71,20 +71,28 @@ const HabitListModal = ({
                   key={index}
                   className="relative flex items-center justify-center bg-[#EEEEEE] rounded-[20px] h-[54px]"
                 >
-                  <input
-                    type="text"
-                    className="text-[16px] text-[#818181] underline select-none text-center w-full bg-transparent border-none outline-none cursor-pointer"
-                    value={habit.name}
-                    onChange={(e) => {
-                      const updatedHabits = [...editableHabits];
-                      updatedHabits[index].name = e.target.value;
-                      setEditableHabits(updatedHabits);
+                  <span
+                    className="text-[16px] text-[#818181] select-none cursor-pointer font-bold underline underline-offset-4"
+                    onClick={() => {
+                      const newName = prompt(
+                        `"${habit.name}" 습관의 새 이름을 입력하세요:`,
+                        habit.name
+                      );
+                      if (newName !== null && newName.trim() !== "") {
+                        const updatedHabits = [...editableHabits];
+                        updatedHabits[index].name = newName;
+                        setEditableHabits(updatedHabits);
+                      }
                     }}
-                    style={{ userSelect: "none" }}
-                  />
+                  >
+                    {habit.name}
+                  </span>
                   {onRemoveHabit && (
                     <button
-                      onClick={() => handleRemoveHabit(index)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveHabit(index);
+                      }}
                       className="absolute -right-[56px] top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-[#FDE0E9] rounded-full"
                     >
                       <img
