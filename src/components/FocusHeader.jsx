@@ -14,7 +14,7 @@ export const FocusHeader = () => {
       </h1>
       <div className="flex gap-4">
         <button
-          className="px-4 md:px-6 py-2 rounded-[15px] border border-[#dddddd] text-sm md:text-base font-medium text-[#818181]"
+          className="px-4 md:px-6 py-3 rounded-[15px] border border-[#dddddd] text-sm md:text-base font-medium text-[#818181]"
           onClick={() => navigate("/habit", { state: { studyData } })}
         >
           오늘의 습관{" "}
@@ -22,7 +22,7 @@ export const FocusHeader = () => {
         </button>
 
         <Link to="/home">
-          <button className="px-4 md:px-6 py-2 rounded-[15px] border border-[#dddddd] text-sm md:text-base font-medium text-[#818181]">
+          <button className="px-4 md:px-6 py-3 rounded-[15px] border border-[#dddddd] text-sm md:text-base font-medium text-[#818181]">
             홈{" "}
             <img src={bracketIcon} alt="" className="inline-block ml-[14px]" />
           </button>
