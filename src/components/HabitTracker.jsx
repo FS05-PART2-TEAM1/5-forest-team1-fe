@@ -24,6 +24,8 @@ function HabitTracker({ studyId }) {
     return (date.getDay() + 6) % 7; // 일요일(0) -> 6으로 변환
   };
 
+  const todayIndex = getDayIndex(new Date()); // 오늘 날짜의 요일 인덱스
+
   useEffect(() => {
     const fetchHabits = async () => {
       try {
@@ -32,9 +34,11 @@ function HabitTracker({ studyId }) {
         const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); //일요일까지
         console.log("weekStart: ", weekStart, "weekEnd", weekEnd);
         console.log(studyId);
+
         const data = await habitApi.getHabits(studyId, weekStart, weekEnd);
         console.log(studyId);
         console.log("Raw Data from API:", data);
+
         setHabitList(data.habitList); // 여기서 데이터 설정!
       } catch (error) {
         console.error("API 호출 오류:", error);
@@ -44,6 +48,7 @@ function HabitTracker({ studyId }) {
     fetchHabits();
   }, []);
   console.log(new Date());
+
   const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
 
   return (
@@ -58,21 +63,17 @@ function HabitTracker({ studyId }) {
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
-            {days.map((day, index) => {
-              // 2025-02-03부터 시작하는 날짜 계산 -> 테스트 후 제거
-              const date = new Date(2025, 1, 3 + index); // 1: 2월 (JS에서는 0부터 시작)
-              // const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // MM/DD 형식
-              // console.log(date);
-              return (
-                <div
-                  key={day}
-                  className="text-center text-gray-500 font-semibold"
-                >
-                  {day}
-                  {/* <div className="text-xs text-gray-400">{formattedDate}</div> */}
-                </div>
-              );
-            })}
+            {days.map((day, index) => (
+              <div
+                key={day}
+                className="relative flex items-center justify-center text-center text-gray-500 font-semibold p-2"
+              >
+                {index === todayIndex && (
+                  <div className="absolute w-12 h-10 bg-yellow-200 rounded-full z-0"></div>
+                )}
+                <span className="relative z-10">{day}</span>
+              </div>
+            ))}
           </div>
 
           {/* 습관 목록 */}
@@ -99,6 +100,7 @@ function HabitTracker({ studyId }) {
                       new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
                   const pawImage = habitImages[habitIndex % habitImages.length];
+                  const isToday = dayIndex === todayIndex; // 오늘 날짜인지 확인
 
                   return (
                     <img
@@ -114,7 +116,7 @@ function HabitTracker({ studyId }) {
                           : paw
                       }
                       alt="paw"
-                      className={`w-9 h-9 mx-auto my-2`}
+                      className={`w-9 h-9 mx-auto my-2 transition-transform `}
                     />
                   );
                 })}
