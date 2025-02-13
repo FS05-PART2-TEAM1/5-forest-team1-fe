@@ -77,21 +77,15 @@ function HabitPage() {
 
       try {
         const today = new Date();
-        const weekStart = startOfWeek(today, { weekStartsOn: 1 }); // 월요일부터 시작
-        const weekEnd = endOfWeek(today, { weekStartsOn: 1 }); // 일요일까지
+        const weekStart = startOfWeek(today, { weekStartsOn: 1 });
+        const weekEnd = endOfWeek(today, { weekStartsOn: 1 });
 
-        console.log("🗓️ [주간 데이터 범위]:", { weekStart, weekEnd });
-
-        // ✅ API에서 주간 데이터 가져오기
         const habitData = await habitApi.getHabits(
           studyData.id,
           weekStart,
           weekEnd
         );
 
-        console.log("📌 [불러온 습관 데이터]:", habitData);
-
-        // ✅ deletedAt이 없는 습관만 필터링
         const activeHabits = habitData.habitList.filter(
           (habit) => !habit.deletedAt
         );
@@ -99,18 +93,22 @@ function HabitPage() {
         setHabits(activeHabits);
         setOriginalHabits(activeHabits);
 
-        // ✅ status가 true인 habitId만 selectedHabits에 추가
         const completedHabitIds = activeHabits
           .filter(
             (habit) =>
               habit.dailyHabitCheck &&
               Array.isArray(habit.dailyHabitCheck) &&
-              habit.dailyHabitCheck.some((check) => check.status === true) // ✅ 상태 체크
+              habit.dailyHabitCheck.some((check) => check.status === true)
           )
           .map((habit) => habit.id);
 
-        console.log("✅ [초기 완료된 습관 ID]:", completedHabitIds);
         setSelectedHabits(completedHabitIds);
+
+        const initialCelebrations = {};
+        completedHabitIds.forEach((id) => {
+          initialCelebrations[id] = true;
+        });
+        setHabitCelebrations(initialCelebrations);
       } catch (error) {
         console.error("❌ [습관 데이터 불러오기 오류]:", error);
       } finally {
@@ -172,7 +170,7 @@ function HabitPage() {
     setSelectedHabits(updatedSelectedHabits);
 
     if (isCompleted) {
-      // ✅ 습관 클릭 비활성화 5초 설정
+      // ✅ 습관 클릭 비활성화 3초 설정
       setDisabledHabits((prev) => ({
         ...prev,
         [habitId]: true,
@@ -190,14 +188,12 @@ function HabitPage() {
           [habitId]: false,
         }));
       }, 3000);
-
-      // ✅ 1.5초 후 축하 GIF 숨기기
-      setTimeout(() => {
-        setHabitCelebrations((prev) => ({
-          ...prev,
-          [habitId]: false,
-        }));
-      }, 3000);
+    } else {
+      // ✅ 완료 해제 시 GIF 숨기기
+      setHabitCelebrations((prev) => ({
+        ...prev,
+        [habitId]: false,
+      }));
     }
 
     // 전부 완료 체크는 기존 유지
@@ -301,11 +297,7 @@ function HabitPage() {
                 {isAllCompleted && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center animate-fadeOut">
                     <Confetti width={width} height={height} />
-                    <img
-                      src={con}
-                      alt="축하 박수"
-                      className="w-40 h-40 mb-4 animate-bounce"
-                    />
+
                     <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
                       쉽네ㅋ👏
                     </h2>
