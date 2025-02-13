@@ -176,13 +176,11 @@ function HabitPage() {
     setSelectedHabits(updatedSelectedHabits);
 
     if (isCompleted) {
-      // ✅ 습관 클릭 비활성화 3초 설정
       setDisabledHabits((prev) => ({
         ...prev,
         [habitId]: true,
       }));
 
-      // ✅ 축하 GIF 띄우기
       setHabitCelebrations((prev) => ({
         ...prev,
         [habitId]: true,
@@ -195,14 +193,12 @@ function HabitPage() {
         }));
       }, 3000);
     } else {
-      // ✅ 완료 해제 시 GIF 숨기기
       setHabitCelebrations((prev) => ({
         ...prev,
         [habitId]: false,
       }));
     }
 
-    // 전부 완료 체크는 기존 유지
     if (updatedSelectedHabits.length === habits.length) {
       setIsAllCompleted(true);
       setTimeout(() => setIsAllCompleted(false), 5000);
@@ -245,75 +241,81 @@ function HabitPage() {
               현재시간
             </div>
             <TimeBox />
-            <div className="border rounded-[20px] mt-8 w-full h-[631px] flex flex-col items-center justify-between py-10 px-6 relative">
-              <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px]  text-[#414141] font-extrabold">
-                오늘의&nbsp; 습관
-              </h3>
-              <button
-                className="absolute left-1/2 transform -translate-x-1/2 ml-[90px] md:ml-[145px] text-[14px] text-[#818181]  mt-[7px] font-medium"
-                onClick={openModal}
-              >
-                목록&nbsp; 수정
-              </button>
-              <div className="h-[498px] flex justify-center items-center w-full">
+            <div className="border rounded-[20px] mt-8 w-full h-[680px] py-10 px-4 relative flex flex-col">
+              <div className="flex items-center justify-center relative mb-4">
+                <h3 className="text-[18px] md:text-[24px] text-[#414141] font-extrabold">
+                  오늘의 습관
+                </h3>
+                <button
+                  className="ml-4 text-[14px] text-[#818181] font-medium underline"
+                  onClick={openModal}
+                >
+                  목록 수정
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto flex flex-col justify-center items-center">
                 {habits.length > 0 ? (
-                  <ul className="flex flex-col gap-3 text-center relative">
+                  <ul className="flex flex-col gap-3 text-center items-center">
                     {habits.map((habit) => (
-                      <div key={habit.id} className="relative">
-                        <li
-                          className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] font-bold text-[#414141]
-                        rounded-[20px] flex items-center justify-center 
-                        transition-all duration-200 ease-in-out transform ${
-                          disabledHabits[habit.id]
-                            ? ""
-                            : "cursor-pointer hover:-translate-y-1"
-                        }
-                        ${
+                      <li
+                        key={habit.id}
+                        className={`text-[20px] w-[280px] h-[54px] md:w-[480px] md:h-[54px] min-h-[54px] font-bold text-[#414141]
+                      rounded-[20px] flex items-center justify-center relative
+                      transition-all duration-200 ease-in-out transform ${
+                        disabledHabits[habit.id]
+                          ? ""
+                          : "cursor-pointer hover:-translate-y-1"
+                      } ${
                           selectedHabits.includes(habit.id)
                             ? "bg-[#99C08E] text-white"
                             : "bg-[#EEEEEE] hover:bg-[#deeed5]"
                         }`}
-                          onClick={() => {
-                            if (!disabledHabits[habit.id]) {
-                              onToggleHabit(habit.id);
-                            }
-                          }}
-                          style={{ userSelect: "none" }}
-                        >
-                          {habit.name}
-                          {habitCelebrations[habit.id] && (
+                        onClick={() => {
+                          if (!disabledHabits[habit.id]) {
+                            onToggleHabit(habit.id);
+                          }
+                        }}
+                        style={{ userSelect: "none" }}
+                      >
+                        {habit.name}
+                        {habitCelebrations[habit.id] && (
+                          <div className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20 pointer-events-none flex items-center justify-center">
                             <img
                               src={con}
                               alt="축하 박수"
-                              className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20  pointer-events-none"
+                              className="w-full h-full"
                             />
-                          )}
-                        </li>
-
-                        {/* ✅ li와 완전히 독립적으로 GIF 띄우기 */}
-                      </div>
+                          </div>
+                        )}
+                      </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="text-[#818181] text-[20px] text-center">
                     아직 생성된 목록이 없어요. <br /> 목록 수정을 눌러 습관을
-                    생성해주세요
+                    생성해주세요.
                   </div>
                 )}
                 {isAllCompleted && (
-                  <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex flex-col items-center justify-center animate-fadeOut">
+                  <div className="fixed inset-0 bg-black bg-opacity-80 z-[100] flex flex-col items-center justify-center animate-fadeOut ">
                     <Confetti width={width} height={height} />
                     <img
                       src={congtb}
-                      className="w-[1000px] opacity-90"
+                      className="w-[1000px] opacity-90 "
                       style={{
                         maskImage:
                           "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
                         WebkitMaskImage:
                           "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
+                        userSelect: "none",
                       }}
+                      draggable="false"
                     />
-                    <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
+                    <h2
+                      className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn"
+                      style={{ userSelect: "none" }}
+                    >
                       쉽네ㅋ👏
                     </h2>
                   </div>
