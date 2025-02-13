@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@strapi/provider-upload-cloudinary": "^5.10.0",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "emoji-picker-react": "^4.12.0",
     "react": "^18.3.1",
+    "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3",

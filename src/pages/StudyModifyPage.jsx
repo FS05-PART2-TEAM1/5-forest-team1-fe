@@ -90,7 +90,9 @@ function StudyModifyPage() {
   }, [studyData]);
 
   const handleImageClick = (index) => {
-    setHasSelected(index);
+    setHasSelected((prevSelectedIndex) =>
+      prevSelectedIndex === index ? null : index
+    );
   };
   const handleValidation = (field, error) => {
     setErrors((prev) => {
