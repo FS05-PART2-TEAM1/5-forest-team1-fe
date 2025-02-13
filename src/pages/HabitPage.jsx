@@ -189,7 +189,7 @@ function HabitPage() {
           ...prev,
           [habitId]: false,
         }));
-      }, 5000);
+      }, 3000);
 
       // ✅ 1.5초 후 축하 GIF 숨기기
       setTimeout(() => {
@@ -197,7 +197,7 @@ function HabitPage() {
           ...prev,
           [habitId]: false,
         }));
-      }, 1500);
+      }, 3000);
     }
 
     // 전부 완료 체크는 기존 유지
@@ -279,16 +279,16 @@ function HabitPage() {
                           style={{ userSelect: "none" }}
                         >
                           {habit.name}
+                          {habitCelebrations[habit.id] && (
+                            <img
+                              src={con}
+                              alt="축하 박수"
+                              className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20  pointer-events-none"
+                            />
+                          )}
                         </li>
 
                         {/* ✅ li와 완전히 독립적으로 GIF 띄우기 */}
-                        {habitCelebrations[habit.id] && (
-                          <img
-                            src={con}
-                            alt="축하 박수"
-                            className="absolute right-[10px] top-0 bottom-0 my-auto w-20 h-20  pointer-events-none"
-                          />
-                        )}
                       </div>
                     ))}
                   </ul>
@@ -307,7 +307,7 @@ function HabitPage() {
                       className="w-40 h-40 mb-4 animate-bounce"
                     />
                     <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
-                      축하합니다! 습관 완료! 👏👏
+                      쉽네ㅋ👏
                     </h2>
                   </div>
                 )}
