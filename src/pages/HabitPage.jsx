@@ -8,6 +8,7 @@ import arrowImg from "../assets/icons/ic_arrow.png";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import con from "../assets/animations/Animation - 1739412951712.gif";
+import congtb from "../assets/animations/Celebrate In Love GIF by Max.gif";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -295,9 +296,18 @@ function HabitPage() {
                   </div>
                 )}
                 {isAllCompleted && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col items-center justify-center animate-fadeOut">
+                  <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex flex-col items-center justify-center animate-fadeOut">
                     <Confetti width={width} height={height} />
-
+                    <img
+                      src={congtb}
+                      className="w-[1000px] opacity-90"
+                      style={{
+                        maskImage:
+                          "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
+                        WebkitMaskImage:
+                          "radial-gradient(circle, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 80%)",
+                      }}
+                    />
                     <h2 className="text-white text-3xl md:text-5xl font-extrabold mt-2 animate-fadeIn">
                       쉽네ㅋ👏
                     </h2>

@@ -99,6 +99,7 @@ const HabitListModal = ({
                         src={deleteHabitImg}
                         alt="삭제"
                         className="w-6 h-6"
+                        draggable="false"
                       />
                     </button>
                   )}
