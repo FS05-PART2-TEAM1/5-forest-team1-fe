@@ -66,11 +66,12 @@ function HabitTracker({ studyId }) {
             {days.map((day, index) => (
               <div
                 key={day}
-                className={`text-center text-gray-500 font-semibold p-2 ${
-                  index === todayIndex ? "bg-f-yellow-bg rounded-md" : ""
-                }`}
+                className="relative flex items-center justify-center text-center text-gray-500 font-semibold p-2"
               >
-                {day}
+                {index === todayIndex && (
+                  <div className="absolute w-12 h-10 bg-yellow-200 rounded-full z-0"></div>
+                )}
+                <span className="relative z-10">{day}</span>
               </div>
             ))}
           </div>
@@ -115,9 +116,7 @@ function HabitTracker({ studyId }) {
                           : paw
                       }
                       alt="paw"
-                      className={`w-9 h-9 mx-auto my-2 transition-transform ${
-                        isToday ? "border-4 border-double rounded-full" : ""
-                      }`}
+                      className={`w-9 h-9 mx-auto my-2 transition-transform `}
                     />
                   );
                 })}
