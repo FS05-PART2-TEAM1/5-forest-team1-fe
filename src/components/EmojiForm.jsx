@@ -116,7 +116,7 @@ function EmojiForm({ studyId }) {
           <div className="md:text-sm lg:text-lg">추가</div>
         </div>
         {isAddMod && (
-          <div className="absolute mt-3 md:translate-x-0 -translate-x-48">
+          <div className="absolute mt-3 md:translate-x-0 -translate-x-48 z-20">
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
