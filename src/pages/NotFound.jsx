@@ -7,7 +7,7 @@ function NotFound() {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="text-center pt-80 py-10 min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 ">
+    <div className="text-center py-80 min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 ">
       <h1 className="text-6xl font-bold mb-4 animate-bounce">4☠️4</h1>
       <p className="text-2xl mb-12 animate-pulse">앗! 길을 잃으셨다구요...?</p>
       <Link to="/">

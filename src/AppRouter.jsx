@@ -20,14 +20,15 @@ const PageTransition = ({ children }) => {
 
   useEffect(() => {
     const loadSequentially = async () => {
-      setIsLoading(true);
-      setShowContent(false);
+      // 현재 경로가 /이고 이전 경로가 /home일 때만 로딩 실행
+      if (location.pathname === "/home" && location.state?.from === "/") {
+        setIsLoading(true);
+        setShowContent(false);
 
-      // 로딩 화면을 먼저 보여줌
-      await new Promise((resolve) => setTimeout(resolve, 1600));
+        await new Promise((resolve) => setTimeout(resolve, 1600));
 
-      setIsLoading(false);
-      // 로딩이 끝난 후 컨텐츠를 보여줌 (스켈레톤 등의 자체 페이지 로딩 기능 시연을 위해 의도적으로 분리함)
+        setIsLoading(false);
+      }
       setShowContent(true);
     };
 
