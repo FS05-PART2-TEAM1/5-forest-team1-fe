@@ -38,12 +38,11 @@ export const createStudy = async (studyData) => {
     throw error;
   }
 };
-
 export const patchStudy = async (studyId, updatedData) => {
   try {
     const response = await axiosClient.patch(
       `/api/studies/${studyId}`,
-      updatedData
+      updatedData // 요청 바디// URL
     );
     return response.data;
   } catch (error) {
