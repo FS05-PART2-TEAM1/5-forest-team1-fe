@@ -18,6 +18,23 @@ const colorMap = {
 };
 
 function StudyModifyPage() {
+  const location = useLocation();
+
+  const { studyData } = location.state || {};
+  const [nickname, setNickname] = useState("");
+  const [studyName, setStudyName] = useState("");
+  const [studyDesc, setStudyDesc] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState({
+    nickname: false,
+    studyName: false,
+    studyDesc: false,
+    password: false,
+    passwordConfirm: false,
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSelected, setHasSelected] = useState(null);
   const [backgrounds, setBackgrounds] = useState([
@@ -46,45 +63,46 @@ function StudyModifyPage() {
         "https://fastly.picsum.photos/id/657/200/200.jpg?hmac=6vrgINA0qije4LsZMVl1Rea_OtagocnfsCfETPr0_Hc",
     },
   ]);
-  const location = useLocation();
-
-  const { studyData } = location.state || {};
 
   useEffect(() => {
     console.log(studyData);
-    if (studyData) {
-      setNickname(studyData.nickname || "");
-      setStudyName(studyData.title || "");
-      setStudyDesc(studyData.description || "");
-      setPassword(studyData.password || "");
-      setConfirmPassword(studyData.password || "");
+    if (!studyData) return;
 
-      // studyData의 배경 정보와 backgrounds 배열을 비교하여 선택된 배경 찾기
-      const selectedIndex = backgrounds.findIndex(
-        (bg) =>
-          bg.type === studyData.backgroundType &&
-          (bg.type === "color"
-            ? colorMap[bg.content] === studyData.backgroundContent
-            : bg.content === studyData.backgroundContent)
+    setNickname(studyData.nickname || "");
+    setStudyName(studyData.title || "");
+    setStudyDesc(studyData.description || "");
+
+    let selectedIndex = -1;
+
+    if (studyData.backgroundType === "color") {
+      // 🔹 studyData.backgroundContent가 색상명("pink", "yellow" 등)으로 주어짐
+      selectedIndex = backgrounds.findIndex(
+        (bg, idx) =>
+          idx <= 3 &&
+          bg.type === "color" &&
+          colorMap[bg.content] === studyData.backgroundContent
+      );
+    } else if (studyData.backgroundType === "image") {
+      // 🔹 기존 backgrounds 배열(4~7)에서 studyData.backgroundContent와 같은 URL 찾기
+      selectedIndex = backgrounds.findIndex(
+        (bg, idx) =>
+          idx >= 4 &&
+          bg.type === "image" &&
+          bg.content === studyData.backgroundContent
       );
 
-      setHasSelected(selectedIndex !== -1 ? selectedIndex : -1); // 배경이 없다면 -1
+      // 🔹 기존에 없으면 추가 (인덱스 8에 저장)
+      if (selectedIndex === -1) {
+        setBackgrounds((prev) => [
+          ...prev,
+          { type: "image", content: studyData.backgroundContent },
+        ]);
+        selectedIndex = backgrounds.length; // 새로 추가한 이미지의 인덱스 (8)
+      }
     }
-  }, [studyData, backgrounds]);
 
-  // const [nickname, setNickname] = useState("");
-  // const [studyName, setStudyName] = useState("");
-  // const [studyDesc, setStudyDesc] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
-  // const [errorMessage, setErrorMessage] = useState("");
-  // const [errors, setErrors] = useState({
-  //   nickname: false,
-  //   studyName: false,
-  //   studyDesc: false,
-  //   password: false,
-  //   confirmPassword: false,
-  // });
+    setHasSelected(selectedIndex);
+  }, [studyData]);
 
   const navigate = useNavigate();
 
@@ -92,6 +110,7 @@ function StudyModifyPage() {
     // 사용자가 배경 이미지를 클릭하면 해당 이미지의 index를 hasSelected에 저장
     setHasSelected(index);
   };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0]; //사용자가 파일을 업로드하면 첫 번째 파일을 가져옴.
 
@@ -132,72 +151,63 @@ function StudyModifyPage() {
       return updatedErrors;
     });
   };
+
   const handleSubmit = async () => {
     if (isSubmitting) return; // isSubmitting이 true라면 함수 실행을 막아 중복 요청 방지
 
     setIsSubmitting(true); // 요청 시작 시 버튼 비활성화
     setErrorMessage(""); // 이전 오류 메시지 초기화
 
-    // 비밀번호 일치 여부 체크
-    if (password !== confirmPassword) {
-      setErrorMessage("비밀번호가 일치하지 않습니다.");
+    const showError = (message) => {
+      setErrorMessage(message);
       setIsSubmitting(false);
-      return;
-    }
-    // 배경 이미지 선택 여부 체크 -  hasSelected에 업로드된 이미지 인덱스가 없으면,
-    if (hasSelected === null) {
-      setErrorMessage("배경을 선택해주세요.");
-      setIsSubmitting(false);
-      return;
-    }
+    };
 
-    //errors 객체의 모든 값이 false(즉, 에러 없음)이고, 배경이 선택되었는지
-    const isFormValid =
-      Object.values(errors).every((error) => !error) && hasSelected !== null;
+    if (hasSelected === null) return showError("배경을 선택해주세요.");
 
-    if (!isFormValid) {
-      setErrorMessage("모든 입력란을 올바르게 채워주세요.");
-      setIsSubmitting(false);
-      return;
+    // 모든 입력값 검증
+    if (Object.values(errors).some((error) => error)) {
+      return showError("모든 입력란을 올바르게 채워주세요.");
     }
-
-    const isFormValidNow = !Object.values(errors).includes(true);
 
     const background = backgrounds[hasSelected];
+
     let backgroundType, backgroundContent;
     if (hasSelected !== null) {
       backgroundType = background.type;
       backgroundContent =
         background.type === "color"
-          ? colorMap[background.content] // ✅ 색상이면 이름으로 변환
+          ? colorMap[background.content]
           : background.content;
     } else {
       setErrorMessage("배경을 선택하거나 업로드해 주세요.");
-      setIsSubmitting(false); //? 버튼을 다시 활성화한 후, return으로 실행을 멈춰
+      setIsSubmitting(false);
       return;
     }
+    const payload = {
+      nickname,
+      title: studyName,
+      description: studyDesc,
+      backgroundType,
+      backgroundContent,
+    };
+
+    if (password && passwordConfirm) {
+      payload.password = password;
+      payload.passwordConfirm = passwordConfirm;
+    }
+
+    console.log("Payload:", payload);
 
     try {
-      const response = await patchStudy(studyData.id, {
-        nickname,
-        title: studyName,
-        description: studyDesc,
-        backgroundType,
-        backgroundContent,
-        password,
-        passwordConfirm: confirmPassword,
-      });
-      console.log(response);
-      // 스터디 수정 후 StudyDetailPage로 라우팅
-      navigate(`/study/${response.id}`); // response.id =생성된 스터디 ID
+      const response = await patchStudy(studyData.id, payload);
+      console.log("Response:", response); // 이 로그로 응답 데이터를 확인
+      navigate(`/study/${response.study.id}`);
     } catch (error) {
-      console.error(
-        "스터디 수정 실패:",
-        error.response ? error.response.data : error.message
-      );
-      setErrorMessage("스터디 생성에 실패했습니다.");
+      console.error("스터디 수정 실패:", error.message);
+      setErrorMessage("스터디 수정에 실패했습니다.");
     } finally {
-      setIsSubmitting(false); // 요청 완료 후 다시 버튼 활성화
+      setIsSubmitting(false);
     }
   };
 
@@ -346,15 +356,16 @@ function StudyModifyPage() {
 
               <form className="flex flex-col mb-5 md:mb-6 gap-2">
                 <PasswordValidation
-                  id="confirmPassword"
+                  id="passwordConfirm"
+                  value={passwordConfirm}
                   label="비밀번호 확인"
                   placeholder="비밀번호를 다시 입력해 주세요"
                   validateFn={(value) =>
                     value === password ? null : "비밀번호가 일치하지 않습니다."
                   }
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
                   onValidate={(error) =>
-                    handleValidation("confirmPassword", error)
+                    handleValidation("passwordConfirm", error)
                   }
                 />
               </form>
