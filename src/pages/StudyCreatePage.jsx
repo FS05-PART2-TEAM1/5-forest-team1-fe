@@ -236,7 +236,7 @@ function StudyCreatePage() {
                     {backgrounds.map((background, index) => (
                       <div
                         key={index}
-                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer ${
+                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300${
                           background.type === "color" ? "border" : ""
                         }`}
                         style={{
