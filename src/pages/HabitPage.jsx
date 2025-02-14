@@ -94,12 +94,15 @@ function HabitPage() {
         setHabits(activeHabits);
         setOriginalHabits(activeHabits);
 
+        // ✅ 오늘 날짜 기준으로 체크된 것만 상태 반영하도록 변경
+        const todayString = today.toISOString().split("T")[0];
+
         const completedHabitIds = activeHabits
-          .filter(
-            (habit) =>
-              habit.dailyHabitCheck &&
-              Array.isArray(habit.dailyHabitCheck) &&
-              habit.dailyHabitCheck.some((check) => check.status === true)
+          .filter((habit) =>
+            habit.dailyHabitCheck?.some((check) => {
+              const checkDateString = check.date.split("T")[0];
+              return checkDateString === todayString && check.status === true;
+            })
           )
           .map((habit) => habit.id);
 
