@@ -50,7 +50,7 @@ function HabitTracker({ studyId }) {
   console.log(new Date());
 
   const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
-  const maxHabits = 8;
+
   return (
     <div className="w-full items-center mt-5">
       <div className="rounded-xl border lg:mt-[27px] lg:mb-5 lg:max-h-[511px] w-full bg-white p-6 py-5 transition-all duration-100">
