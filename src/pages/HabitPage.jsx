@@ -233,9 +233,10 @@ function HabitPage() {
                     <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
-                <Link to="/">
-                  <button className="border py-2 px-4 md:py-3 md:pl-6 md:pr-5  rounded-[15px] text-[#818181] w-[82px] flex items-center justify-center font-medium">
-                    홈<img src={arrowImg} className="ml-3" />
+                <Link to={`/study/${studyData.id}`}>
+                  <button className="border py-2 px-2 md:py-3 md:pl-6 md:pr-5 rounded-[15px] text-[#818181] w-[120px] md:w-[144px] flex items-center justify-center font-medium">
+                    스터디 상세
+                    <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
               </div>
