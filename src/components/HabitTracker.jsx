@@ -50,7 +50,7 @@ function HabitTracker({ studyId }) {
   console.log(new Date());
 
   const habitImages = [Paw1, Paw2, Paw3, Paw4, Paw5, Paw6, Paw7, Paw8];
-
+  const maxHabits = 8;
   return (
     <div className="w-full items-center mt-5">
       <div className="rounded-xl border lg:mt-[27px] lg:mb-5 lg:max-h-[511px] w-full bg-white p-6 py-5 transition-all duration-100">
@@ -77,13 +77,13 @@ function HabitTracker({ studyId }) {
           </div>
 
           {/* 습관 목록 */}
-          {habitList.map((habit, habitIndex) => (
+          {habitList.slice(0, 8).map((habit, habitIndex) => (
             <div
               key={habit.id}
-              className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px] {}"
+              className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px]"
             >
               {/* 습관 이름 */}
-              <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
+              <div className="break-all col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
                 {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
                   startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
                     0,
