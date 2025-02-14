@@ -304,9 +304,9 @@ function StudyCreatePage() {
                   label="비밀번호"
                   placeholder="비밀번호를 입력해 주세요"
                   validateFn={(value) =>
-                    value.length >= 6
-                      ? null
-                      : "비밀번호는 6자 이상이어야 합니다."
+                    value.length < 6 || value.length > 12
+                      ? "비밀번호를 6자 이상 12자 이하로 입력해주세요."
+                      : null
                   }
                   onChange={(e) => setPassword(e.target.value)}
                   onValidate={(error) => handleValidation("password", error)}
@@ -328,13 +328,7 @@ function StudyCreatePage() {
                 />
               </form>
             </div>
-            <PrimaryButton
-              onClick={handleSubmit}
-              // disabled={
-              //   Object.values(errors).some((error) => error) ||
-              //   hasSelected === null
-              // }
-            >
+            <PrimaryButton onClick={handleSubmit}>
               {isSubmitting ? "생성 중..." : "만들기"}
             </PrimaryButton>
           </div>
