@@ -333,7 +333,7 @@ function StudyCreatePage() {
             </PrimaryButton>
           </div>
         </div>
-      </div>{" "}
+      </div>
       {errorMessage ? <ErrorMessage message={errorMessage} /> : null}
     </div>
   );
