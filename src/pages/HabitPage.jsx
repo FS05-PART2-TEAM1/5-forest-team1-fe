@@ -9,6 +9,7 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import con from "../assets/animations/Animation - 1739412951712.gif";
 import congtb from "../assets/animations/Celebrate In Love GIF by Max.gif";
+import { debounce } from "lodash";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -246,12 +247,12 @@ function HabitPage() {
             </div>
             <TimeBox />
             <div className="border rounded-[20px] mt-8 w-full h-[680px] py-10 px-4 relative flex flex-col">
-              <div className="flex items-center justify-center relative mb-4">
-                <h3 className="text-[18px] md:text-[24px] text-[#414141] font-extrabold">
+              <div className="relative flex items-center justify-center mb-4">
+                <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] text-[#414141] font-extrabold">
                   오늘의 습관
                 </h3>
                 <button
-                  className="ml-4 text-[14px] text-[#818181] font-medium underline"
+                  className="absolute right-80 text-[14px] text-[#818181] font-medium underline"
                   onClick={openModal}
                 >
                   목록 수정
