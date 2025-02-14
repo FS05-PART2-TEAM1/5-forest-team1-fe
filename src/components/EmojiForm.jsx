@@ -12,7 +12,6 @@ function EmojiForm({ studyId }) {
   const [isShowAll, setIsShowAll] = useState(false);
   const [isChanged, setIsChanged] = useState(true);
 
-
   useEffect(() => {
     const fetchReactions = async () => {
       const data = await getReactions(studyId);
@@ -26,11 +25,11 @@ function EmojiForm({ studyId }) {
     setIsShowAll(!isShowAll);
   };
 
-  const onEmojiTagClick = useDebounceCallback(async (emoji) => {
+  const onEmojiTagClick = async (emoji) => {
     const findEmoji = emojis.find((element) => element.emoji === emoji);
     await patchReaction(studyId, findEmoji.id, { counts: 1 });
     setIsChanged(true);
-  }, 200);
+  }
 
   const onEmojiClick = useDebounceCallback(async (emojiData) => {
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
@@ -44,7 +43,7 @@ function EmojiForm({ studyId }) {
     }
     setIsChanged(true);
     setIsAddMod(false);
-  },200);
+  }, 200);
 
   useEffect(() => {
     if (isChanged) {
@@ -108,7 +107,9 @@ function EmojiForm({ studyId }) {
           </div>
         )}
       </div>
-      <div>
+      {emojis &&
+      <>
+      <div className={emojis.length===0 && "relative right-8"}>
         <div
           className="border flex lg:w-[70px] md:w-[65px] h-8 text-16pt gap-2 items-center lg:p-1 p-1 rounded-[50px] cursor-pointer"
           onClick={() => setIsAddMod(!isAddMod)}
@@ -121,7 +122,9 @@ function EmojiForm({ studyId }) {
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
-      </div>
+        </div>
+        </>
+      }
     </div>
   );
 }
