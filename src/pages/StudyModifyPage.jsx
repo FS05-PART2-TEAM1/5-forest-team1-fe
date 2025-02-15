@@ -176,17 +176,9 @@ function StudyModifyPage() {
     setIsSubmitting(true); // 요청 시작 시 버튼 비활성화
     setErrorMessage(""); // 이전 오류 메시지 초기화
 
-    const showError = (message) => {
-      setErrorMessage(message);
-      setIsSubmitting(false);
-    };
+    //errors 객체의 모든 값이 false(즉, 에러 없음)이고, 배경이 선택되었는지
 
-    if (hasSelected === null) return showError("배경을 선택해주세요.");
-
-    // 모든 입력값 검증
-    if (Object.values(errors).some((error) => error)) {
-      return showError("모든 입력란을 올바르게 채워주세요.");
-    }
+    // 비밀번호 일치 여부 체크
 
     const background = backgrounds[hasSelected];
 
@@ -198,7 +190,28 @@ function StudyModifyPage() {
           ? colorMap[background.content]
           : background.content;
     } else {
-      setErrorMessage("배경을 선택하거나 업로드해 주세요.");
+      setErrorMessage("배경을 선택해주세요.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!password || !passwordConfirm) {
+      setErrorMessage("비밀번호를 입력해 주세요.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const isFormValid =
+      Object.values(errors).every((error) => !error) && hasSelected !== null;
+
+    if (!isFormValid) {
+      setErrorMessage("모든 입력란을 올바르게 채워주세요.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setErrorMessage("비밀번호가 일치하지 않습니다.");
       setIsSubmitting(false);
       return;
     }
@@ -208,14 +221,9 @@ function StudyModifyPage() {
       description: studyDesc,
       backgroundType,
       backgroundContent,
+      password,
+      passwordConfirm,
     };
-
-    if (password && passwordConfirm) {
-      payload.password = password;
-      payload.passwordConfirm = passwordConfirm;
-    }
-
-    console.log("Payload:", payload);
 
     try {
       const response = await patchStudy(studyData.id, payload);
@@ -369,9 +377,9 @@ function StudyModifyPage() {
                   value={password}
                   placeholder="비밀번호를 입력해 주세요"
                   validateFn={(value) =>
-                    value.length >= 6
+                    value.length >= 6 && value.length <= 12
                       ? null
-                      : "비밀번호는 6자 이상이어야 합니다."
+                      : "비밀번호를 6자 이상 12자 이하로 입력해주세요."
                   }
                   onChange={(e) => setPassword(e.target.value)}
                   onValidate={(error) => handleValidation("password", error)}
