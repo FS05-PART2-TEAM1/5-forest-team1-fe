@@ -10,6 +10,7 @@ import ShareModal from "@/components/ShareModal";
 import HabitTracker from "@/components/HabitTracker";
 
 function StudyDetailPage() {
+  window.scrollTo(0, 0);
   const { studyId } = useParams();
   const [studyData, setStudyData] = useState();
   const [isModal, setIsModal] = useState(false);

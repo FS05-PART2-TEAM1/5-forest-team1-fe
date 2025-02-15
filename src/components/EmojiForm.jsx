@@ -37,6 +37,7 @@ function EmojiForm({ studyId }) {
   }, 200);
 
   const onEmojiClick = useDebounceCallback(async (emojiData) => {
+    setIsLoading(true);
     const isEmoji = emojis.find((element) => emojiData.emoji === element.emoji);
     if (isEmoji) {
       const patchData = { counts: 1 };
