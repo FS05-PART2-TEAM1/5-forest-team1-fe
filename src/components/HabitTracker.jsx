@@ -54,7 +54,7 @@ function HabitTracker({ studyId }) {
       <div className="rounded-xl border lg:mt-[27px] lg:mb-5 lg:max-h-[511px] w-full bg-white p-6 py-5 transition-all duration-100">
         <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
-        <div className="mt-2 overflow-scroll md:overflow-x-auto lg:overflow-x-auto overflow-y-auto max-h-[380px] md:max-h-[430px]">
+        <div className="mt-2 scrollbar-hide overflow-x-auto overflow-y-scroll md:overflow-y-auto lg:overflow-y-auto max-h-[380px] md:max-h-[430px]">
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
