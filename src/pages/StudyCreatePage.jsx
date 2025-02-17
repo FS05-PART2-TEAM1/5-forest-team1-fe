@@ -72,59 +72,18 @@ function StudyCreatePage() {
     const file = event.target.files[0]; //사용자가 파일을 업로드하면 첫 번째 파일을 가져옴.
 
     if (backgrounds.length >= 11) {
-      setErrorMessage("이미지는 3장까지만 추가 가능합니다.");
-
+      setErrorMessage("사진 이미지는 3장까지만 추가 가능합니다.");
+      console.log("사진 이미지는 3장까지만 추가 가능합니다.");
       return; // 이미지 업로드를 더 이상 진행하지 않음
     }
 
     if (file) {
-      // 임시 업로드 중 상태 추가
-      const tempBackground = {
-        type: "image",
-        content: "", // 이미지 URL이 아직 없으므로 빈 값
-        isUploaded: false,
-        isUploading: true, // ⬅️ 업로드 중 상태
-      };
-      setBackgrounds((prev) => [...prev, tempBackground]);
-
-      const uploadedUrl = await uploadImage(file); //uploadImage(file)외부 API를 사용하여 이미지를 업로드
-
-      // 임시 업로드 중 상태 추가
-      const tempBackground = {
-        type: "image",
-        content: "", // 이미지 URL이 아직 없으므로 빈 값
-        isUploaded: false,
-        isUploading: true, // ⬅️ 업로드 중 상태
-      };
-      setBackgrounds((prev) => [...prev, tempBackground]);
-
-      const uploadedUrl = await uploadImage(file); //uploadImage(file)외부 API를 사용하여 이미지를 업로드
-
+      const uploadedUrl = await uploadImage(file); //uploadImage(file) 함수(외부 API)를 사용하여 이미지를 업로드
       // 새로운 이미지 backgrounds 배열에 추가
-      setBackgrounds((prev) =>
-        prev.map((bg, i) =>
-          i === prev.length - 1
-            ? {
-                ...bg,
-                content: uploadedUrl,
-                isUploading: false,
-                isUploaded: true,
-              }
-            : bg
-        )
-      );
-      setBackgrounds((prev) =>
-        prev.map((bg, i) =>
-          i === prev.length - 1
-            ? {
-                ...bg,
-                content: uploadedUrl,
-                isUploading: false,
-                isUploaded: true,
-              }
-            : bg
-        )
-      );
+      setBackgrounds((prev) => [
+        ...prev,
+        { type: "image", content: uploadedUrl, isUploaded: true }, // isUploaded 필드로 새로 업로드된 이미지 구분
+      ]);
 
       // 업로드된 이미지를 선택하려면 사용자가 클릭해야 하므로
       // 업로드 후 'hasSelected' 상태를 null로 초기화 (이미지 선택을 기다리는 상태로)
@@ -176,6 +135,10 @@ function StudyCreatePage() {
 
     let backgroundType, backgroundContent;
 
+    // if (uploadedImg) {
+    //   backgroundType = "image";
+    //   backgroundContent = uploadedImg; // ✅ Cloudinary URL 사용
+    // } else
     if (hasSelected !== null) {
       backgroundType = background.type;
       backgroundContent =
@@ -273,8 +236,7 @@ function StudyCreatePage() {
                     {backgrounds.map((background, index) => (
                       <div
                         key={index}
-                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300${
-                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300${
+                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer ${
                           background.type === "color" ? "border" : ""
                         }`}
                         style={{
@@ -286,19 +248,13 @@ function StudyCreatePage() {
                         onClick={() => handleImageClick(index)}
                       >
                         {/* 이미지 타입일 경우 */}
-                        {background.type === "image" &&
-                          !background.isUploading && (
-                            <img
-                              src={background.content}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        {/* 업로드 중 로딩 스피너 표시 */}
-                        {background.isUploading && (
-                          <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
-                            <div className="w-6 h-6 border-4 border-f-green-text border-t-transparent rounded-full animate-spin"></div>
-                          </div>
+                        {background.type === "image" && (
+                          <img
+                            src={background.content}
+                            className="w-full h-full object-cover"
+                          />
                         )}
+
                         {/* 선택된 항목에 대해 아이콘 표시 */}
                         {hasSelected === index && (
                           <img
@@ -348,9 +304,9 @@ function StudyCreatePage() {
                   label="비밀번호"
                   placeholder="비밀번호를 입력해 주세요"
                   validateFn={(value) =>
-                    value.length < 6 || value.length > 12
-                      ? "비밀번호를 6자 이상 12자 이하로 입력해주세요."
-                      : null
+                    value.length >= 6
+                      ? null
+                      : "비밀번호는 6자 이상이어야 합니다."
                   }
                   onChange={(e) => setPassword(e.target.value)}
                   onValidate={(error) => handleValidation("password", error)}
@@ -372,12 +328,18 @@ function StudyCreatePage() {
                 />
               </form>
             </div>
-            <PrimaryButton onClick={handleSubmit}>
+            <PrimaryButton
+              onClick={handleSubmit}
+              // disabled={
+              //   Object.values(errors).some((error) => error) ||
+              //   hasSelected === null
+              // }
+            >
               {isSubmitting ? "생성 중..." : "만들기"}
             </PrimaryButton>
           </div>
         </div>
-      </div>
+      </div>{" "}
       {errorMessage ? <ErrorMessage message={errorMessage} /> : null}
     </div>
   );
