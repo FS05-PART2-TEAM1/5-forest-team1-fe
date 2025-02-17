@@ -9,6 +9,7 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import con from "../assets/animations/Animation - 1739412951712.gif";
 import congtb from "../assets/animations/Celebrate In Love GIF by Max.gif";
+import { debounce } from "lodash";
 
 const TimeBox = () => {
   const [currentTime, setCurrentTime] = useState(getFormattedTime());
@@ -94,12 +95,15 @@ function HabitPage() {
         setHabits(activeHabits);
         setOriginalHabits(activeHabits);
 
+        // ✅ 오늘 날짜 기준으로 체크된 것만 상태 반영하도록 변경
+        const todayString = today.toISOString().split("T")[0];
+
         const completedHabitIds = activeHabits
-          .filter(
-            (habit) =>
-              habit.dailyHabitCheck &&
-              Array.isArray(habit.dailyHabitCheck) &&
-              habit.dailyHabitCheck.some((check) => check.status === true)
+          .filter((habit) =>
+            habit.dailyHabitCheck?.some((check) => {
+              const checkDateString = check.date.split("T")[0];
+              return checkDateString === todayString && check.status === true;
+            })
           )
           .map((habit) => habit.id);
 
@@ -230,9 +234,10 @@ function HabitPage() {
                     <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
-                <Link to="/">
-                  <button className="border py-2 px-4 md:py-3 md:pl-6 md:pr-5  rounded-[15px] text-[#818181] w-[82px] flex items-center justify-center font-medium">
-                    홈<img src={arrowImg} className="ml-3" />
+                <Link to={`/study/${studyData.id}`}>
+                  <button className="border py-2 px-2 md:py-3 md:pl-6 md:pr-5 rounded-[15px] text-[#818181] w-[120px] md:w-[144px] flex items-center justify-center font-medium">
+                    스터디 상세
+                    <img src={arrowImg} className="ml-3" />
                   </button>
                 </Link>
               </div>
@@ -242,12 +247,12 @@ function HabitPage() {
             </div>
             <TimeBox />
             <div className="border rounded-[20px] mt-8 w-full h-[680px] py-10 px-4 relative flex flex-col">
-              <div className="flex items-center justify-center relative mb-4">
+              <div className="relative flex items-center justify-center mb-4">
                 <h3 className="text-[18px] md:text-[24px] text-[#414141] font-extrabold">
                   오늘의 습관
                 </h3>
                 <button
-                  className="ml-4 text-[14px] text-[#818181] font-medium underline"
+                  className="absolute right-16 md:left-80 text-[14px] text-[#818181] font-medium underline"
                   onClick={openModal}
                 >
                   목록 수정
