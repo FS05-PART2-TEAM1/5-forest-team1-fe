@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="screen join-screen active">
+        <div class="form">
+          <h2>채팅방 입장하기</h2>
+          <div class="form-input">
+            <label>닉네임 입력</label>
+            <input type="text" id="username" >
+          </div>
+          <div class="form-input">
+              <button id="join-user">Join</button>
+          </div>
+        </div>
+    </div>
+    <div class="screen chat-screen ">
+        <div class="header">
+          <div class="logo">Chatroom</div>
+          <button id="exit-chat">Exit</button>
+        </div>
+        <div class="messages">
+          <!-- Dummy Messages -->
+          <!-- <div class="message my-message">
+            <div>
+              <div class="name">You</div>
+              <div class="text">Hi</div>
+            </div>
+          </div>
+          <div class="update">Abc is joined the conversation</div>
+          <div class="message other-message">
+            <div>
+              <div class="name">Abc</div>
+              <div class="text">Hi</div>
+            </div> -->
+          </div>
+        </div>
+        <div class="typebox">
+          <input type="text" id="message-input" />
+          <button id="send-message">Send</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Vite 환경 변수에 맞게 WebSocket URL 설정
+      const serverUrl = "https://five-forest-team1.onrender.com"; // 배포용 URL
+  
+  // socket.io.js 로드
+  const socketScript = document.createElement("script");
+  socketScript.src = `${serverUrl}/socket.io/socket.io.js`;
+
+  // socket.io.js 로드 완료 후에 code.js 실행
+  socketScript.onload = () => {
+    const codeScript = document.createElement("script");
+    codeScript.src = "code.js"; // code.js 파일을 동적으로 추가
+    document.head.appendChild(codeScript);  // code.js 실행
+  };
+
+  document.head.appendChild(socketScript);  // socket.io.js 먼저 로드
+    </script>
+    
+    <script type="module" src="code.js"></script>
+
+  </body>
+</html>
