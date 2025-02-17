@@ -15,7 +15,6 @@ const PasswordValidation = ({
   const [isVisible, setIsVisible] = useState(false);
 
   const handleBlur = () => {
-    console.log("Validating value:", value);
     const validationError = validateFn(value);
     setError(validationError);
     onValidate?.(validationError);

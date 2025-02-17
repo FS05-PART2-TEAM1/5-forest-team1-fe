@@ -252,7 +252,7 @@ function HabitPage() {
                   오늘의 습관
                 </h3>
                 <button
-                  className="absolute right-16 md:left-80 text-[14px] text-[#818181] font-medium underline"
+                  className="absolute right-12 md:right-40 text-[14px] text-[#818181] font-medium underline"
                   onClick={openModal}
                 >
                   목록 수정

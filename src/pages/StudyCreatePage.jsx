@@ -72,7 +72,7 @@ function StudyCreatePage() {
     const file = event.target.files[0]; //사용자가 파일을 업로드하면 첫 번째 파일을 가져옴.
 
     if (backgrounds.length >= 11) {
-      setErrorMessage("사진 이미지는 3장까지만 추가 가능합니다.");
+      setErrorMessage("이미지는 3장까지만 추가 가능합니다.");
 
       return; // 이미지 업로드를 더 이상 진행하지 않음
     }
