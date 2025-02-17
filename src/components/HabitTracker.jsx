@@ -9,7 +9,6 @@ import Paw6 from "../assets/icons/paws/paw06.png";
 import Paw7 from "../assets/icons/paws/paw07.png";
 import Paw8 from "../assets/icons/paws/paw08.png";
 import paw from "@assets/icons/paws/paw.png";
-import useWheelScroll from "@/hooks/useWheelScroll";
 import habitApi from "../api/habitApi";
 import { startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns";
@@ -17,7 +16,6 @@ import { endOfWeek } from "date-fns";
 function HabitTracker({ studyId }) {
   const [habitList, setHabitList] = useState([]);
   const days = ["월", "화", "수", "목", "금", "토", "일"];
-  const { scrollRef } = useWheelScroll();
 
   const getDayIndex = (dateString) => {
     const date = new Date(dateString);
@@ -56,10 +54,7 @@ function HabitTracker({ studyId }) {
       <div className="rounded-xl border lg:mt-[27px] lg:mb-5 lg:max-h-[511px] w-full bg-white p-6 py-5 transition-all duration-100">
         <h1 className="md:text-2xl text-lg font-bold">습관 기록표</h1>
 
-        <div
-          ref={scrollRef}
-          className="mt-2 overflow-x-auto overflow-y-auto max-h-[380px] md:max-h-[430px]"
-        >
+        <div className="mt-2 scrollbar-hide overflow-x-auto overflow-y-scroll md:overflow-y-auto lg:overflow-y-auto max-h-[380px] md:max-h-[430px]">
           {/* 요일 헤더 */}
           <div className="min-w-[648px] grid grid-cols-9 gap-2 items-center sm:text-[14px] md:text-[18px] mb-4">
             <div className="col-span-2"></div>
@@ -77,13 +72,13 @@ function HabitTracker({ studyId }) {
           </div>
 
           {/* 습관 목록 */}
-          {habitList.map((habit, habitIndex) => (
+          {habitList.slice(0, 8).map((habit, habitIndex) => (
             <div
               key={habit.id}
-              className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px] {}"
+              className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px]"
             >
               {/* 습관 이름 */}
-              <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
+              <div className="break-all col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
                 {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
                   startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
                     0,
@@ -121,7 +116,8 @@ function HabitTracker({ studyId }) {
 
                     return (
                       <img
-                        key={dayIndex}
+                        draggable="false"
+                        key={isToday}
                         src={
                           isDeletedForThisDay ||
                           (habitStatus === undefined &&
