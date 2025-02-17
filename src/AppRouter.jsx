@@ -11,8 +11,6 @@ import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
 import TestPage from "./pages/TestPage";
 import LandingPage from "./pages/LandingPage.jsx";
-import JoinScreen from "./components/JoinScreen"; // 새로 추가한 JoinScreen
-import ChatScreen from "./components/ChatScreen"; // 새로 추가한 ChatScreen
 
 // 페이지 전환을 감지하는 컴포넌트
 const PageTransition = ({ children }) => {
@@ -54,9 +52,6 @@ function AppRouter() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/home" element={<Home />} />
-              {/* Chat 관련 라우트 추가 */}
-              <Route path="/join" element={<JoinScreen />} />{" "}
-              <Route path="/chat" element={<ChatScreen />} />{" "}
               <Route path="/study">
                 <Route path="create" element={<StudyCreatePage />} />
                 <Route path=":studyId" element={<StudyDetailPage />} />
