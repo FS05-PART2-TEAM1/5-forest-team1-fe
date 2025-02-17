@@ -1,6 +1,5 @@
 import { io } from "socket.io-client";
 
-// `.env`에서 백엔드 URL을 가져오되, 없으면 로컬 서버 사용
 const SERVER_URL = import.meta.env.VITE_API_BASE_URL
   ? import.meta.env.VITE_API_BASE_URL
   : `${
