@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import deleteHabitImg from "./img/deleteHabit.png";
 import addHabitImg from "./img/addHabit.png";
 import ModalButton from "../buttons/ModalButton";
+import HabitEditModal from "./HabitEditModal"; // 새로 만든 모달 import
 
 const HabitListModal = ({
   isOpen,
@@ -17,10 +18,43 @@ const HabitListModal = ({
   const [editableHabits, setEditableHabits] = useState([...habits]);
   const [deletedHabits, setDeletedHabits] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     setEditableHabits([...habits]);
   }, [habits]);
+
+  const openEditModal = (index) => {
+    setEditingIndex(index);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = (newName) => {
+    if (newName.trim() === "") {
+      alert("습관 이름을 입력해주세요.");
+      return;
+    }
+    if (newName.length > 20) {
+      alert("습관 이름은 최대 20자까지 입력 가능합니다.");
+      return;
+    }
+
+    if (isAdding) {
+      // 추가 모드일 때
+      const newHabit = { id: null, name: newName.trim(), deletedAt: null };
+      setEditableHabits([...editableHabits, newHabit]);
+    } else if (editingIndex !== null) {
+      // 수정 모드일 때
+      const updatedHabits = [...editableHabits];
+      updatedHabits[editingIndex].name = newName;
+      setEditableHabits(updatedHabits);
+    }
+
+    setEditModalOpen(false);
+    setIsAdding(false);
+  };
 
   const handleRemoveHabit = (index) => {
     const habitToRemove = editableHabits[index];
@@ -36,28 +70,12 @@ const HabitListModal = ({
       prevEditable.filter((_, i) => i !== index)
     );
   };
+
   const handleAddHabit = () => {
     if (editableHabits.length < maxHabitCount) {
-      const newHabitName = prompt("새로운 습관을 입력하세요:");
-
-      if (newHabitName !== null) {
-        const trimmedName = newHabitName.trim();
-
-        if (trimmedName === "") {
-          alert("습관 이름을 입력해주세요.");
-          return;
-        }
-
-        if (trimmedName.length > 20) {
-          alert("습관 이름은 최대 20자까지 입력 가능합니다.");
-          return;
-        }
-
-        setEditableHabits([
-          ...editableHabits,
-          { id: null, name: trimmedName, deletedAt: null },
-        ]);
-      }
+      setIsAdding(true);
+      setEditingIndex(null); // 추가 모드니까 index는 null로
+      setEditModalOpen(true);
     } else {
       alert("습관은 최대 8개까지만 추가할 수 있습니다.");
     }
@@ -69,6 +87,7 @@ const HabitListModal = ({
     await onSave([...editableHabits, ...deletedHabits]);
     setIsSaving(false);
   };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
       <div className="bg-white rounded-[20px] shadow-xl p-6 w-[698px] max-h-[90vh] font-sans flex flex-col">
@@ -86,24 +105,7 @@ const HabitListModal = ({
                 >
                   <span
                     className="text-[16px] text-[#818181] select-none cursor-pointer font-bold underline underline-offset-4"
-                    onClick={() => {
-                      const newName = prompt(
-                        `"${habit.name}" 습관의 새 이름을 입력하세요:`,
-                        habit.name
-                      );
-                      if (newName !== null) {
-                        const trimmedName = newName.trim();
-                        if (trimmedName === "") {
-                          alert("습관 이름을 입력해주세요.");
-                        } else if (trimmedName.length > 20) {
-                          alert("습관 이름은 최대 20자까지 입력 가능합니다.");
-                        } else {
-                          const updatedHabits = [...editableHabits];
-                          updatedHabits[index].name = trimmedName;
-                          setEditableHabits(updatedHabits);
-                        }
-                      }
-                    }}
+                    onClick={() => openEditModal(index)}
                   >
                     {habit.name}
                   </span>
@@ -160,6 +162,17 @@ const HabitListModal = ({
           </ModalButton>
         </div>
       </div>
+
+      {/* ✅ 습관 수정 모달 */}
+      <HabitEditModal
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setIsAdding(false);
+        }}
+        initialName={isAdding ? "" : editableHabits[editingIndex]?.name || ""}
+        onSave={handleEditSave}
+      />
     </div>
   );
 };

@@ -89,7 +89,30 @@ function StudyCreatePage() {
 
       const uploadedUrl = await uploadImage(file); //uploadImage(file)외부 API를 사용하여 이미지를 업로드
 
+      // 임시 업로드 중 상태 추가
+      const tempBackground = {
+        type: "image",
+        content: "", // 이미지 URL이 아직 없으므로 빈 값
+        isUploaded: false,
+        isUploading: true, // ⬅️ 업로드 중 상태
+      };
+      setBackgrounds((prev) => [...prev, tempBackground]);
+
+      const uploadedUrl = await uploadImage(file); //uploadImage(file)외부 API를 사용하여 이미지를 업로드
+
       // 새로운 이미지 backgrounds 배열에 추가
+      setBackgrounds((prev) =>
+        prev.map((bg, i) =>
+          i === prev.length - 1
+            ? {
+                ...bg,
+                content: uploadedUrl,
+                isUploading: false,
+                isUploaded: true,
+              }
+            : bg
+        )
+      );
       setBackgrounds((prev) =>
         prev.map((bg, i) =>
           i === prev.length - 1
@@ -250,6 +273,7 @@ function StudyCreatePage() {
                     {backgrounds.map((background, index) => (
                       <div
                         key={index}
+                        className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300${
                         className={`w-[150px] h-[150px] rounded-2xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform duration-300${
                           background.type === "color" ? "border" : ""
                         }`}
