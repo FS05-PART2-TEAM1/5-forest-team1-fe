@@ -18,9 +18,9 @@ function EmojiForm({ studyId }) {
       const data = await getReactions(studyId);
       setEmojis(data.reactionList);
       setIsChanged(false);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 600);
+      setTimeout(()=> {
+        setIsLoading(false)
+      },600)
     };
     if (isChanged) fetchReactions();
   }, [isChanged]);
@@ -91,7 +91,7 @@ function EmojiForm({ studyId }) {
       )}
 
       <div className="flex">
-        {emojis.length > 3 && !isLoading && (
+        {(emojis.length > 3 && !isLoading) && (
           <div className="lg:block hidden">
             <div
               className="cursor-pointer flex gap-1 p-2 h-8 rounded-[50px] items-center text-[14px] text-white bg-black opacity-20"
@@ -102,7 +102,7 @@ function EmojiForm({ studyId }) {
             </div>
           </div>
         )}
-        {isShowAll && !isLoading && (
+        {(isShowAll&&!isLoading) && (
           <div className="lg:visible invisible pl-5 -translate-x-52 border p-4 gap-1 mt-12 absolute bg-white grid grid-cols-4 place-items-center rounded-[20px] ">
             {emojis.map((element, index) => {
               return (
