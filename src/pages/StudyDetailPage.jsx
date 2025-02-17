@@ -10,6 +10,10 @@ import ShareModal from "@/components/ShareModal";
 import HabitTracker from "@/components/HabitTracker";
 
 function StudyDetailPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { studyId } = useParams();
   const [studyData, setStudyData] = useState();
   const [isModal, setIsModal] = useState(false);
@@ -56,36 +60,35 @@ function StudyDetailPage() {
       <div className="min-h-screen place-items-center py-10 md:py-20 ">
         <div className="bg-white w-[95%]  min-w-[380px] mx-auto rounded-[20px] p-6 md:p-10 shadow-lg md:max-w-[1248px]">
           <div className="flex md:flex-row flex-col-reverse justify-between gap-3">
-            {
-              studyData &&
+            {studyData && (
               <>
-<EmojiForm studyId={studyId} />
-            <div className="flex gap-4 md:justify-start justify-end mt-4">
-              <div
-                className="text-[#578246] text-16pt cursor-pointer"
-                onClick={enableShare}
-              >
-                공유하기
-              </div>
-              <div className="text-[#818181] text-16pt">|</div>
-              <div
-                className="text-[#578246] text-16pt cursor-pointer"
-                data-name="수정하러 가기"
-                onClick={(e) => enableModal(e)}
-              >
-                수정하기
-              </div>
-              <div className="text-[#818181] text-16pt">|</div>
-              <div
-                className="text-[#818181] text-16pt cursor-pointer"
-                onClick={(e) => enableModal(e)}
-                data-name="스터디 삭제하기"
-              >
-                스터디 삭제하기
-              </div>
-              </div>
+                <EmojiForm studyId={studyId} />
+                <div className="flex gap-4 md:justify-start justify-end mt-4">
+                  <div
+                    className="text-[#578246] text-16pt cursor-pointer"
+                    onClick={enableShare}
+                  >
+                    공유하기
+                  </div>
+                  <div className="text-[#818181] text-16pt">|</div>
+                  <div
+                    className="text-[#578246] text-16pt cursor-pointer"
+                    data-name="수정하러 가기"
+                    onClick={(e) => enableModal(e)}
+                  >
+                    수정하기
+                  </div>
+                  <div className="text-[#818181] text-16pt">|</div>
+                  <div
+                    className="text-[#818181] text-16pt cursor-pointer"
+                    onClick={(e) => enableModal(e)}
+                    data-name="스터디 삭제하기"
+                  >
+                    스터디 삭제하기
+                  </div>
+                </div>
               </>
-            }
+            )}
           </div>
           {!isLoading ? (
             studyData?.title ? (
@@ -138,8 +141,6 @@ function StudyDetailPage() {
             )
           ) : (
             <div className="animate-pulse">
-
-
               {/* 제목 */}
               <div className="flex md:flex-row flex-col justify-between mt-8 gap-4">
                 <div className="h-[30px] md:h-[40px] bg-gray-300 rounded w-[60%]"></div>
