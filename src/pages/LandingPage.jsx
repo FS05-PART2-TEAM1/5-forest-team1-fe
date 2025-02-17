@@ -1,8 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "../common/layout/Header";
 import landingImage from "../assets/img_landing.png";
 
 function LandingPage() {
+  const navigate = useNavigate();
+
+  const handleStartStudy = (e) => {
+    if (e) e.preventDefault();
+    navigate("/home", { state: { from: "/" } });
+  };
+
   return (
     <div className="min-h-screen bg-f-bg">
       <Header />
@@ -16,12 +23,12 @@ function LandingPage() {
             <br />
             당신의 성장을 위한 모든 것
           </p>
-          <Link
-            to="/home"
+          <button
+            onClick={handleStartStudy}
             className="bg-f-brand text-white px-8 py-3 rounded-full text-lg hover:bg-f-green-text transition-colors"
           >
             스터디 시작하기
-          </Link>
+          </button>
         </div>
       </section>
       <img src={landingImage} alt="landing" className="w-full h-full" />
@@ -75,11 +82,12 @@ function LandingPage() {
       </section>
 
       <section className="h-[500px] px-4 md:px-8 lg:px-40 bg-gradient-to-b from-white to-f-green-bg/20 flex flex-col items-center justify-center">
-        <Link to="/home">
-          <h2 className="text-3xl md:text-4xl font-bold text-f-black hover:text-f-brand cursor-pointer transform hover:scale-105 transition-all duration-300">
-            공부의 숲으로 떠나볼까요?
-          </h2>
-        </Link>
+        <button
+          onClick={handleStartStudy}
+          className="text-3xl md:text-4xl font-bold text-f-black hover:text-f-brand cursor-pointer transform hover:scale-105 transition-all duration-300"
+        >
+          공부의 숲으로 떠나볼까요?
+        </button>
       </section>
     </div>
   );
