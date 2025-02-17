@@ -8,29 +8,44 @@ export function ChatApp({ toggleChat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
+  // const SERVER_URL = "https://five-forest-team1.onrender.com";
+  const SERVER_URL = "http://localhost:8000";
+  console.log("WebSocket 연결 시도 중:", SERVER_URL);
 
   useEffect(() => {
     if (isChatting) {
       console.log("✅ 채팅 시작: 소켓 연결 중...");
+      // //const socketIo = io("https://five-forest-team1.onrender.com/");
+      // const socketIo = io("http://localhost:8000");
 
-      const socketIo = io("http://localhost:8000");
+      const socketIo = io.connect(SERVER_URL);
       setSocket(socketIo);
-
       socketIo.on("connect", () => {
         console.log("✅ 소켓 연결됨:", socketIo.connected);
+        console.log(`✅ WebSocket 서버 연결 성공: ${socketIo.id}`);
         socketIo.emit("newuser", username);
       });
 
-      socketIo.on("receiveMessage", (message) => {
+      socketIo.on("chat", (message) => {
         console.log("📩 메시지 수신:", message);
-        setMessages((prevMessages) => [...prevMessages, message]);
+
+        // 메시지 데이터를 확인
+        const messageData = {
+          sender: message.sender,
+          text: message.text,
+          type: "other",
+        };
+
+        console.log("메시지:", messageData);
+
+        setMessages((prevMessages) => [...prevMessages, messageData]);
       });
 
       socketIo.on("update", (updateMessage) => {
         console.log("🔔 업데이트 메시지:", updateMessage);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: "System", text: updateMessage },
+          { sender: "System", text: updateMessage, type: "update" },
         ]);
       });
 
@@ -52,11 +67,13 @@ export function ChatApp({ toggleChat }) {
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      const messageData = { sender: username, text: newMessage };
+      const messageData = { sender: username, text: newMessage, type: "my" };
       console.log("📤 메시지 전송:", messageData);
 
       setMessages((prev) => [...prev, messageData]);
-      socket.emit("chat", messageData);
+      setTimeout(() => {
+        socket.emit("chat", messageData);
+      }, 500);
       setNewMessage("");
     } else {
       console.warn("⚠️ 메시지가 비어 있음!");
@@ -122,20 +139,22 @@ export function ChatApp({ toggleChat }) {
               <div
                 key={index}
                 className={`flex my-2 ${
-                  msg.sender === username ? "justify-end" : "justify-start"
+                  msg.type === "my" ? "justify-end" : "justify-start"
                 }`}
               >
                 {msg.type === "update" ? (
-                  <div className="flex justify-center items-center w-full italic text-gray-600 bg-gray-100 p-2 rounded-md">
+                  <div className="flex justify-center items-center font-thin text-center italic">
                     {msg.text}
                   </div>
                 ) : (
                   <div
                     className={`max-w-[80%] p-3 shadow-md rounded-lg ${
-                      msg.sender === username ? "bg-lime-200" : "bg-white"
+                      msg.type === "my" ? "bg-lime-200" : "bg-white"
                     }`}
                   >
-                    <div className="text-xs text-gray-600">{msg.sender}</div>
+                    <div className="text-xs text-gray-600">
+                      {msg.type === "my" ? "You" : msg.sender}
+                    </div>
                     <div className="text-md">{msg.text}</div>
                   </div>
                 )}
