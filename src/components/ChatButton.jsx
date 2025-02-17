@@ -34,6 +34,7 @@ export function ChatButton() {
             채팅방 나가기
           </div>
         </div>
+        <div>여기에 채팅방 넣기</div>
       </div>
     </>
   );
