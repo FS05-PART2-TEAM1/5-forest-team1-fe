@@ -248,11 +248,11 @@ function HabitPage() {
             <TimeBox />
             <div className="border rounded-[20px] mt-8 w-full h-[680px] py-10 px-4 relative flex flex-col">
               <div className="relative flex items-center justify-center mb-4">
-                <h3 className="absolute left-1/2 transform -translate-x-1/2 text-[18px] md:text-[24px] text-[#414141] font-extrabold">
+                <h3 className="text-[18px] md:text-[24px] text-[#414141] font-extrabold">
                   오늘의 습관
                 </h3>
                 <button
-                  className="absolute right-80 text-[14px] text-[#818181] font-medium underline"
+                  className="absolute right-16 md:left-80 text-[14px] text-[#818181] font-medium underline"
                   onClick={openModal}
                 >
                   목록 수정
