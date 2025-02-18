@@ -14,6 +14,24 @@ export function ChatApp({ toggleChat }) {
   // const SERVER_URL = "http://localhost:8000";
   console.log("WebSocket 연결 시도 중:", SERVER_URL);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    // 페이지 이동 후에도 상태를 유지하기 위해 로컬 스토리지에서 채팅 상태 불러오기
+    const savedIsChatting = localStorage.getItem("isChatting") === "true";
+    const savedUsername = localStorage.getItem("username");
+    const savedMessages = JSON.parse(localStorage.getItem("messages")) || [];
+
+    if (savedIsChatting) {
+      setIsChatting(savedIsChatting);
+      setUsername(savedUsername);
+      setMessages(savedMessages);
+    }
+
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -71,6 +89,19 @@ export function ChatApp({ toggleChat }) {
       };
     }
   }, [isChatting]);
+
+  useEffect(() => {
+    // 메시지가 변경될 때마다 로컬 스토리지에 상태 저장
+    if (isChatting) {
+      localStorage.setItem("isChatting", true);
+      localStorage.setItem("username", username);
+      localStorage.setItem("messages", JSON.stringify(messages));
+    } else {
+      localStorage.removeItem("isChatting");
+      localStorage.removeItem("username");
+      localStorage.removeItem("messages");
+    }
+  }, [isChatting, messages, username]);
 
   const handleJoin = () => {
     if (username.trim()) {
