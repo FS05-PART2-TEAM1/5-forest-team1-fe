@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import exitIcn from "../assets/icons/exit.png";
 
@@ -11,6 +11,12 @@ export function ChatApp({ toggleChat }) {
   const SERVER_URL = "https://sprint-forest-be.onrender.com";
   // const SERVER_URL = "http://localhost:8000";
   console.log("WebSocket 연결 시도 중:", SERVER_URL);
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (isChatting) {
@@ -89,10 +95,10 @@ export function ChatApp({ toggleChat }) {
   };
 
   return (
-    <div className="max-w-84 fixed bottom-4 right-4 bg-white border-gray-300 border-2 h-96 rounded-3xl shadow-xl z-50 transition-all duration-500 transform origin-bottom-right">
+    <div className="max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl z-50 transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
-        <div className="h-full flex justify-center items-center">
-          <div className="form w-4/5 max-w-md">
+        <div className="w-full h-full flex justify-center items-center">
+          <div className="form w-4/5 max-w-md p-6 ">
             <h2 className="text-2xl font-semibold text-gray-800 mb-5 border-b-4 border-gray-600 inline-block">
               채팅방 입장하기
             </h2>
@@ -102,14 +108,14 @@ export function ChatApp({ toggleChat }) {
               </label>
               <input
                 type="text"
-                className="w-full p-3 border border-gray-400 text-lg rounded-lg"
+                className="w-full p-2 border border-gray-400 text-lg rounded-lg focus:ring-2 focus:ring-lime-400 focus:outline-none shadow-sm"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <button
               onClick={handleJoin}
-              className="w-full py-2 bg-f-brand text-white text-lg rounded-lg hover:bg-f-green-text"
+              className="w-full py-2 bg-gradient-to-r from-lime-300 to-lime-500 text-white text-lg rounded-lg hover:from-lime-400 hover:to-lime-600 shadow-lg transition-all duration-300"
             >
               Join
             </button>
@@ -124,9 +130,12 @@ export function ChatApp({ toggleChat }) {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col w-full h-full  ">
-          <div className="bg-f-brand  h-14 flex justify-between items-center px-4 text-white">
-            <div className="text-lg font-semibold">실시간 채팅방</div>
+        <div className="flex flex-col w-full h-full ">
+          {/* 헤더 부분 */}
+          <div className="backdrop-blur-md bg-gradient-to-r from-lime-300 to-teal-500 border-b border-gray-300 h-14 flex justify-between items-center px-6 text-white rounded-t-2xl shadow-lg">
+            <div className="text-xl drop-shadow font-bold tracking-wide">
+              💬 실시간 채팅방
+            </div>
             <button
               onClick={handleExitChat}
               className="p-2 bg-white rounded-xl hover:bg-gray-300"
@@ -134,7 +143,8 @@ export function ChatApp({ toggleChat }) {
               <img src={exitIcn} className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex-1 bg-gray-100 p-4 overflow-auto ">
+          {/* 채팅 메시지 */}
+          <div className=" ref={messagesEndRef} flex-1 bg-gray-100 p-4 overflow-auto ">
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -143,13 +153,13 @@ export function ChatApp({ toggleChat }) {
                 }`}
               >
                 {msg.type === "update" ? (
-                  <div className="flex justify-center items-center font-thin text-center italic">
+                  <div className="flex justify-center items-center font-thin text-center italic text-gray-500">
                     {msg.text}
                   </div>
                 ) : (
                   <div
                     className={`max-w-[80%] p-3 shadow-md rounded-lg ${
-                      msg.type === "my" ? "bg-lime-200" : "bg-white"
+                      msg.type === "my" ? "bg-lime-300" : "bg-white"
                     }`}
                   >
                     <div className="text-xs text-gray-600">
@@ -161,7 +171,8 @@ export function ChatApp({ toggleChat }) {
               </div>
             ))}
           </div>
-          <div className="w-0-full flex border-t h-[50px] items-center bg-white">
+          {/* 채팅 입력창 */}
+          <div className="w-full flex border-t h-[60px] items-center bg-white rounded-b-3xl shadow-md">
             <input
               type="text"
               value={newMessage}
@@ -171,12 +182,12 @@ export function ChatApp({ toggleChat }) {
                   handleSendMessage(); // 엔터키 눌렀을 때 메시지 전송
                 }
               }}
-              className="w-full px-3 text-lg border-none outline-none"
+              className="w-full px-4 text-lg border-none outline-none"
               placeholder="메시지를 입력하세요..."
             />
             <button
               onClick={handleSendMessage}
-              className="ml-3 px-4 py-2 bg-gray-900 text-white text-lg rounded-lg"
+              className="m-1 px-5 py-2 bg-gradient-to-b from-gray-900 to-black text-white text-lg rounded-2xl border border-gray-700 shadow-xl hover:shadow-2xl active:scale-95 transition-all"
             >
               Send
             </button>
