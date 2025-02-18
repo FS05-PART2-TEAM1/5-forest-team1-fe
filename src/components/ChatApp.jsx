@@ -68,6 +68,7 @@ export function ChatApp({ toggleChat }) {
           sender: message.sender,
           text: message.text,
           type: "other",
+          timestamp: new Date().toLocaleTimeString(), // 타임스탬프 추가
         };
 
         console.log("메시지:", messageData);
@@ -118,15 +119,16 @@ export function ChatApp({ toggleChat }) {
     }
     if (newMessage.trim() && !chatTerm) {
       setChatTerm(true);
-      const messageData = { sender: username, text: newMessage, type: "my" };
+      const messageData = {
+        sender: username,
+        text: newMessage,
+        type: "my",
+        timestamp: new Date().toLocaleTimeString(), // 타임스탬프 추가
+      };
 
       // 1️⃣ 내가 보낸 메시지를 먼저 화면에 추가
       setMessages((prev) => [...prev, messageData]);
-
-      // 2️⃣ 소켓을 통해 서버로 메시지 전송
       socket.emit("chat", messageData);
-
-      // 3️⃣ 입력창 초기화
       setNewMessage("");
     } else {
       console.warn("⚠️ 메시지가 비어 있음!");
@@ -211,7 +213,7 @@ export function ChatApp({ toggleChat }) {
                     }`}
                   >
                     <div className="text-xs text-gray-600">
-                      {msg.type === "my" ? "You" : msg.sender}
+                      {msg.type === "my" ? "You" : msg.sender} - {msg.timestamp}
                     </div>
                     <div className="text-md">{msg.text}</div>
                   </div>
