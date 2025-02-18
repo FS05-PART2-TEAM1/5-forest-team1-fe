@@ -111,7 +111,7 @@ export function ChatApp({ toggleChat }) {
   };
 
   return (
-    <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[400px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
+    <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[500px] max-h-[80vh]  rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
         <div className="flex flex-col justify-around w-full h-full items-center">
           <img src={logoImg} className="w-24 h-auto self-start ml-8 -mt-4 " />
@@ -149,7 +149,7 @@ export function ChatApp({ toggleChat }) {
       ) : (
         <div className="flex flex-col w-full h-full ">
           {/* 헤더 부분 */}
-          <div className="backdrop-blur-md bg-gradient-to-r from-lime-300 to-teal-500 border-b border-gray-300 h-14 flex justify-between items-center px-6 text-white rounded-t-2xl shadow-lg">
+          <div className="backdrop-blur-md bg-gradient-to-r mb-0 from-lime-300 to-teal-500 h-14 flex justify-between items-center px-6 text-white rounded-t-2xl shadow-lg">
             <div className="text-xl drop-shadow font-bold tracking-wide">
               💬 실시간 채팅방
             </div>
