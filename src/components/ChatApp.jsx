@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import exitIcn from "../assets/icons/exit.png";
 import logoImg from "../assets/img_logo.png";
+import minimizeIcn from "../assets/icons/ic-minimize.png";
 export function ChatApp({ toggleChat }) {
   const [isChatting, setIsChatting] = useState(false);
   const [username, setUsername] = useState("");
@@ -155,7 +156,7 @@ export function ChatApp({ toggleChat }) {
     setIsChatting(false);
     setMessages([]);
     setUsername("");
-    toggleChat();
+    // toggleChat();
   };
 
   return (
@@ -197,16 +198,26 @@ export function ChatApp({ toggleChat }) {
       ) : (
         <div className="flex flex-col w-full h-full ">
           {/* 헤더 부분 */}
-          <div className="backdrop-blur-md bg-gradient-to-r mb-0 from-lime-300 to-teal-500 h-14 flex justify-between items-center px-6 text-white rounded-t-2xl shadow-lg">
+          <div className="backdrop-blur-md bg-gradient-to-r mb-0 from-lime-300 to-teal-500 h-14 flex justify-between items-center pl-4 pr-2 text-white rounded-t-2xl shadow-lg">
             <div className="text-xl drop-shadow font-bold tracking-wide">
               💬 실시간 채팅방
             </div>
-            <button
-              onClick={handleExitChat}
-              className="p-2 bg-white rounded-xl hover:bg-gray-300"
-            >
-              <img src={exitIcn} className="w-5 h-5" />
-            </button>
+            <div className="flex gap-2">
+              {/* 채팅창 최소화 버튼 */}
+              <button
+                onClick={toggleChat}
+                className="p-2 bg-white rounded-xl hover:bg-gray-300"
+              >
+                <img src={minimizeIcn} className="w-5 h-5" />
+              </button>
+              {/* 채팅방 나가기 버튼 */}
+              <button
+                onClick={handleExitChat}
+                className="p-2 bg-white rounded-xl hover:bg-gray-300"
+              >
+                <img src={exitIcn} className="w-5 h-5" />
+              </button>
+            </div>
           </div>
           {/* 채팅 메시지 */}
           <div className=" flex-1 bg-gray-100 p-4 overflow-auto ">
