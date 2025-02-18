@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import exitIcn from "../assets/icons/exit.png";
-
+import logoImg from "../assets/img_logo.png";
 export function ChatApp({ toggleChat }) {
   const [isChatting, setIsChatting] = useState(false);
   const [username, setUsername] = useState("");
@@ -75,12 +75,14 @@ export function ChatApp({ toggleChat }) {
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       const messageData = { sender: username, text: newMessage, type: "my" };
-      console.log("📤 메시지 전송:", messageData);
 
+      // 1️⃣ 내가 보낸 메시지를 먼저 화면에 추가
       setMessages((prev) => [...prev, messageData]);
-      setTimeout(() => {
-        socket.emit("chat", messageData);
-      }, 500);
+
+      // 2️⃣ 소켓을 통해 서버로 메시지 전송
+      socket.emit("chat", messageData);
+
+      // 3️⃣ 입력창 초기화
       setNewMessage("");
     } else {
       console.warn("⚠️ 메시지가 비어 있음!");
@@ -98,7 +100,8 @@ export function ChatApp({ toggleChat }) {
   return (
     <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="flex flex-col justify-around w-full h-full items-center">
+          <img src={logoImg} className="w-24 h-auto self-start ml-8 -mt-10 " />
           <div className="form w-4/5 max-w-md p-6 ">
             <h2 className="text-2xl font-semibold text-gray-800 mb-5 border-b-4 border-gray-600 inline-block">
               채팅방 입장하기
