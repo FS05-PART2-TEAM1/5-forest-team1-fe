@@ -8,6 +8,7 @@ export function ChatApp({ toggleChat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
+  const [chatTerm, setChatTerm] = useState(false);
   // const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
   const SERVER_URL = "https://sprint-forest-be.onrender.com";
   // const SERVER_URL = "http://localhost:8000";
@@ -18,6 +19,14 @@ export function ChatApp({ toggleChat }) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if(chatTerm){
+      setTimeout(()=> {
+        setChatTerm(false);
+      },500)
+    }
+  }, [chatTerm])
 
   useEffect(() => {
     if (isChatting) {
@@ -73,7 +82,11 @@ export function ChatApp({ toggleChat }) {
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
+    if (chatTerm){
+      setNewMessage("");
+    }
+    if (newMessage.trim() && !chatTerm) {
+      setChatTerm(true);
       const messageData = { sender: username, text: newMessage, type: "my" };
 
       // 1️⃣ 내가 보낸 메시지를 먼저 화면에 추가
