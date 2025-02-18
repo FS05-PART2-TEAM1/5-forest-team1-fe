@@ -184,12 +184,12 @@ export function ChatApp({ toggleChat }) {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.repeat) {
-                  // ⬅️ 중복 실행 방지
-                  e.preventDefault(); // ⬅️ 기본 동작 방지 (특히 Safari에서)
-                  handleSendMessage();
+                if (e.key === "Enter") {
+                  handleSendMessage(); // 엔터키 눌렀을 때 메시지 전송
                 }
               }}
+              onCompositionStart={() => setIsComposing(true)} // 한글 조합 시작
+              onCompositionEnd={() => setIsComposing(false)} // 한글 조합 완료
               className="w-full px-4 text-lg border-none outline-none"
               placeholder="메시지를 입력하세요..."
             />
