@@ -8,9 +8,10 @@ export function ChatApp({ toggleChat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const SERVER_URL = "https://sprint-forest-be.onrender.com";
+  const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
   // const SERVER_URL = "http://localhost:8000";
   console.log("WebSocket 연결 시도 중:", SERVER_URL);
+
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -95,7 +96,7 @@ export function ChatApp({ toggleChat }) {
   };
 
   return (
-    <div className="z-100 max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
+    <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
         <div className="w-full h-full flex justify-center items-center">
           <div className="form w-4/5 max-w-md p-6 ">

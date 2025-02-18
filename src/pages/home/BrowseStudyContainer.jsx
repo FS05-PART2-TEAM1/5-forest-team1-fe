@@ -65,30 +65,32 @@ const BrowseStudyContainer = () => {
   };
 
   return (
-    <BrowseStudySection>
-      <BrowseStudySection.Filter
-        {...{
-          localKeyword,
-          handleChangeSearchValue,
-          selectedOption,
-          handleChangeSelectedOption,
-        }}
-      />
-      {loading ? (
-        <BrowseStudySection.Loading />
-      ) : (
-        <BrowseStudySection.Content
-          {...{ studies, error, handleClickStudyCard }}
+    <div className="relative z-[10]">
+      <BrowseStudySection>
+        <BrowseStudySection.Filter
+          {...{
+            localKeyword,
+            handleChangeSearchValue,
+            selectedOption,
+            handleChangeSelectedOption,
+          }}
         />
-      )}
-      <BrowseStudySection.Pagination
-        {...{
-          currentPage,
-          totalPage,
-          handlePageChange,
-        }}
-      />
-    </BrowseStudySection>
+        {loading ? (
+          <BrowseStudySection.Loading />
+        ) : (
+          <BrowseStudySection.Content
+            {...{ studies, error, handleClickStudyCard }}
+          />
+        )}
+        <BrowseStudySection.Pagination
+          {...{
+            currentPage,
+            totalPage,
+            handlePageChange,
+          }}
+        />
+      </BrowseStudySection>
+    </div>
   );
 };
 
