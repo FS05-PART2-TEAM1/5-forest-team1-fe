@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Home from "./pages/home";
 import TestPage from "./pages/TestPage";
 import LandingPage from "./pages/LandingPage.jsx";
+import { ChatContainer } from "./components/ChatContainer";
 
 // 페이지 전환을 감지하는 컴포넌트
 const PageTransition = ({ children }) => {
@@ -66,6 +67,8 @@ function AppRouter() {
           <Footer />
         </div>
       </PageTransition>
+      {/* 모든 페이지에 ChatButton을 포함 */}
+      <ChatContainer />
     </BrowserRouter>
   );
 }
