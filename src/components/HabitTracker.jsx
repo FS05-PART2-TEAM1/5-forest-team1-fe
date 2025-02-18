@@ -10,7 +10,7 @@ import Paw7 from "../assets/icons/paws/paw07.png";
 import Paw8 from "../assets/icons/paws/paw08.png";
 import paw from "@assets/icons/paws/paw.png";
 import habitApi from "../api/habitApi";
-import { startOfWeek } from "date-fns";
+import { getWeek, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns";
 
 function HabitTracker({ studyId }) {
@@ -20,6 +20,15 @@ function HabitTracker({ studyId }) {
   const getDayIndex = (dateString) => {
     const date = new Date(dateString);
     return (date.getDay() + 6) % 7; // 일요일(0) -> 6으로 변환
+  };
+
+  const getWeekDayTime = (weekday) => {
+    const now = new Date();
+    const today = (now.getDay() + 6) % 7;
+    const diff = weekday - today;
+    const targetDate = new Date(now);
+    targetDate.setDate(now.getDate() + diff);
+    return targetDate;
   };
 
   const todayIndex = getDayIndex(new Date()); // 오늘 날짜의 요일 인덱스
@@ -119,6 +128,8 @@ function HabitTracker({ studyId }) {
                         draggable="false"
                         key={isToday}
                         src={
+                          new Date(habit.createdAt).setHours(0, 0, 0, 0) >
+                            getWeekDayTime(dayIndex).setHours(0, 0, 0, 0) ||
                           isDeletedForThisDay ||
                           (habitStatus === undefined &&
                             habit.deletedAt &&
