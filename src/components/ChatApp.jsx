@@ -10,6 +10,7 @@ export function ChatApp({ toggleChat }) {
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
   const [chatTerm, setChatTerm] = useState(false);
+  const [isReconnected, setIsReconnected] = useState(false); // 재접속 여부 상태
   // const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
   const SERVER_URL = "https://sprint-forest-be.onrender.com";
   // const SERVER_URL = "http://localhost:8000";
@@ -120,6 +121,7 @@ export function ChatApp({ toggleChat }) {
     if (username.trim()) {
       console.log(`✅ 유저 이름 입력됨: ${username}`);
       setIsChatting(true);
+      setIsReconnected(false); // 처음 접속할 때는 재접속 상태를 false로 설정
     } else {
       console.warn("⚠️ 유저 이름이 비어 있음!");
     }
@@ -157,6 +159,7 @@ export function ChatApp({ toggleChat }) {
     setMessages([]);
     setUsername("");
     // toggleChat();
+    setIsReconnected(true); // 채팅방을 나갔을 때 재접속 상태를 true로 설정
   };
 
   return (
