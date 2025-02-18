@@ -31,9 +31,6 @@ function HabitTracker({ studyId }) {
     return targetDate;
   };
 
-  console.log("test", getWeekDayTime(0));
-  //test Mon Feb 17 2025 11:18:07 GMT+0900 (한국 표준시)
-
   const todayIndex = getDayIndex(new Date()); // 오늘 날짜의 요일 인덱스
 
   useEffect(() => {
