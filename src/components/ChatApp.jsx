@@ -15,7 +15,7 @@ export function ChatApp({ toggleChat }) {
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
@@ -145,7 +145,7 @@ export function ChatApp({ toggleChat }) {
             </button>
           </div>
           {/* 채팅 메시지 */}
-          <div className=" ref={messagesEndRef} flex-1 bg-gray-100 p-4 overflow-auto ">
+          <div className=" flex-1 bg-gray-100 p-4 overflow-auto ">
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -171,6 +171,8 @@ export function ChatApp({ toggleChat }) {
                 )}
               </div>
             ))}
+            {/* 스크롤 조정을 위한 빈 요소 */}
+            <div ref={messagesEndRef} />
           </div>
           {/* 채팅 입력창 */}
           <div className="w-full flex border-t h-[60px] items-center bg-white rounded-b-2xl shadow-md">
