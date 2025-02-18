@@ -10,7 +10,7 @@ import Paw7 from "../assets/icons/paws/paw07.png";
 import Paw8 from "../assets/icons/paws/paw08.png";
 import paw from "@assets/icons/paws/paw.png";
 import habitApi from "../api/habitApi";
-import { startOfWeek } from "date-fns";
+import { getWeek, startOfWeek } from "date-fns";
 import { endOfWeek } from "date-fns";
 
 function HabitTracker({ studyId }) {
@@ -21,6 +21,18 @@ function HabitTracker({ studyId }) {
     const date = new Date(dateString);
     return (date.getDay() + 6) % 7; // 일요일(0) -> 6으로 변환
   };
+
+  const getWeekDayTime = (weekday) => {
+    const now = new Date();
+    const today = (now.getDay() + 6) % 7;
+    const diff = weekday - today;
+    const targetDate = new Date(now);
+    targetDate.setDate(now.getDate() + diff);
+    return targetDate;
+  };
+
+  console.log("test", getWeekDayTime(0));
+  //test Mon Feb 17 2025 11:18:07 GMT+0900 (한국 표준시)
 
   const todayIndex = getDayIndex(new Date()); // 오늘 날짜의 요일 인덱스
 
@@ -73,57 +85,71 @@ function HabitTracker({ studyId }) {
 
           {/* 습관 목록 */}
           {habitList.slice(0, 8).map((habit, habitIndex) => (
-              !habit.deletedAt && 
-              <div
+            <div
               key={habit.id}
               className="grid grid-cols-9 gap-2 md:gap-4 items-center mb-4 min-w-[648px]"
             >
               {/* 습관 이름 */}
-                <div className="col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
-                {habit.name}
+              <div className="break-all col-span-2 font-medium text-[14px] md:text-[18px] text-right whitespace-normal max-w-[110px] md:max-w-[200px]">
+                {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
+                  startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  ) ||
+                  !habit.deletedAt) &&
+                  habit.name}
               </div>
 
               {/* paw 이미지 */}
-                <div className="col-span-7 grid grid-cols-7 gap-2">
-                  {!habit.deletedAt &&
-                    days.map((_, dayIndex) => {
-                      const habitStatus = habit.dailyHabitCheck.find(
-                        (check) => getDayIndex(check.date) === dayIndex
-                      );
+              <div className="col-span-7 grid grid-cols-7 gap-2">
+                {(new Date(habit.deletedAt).setHours(0, 0, 0, 0) >=
+                  startOfWeek(new Date(), { weekStartsOn: 1 }).setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  ) ||
+                  !habit.deletedAt) &&
+                  days.map((_, dayIndex) => {
+                    const habitStatus = habit.dailyHabitCheck.find(
+                      (check) => getDayIndex(check.date) === dayIndex
+                    );
 
-                      const isDeletedForThisDay =
-                        habit.deletedAt &&
-                        new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
-                          new Date(habitStatus?.date).setHours(0, 0, 0, 0);
+                    const isDeletedForThisDay =
+                      habit.deletedAt &&
+                      new Date(habit.deletedAt).setHours(0, 0, 0, 0) <=
+                        new Date(habitStatus?.date).setHours(0, 0, 0, 0);
 
-                      const pawImage =
-                        habitImages[habitIndex % habitImages.length];
-                      const isToday = dayIndex === todayIndex; // 오늘 날짜인지 확인
+                    const pawImage =
+                      habitImages[habitIndex % habitImages.length];
+                    const isToday = dayIndex === todayIndex; // 오늘 날짜인지 확인
 
-                      return (
-                        <img
-                          key={dayIndex}
-                          src={
-                            isDeletedForThisDay ||
-                            (habitStatus === undefined &&
-                              habit.deletedAt &&
-                              new Date(habit.deletedAt).getDay() <=
-                                dayIndex + 1)
-                              ? PawDelete
-                              : habitStatus?.status
-                              ? pawImage
-                              : paw
-                          }
-                          alt="paw"
-                          className={`w-9 h-9 mx-auto my-2 transition-transform `}
-                        />
-                      );
-                    })}
-                </div>
+                    return (
+                      <img
+                        draggable="false"
+                        key={isToday}
+                        src={
+                          new Date(habit.createdAt).setHours(0, 0, 0, 0) >
+                            getWeekDayTime(dayIndex).setHours(0, 0, 0, 0) ||
+                          isDeletedForThisDay ||
+                          (habitStatus === undefined &&
+                            habit.deletedAt &&
+                            new Date(habit.deletedAt).getDay() <= dayIndex + 1)
+                            ? PawDelete
+                            : habitStatus?.status
+                            ? pawImage
+                            : paw
+                        }
+                        alt="paw"
+                        className={`w-9 h-9 mx-auto my-2 transition-transform `}
+                      />
+                    );
+                  })}
+              </div>
             </div>
-          ))
-            }
-
+          ))}
         </div>
       </div>
     </div>
