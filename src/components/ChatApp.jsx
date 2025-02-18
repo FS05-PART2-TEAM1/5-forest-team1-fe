@@ -95,7 +95,7 @@ export function ChatApp({ toggleChat }) {
   };
 
   return (
-    <div className="max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl z-50 transition-all duration-500 transform origin-bottom-right overflow-hidden">
+    <div className="z-100 max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
         <div className="w-full h-full flex justify-center items-center">
           <div className="form w-4/5 max-w-md p-6 ">
@@ -153,7 +153,7 @@ export function ChatApp({ toggleChat }) {
                 }`}
               >
                 {msg.type === "update" ? (
-                  <div className="flex justify-center items-center font-thin text-center italic text-gray-500">
+                  <div className="w-full flex justify-center items-center font-thin text-center italic text-gray-500">
                     {msg.text}
                   </div>
                 ) : (
@@ -172,7 +172,7 @@ export function ChatApp({ toggleChat }) {
             ))}
           </div>
           {/* 채팅 입력창 */}
-          <div className="w-full flex border-t h-[60px] items-center bg-white rounded-b-3xl shadow-md">
+          <div className="w-full flex border-t h-[60px] items-center bg-white rounded-b-2xl shadow-md">
             <input
               type="text"
               value={newMessage}
