@@ -98,10 +98,10 @@ export function ChatApp({ toggleChat }) {
   };
 
   return (
-    <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[550px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
+    <div className="z-[50] max-w-84 fixed bottom-4 right-4 bg-white h-[400px] max-h-[80vh] rounded-2xl shadow-xl transition-all duration-500 transform origin-bottom-right overflow-hidden">
       {!isChatting ? (
         <div className="flex flex-col justify-around w-full h-full items-center">
-          <img src={logoImg} className="w-24 h-auto self-start ml-8 -mt-10 " />
+          <img src={logoImg} className="w-24 h-auto self-start ml-8 -mt-4 " />
           <div className="form w-4/5 max-w-md p-6 ">
             <h2 className="text-2xl font-semibold text-gray-800 mb-5 border-b-4 border-gray-600 inline-block">
               채팅방 입장하기
@@ -184,8 +184,10 @@ export function ChatApp({ toggleChat }) {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSendMessage(); // 엔터키 눌렀을 때 메시지 전송
+                if (e.key === "Enter" && !e.repeat) {
+                  // ⬅️ 중복 실행 방지
+                  e.preventDefault(); // ⬅️ 기본 동작 방지 (특히 Safari에서)
+                  handleSendMessage();
                 }
               }}
               className="w-full px-4 text-lg border-none outline-none"
