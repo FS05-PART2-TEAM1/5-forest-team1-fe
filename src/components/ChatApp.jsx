@@ -8,8 +8,8 @@ export function ChatApp({ toggleChat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  // const SERVER_URL = "https://five-forest-team1.onrender.com";
-  const SERVER_URL = "http://localhost:8000";
+  const SERVER_URL = "https://sprint-forest-be.onrender.com";
+  // const SERVER_URL = "http://localhost:8000";
   console.log("WebSocket 연결 시도 중:", SERVER_URL);
 
   useEffect(() => {
@@ -125,16 +125,16 @@ export function ChatApp({ toggleChat }) {
         </div>
       ) : (
         <div className="flex flex-col w-full h-full  ">
-          <div className="bg-gray-900 h-12 flex justify-between items-center pl-3 pr-1 text-white">
+          <div className="bg-f-brand  h-14 flex justify-between items-center px-4 text-white">
             <div className="text-lg font-semibold">실시간 채팅방</div>
             <button
               onClick={handleExitChat}
-              className="px-2 py-2 bg-white border rounded-xl hover:bg-gray-300"
+              className="p-2 bg-white rounded-xl hover:bg-gray-300"
             >
               <img src={exitIcn} className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex-1 bg-gray-100 overflow-auto p-3 ">
+          <div className="flex-1 bg-gray-100 p-4 overflow-auto ">
             {messages.map((msg, index) => (
               <div
                 key={index}

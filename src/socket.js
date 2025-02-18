@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL = "https://sprint-forest-be.onrender.com";
 
 // import.meta.env.VITE_API_BASE_URL
 //   ? import.meta.env.VITE_API_BASE_URL
