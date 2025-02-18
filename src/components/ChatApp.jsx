@@ -155,6 +155,7 @@ export function ChatApp({ toggleChat }) {
     setIsChatting(false);
     setMessages([]);
     setUsername("");
+    toggleChat();
   };
 
   return (
