@@ -68,7 +68,10 @@ export function ChatApp({ toggleChat }) {
           sender: message.sender,
           text: message.text,
           type: "other",
-          timestamp: new Date().toLocaleTimeString(), // 타임스탬프 추가
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
 
         console.log("메시지:", messageData);
@@ -80,7 +83,15 @@ export function ChatApp({ toggleChat }) {
         console.log("🔔 업데이트 메시지:", updateMessage);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: "System", text: updateMessage, type: "update" },
+          {
+            sender: "System",
+            text: updateMessage,
+            type: "update",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
         ]);
       });
 
@@ -123,7 +134,10 @@ export function ChatApp({ toggleChat }) {
         sender: username,
         text: newMessage,
         type: "my",
-        timestamp: new Date().toLocaleTimeString(), // 타임스탬프 추가
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
 
       // 1️⃣ 내가 보낸 메시지를 먼저 화면에 추가
@@ -141,6 +155,7 @@ export function ChatApp({ toggleChat }) {
     setIsChatting(false);
     setMessages([]);
     setUsername("");
+    toggleChat();
   };
 
   return (
