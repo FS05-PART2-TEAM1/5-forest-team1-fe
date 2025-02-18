@@ -21,12 +21,12 @@ export function ChatApp({ toggleChat }) {
   }, [messages]);
 
   useEffect(() => {
-    if(chatTerm){
-      setTimeout(()=> {
+    if (chatTerm) {
+      setTimeout(() => {
         setChatTerm(false);
-      },500)
+      }, 500);
     }
-  }, [chatTerm])
+  }, [chatTerm]);
 
   useEffect(() => {
     if (isChatting) {
@@ -82,7 +82,7 @@ export function ChatApp({ toggleChat }) {
   };
 
   const handleSendMessage = () => {
-    if (chatTerm){
+    if (chatTerm) {
       setNewMessage("");
     }
     if (newMessage.trim() && !chatTerm) {
