@@ -8,8 +8,8 @@ export function ChatApp({ toggleChat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
-  // const SERVER_URL = "https://sprint-forest-be.onrender.com";
+  // const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
+  const SERVER_URL = "https://sprint-forest-be.onrender.com";
   // const SERVER_URL = "http://localhost:8000";
   console.log("WebSocket 연결 시도 중:", SERVER_URL);
   const messagesEndRef = useRef(null);
