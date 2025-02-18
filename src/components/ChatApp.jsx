@@ -12,9 +12,9 @@ export function ChatApp({ toggleChat }) {
   const [chatTerm, setChatTerm] = useState(false);
   const [isReconnected, setIsReconnected] = useState(false); // 재접속 여부 상태
   // const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
-  const SERVER_URL = "https://sprint-forest-be.onrender.com";
-  // const SERVER_URL = "http://localhost:8000";
-  console.log("WebSocket 연결 시도 중:", SERVER_URL);
+  //  const SERVER_URL = "https://sprint-forest-be.onrender.com";
+  const SERVER_URL = "http://localhost:8000";
+  // console.log("WebSocket 연결 시도 중:", SERVER_URL);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export function ChatApp({ toggleChat }) {
 
   useEffect(() => {
     if (isChatting) {
-      console.log("✅ 채팅 시작: 소켓 연결 중...");
+      // console.log("✅ 채팅 시작: 소켓 연결 중...");
       // //const socketIo = io("https://five-forest-team1.onrender.com/");
       // const socketIo = io("http://localhost:8000");
 
@@ -58,12 +58,12 @@ export function ChatApp({ toggleChat }) {
       setSocket(socketIo);
       socketIo.on("connect", () => {
         console.log("✅ 소켓 연결됨:", socketIo.connected);
-        console.log(`✅ WebSocket 서버 연결 성공: ${socketIo.id}`);
+        // console.log(`✅ WebSocket 서버 연결 성공: ${socketIo.id}`);
         socketIo.emit("newuser", username);
       });
 
       socketIo.on("chat", (message) => {
-        console.log("📩 메시지 수신:", message);
+        // console.log("📩 메시지 수신:", message);
 
         // 메시지 데이터를 확인
         const messageData = {
@@ -76,18 +76,36 @@ export function ChatApp({ toggleChat }) {
           }),
         };
 
-        console.log("메시지:", messageData);
+        // console.log("메시지:", messageData);
 
         setMessages((prevMessages) => [...prevMessages, messageData]);
       });
 
       socketIo.on("update", (updateMessage) => {
-        console.log("🔔 업데이트 메시지:", updateMessage);
+        // console.log("🔔 업데이트 메시지:", updateMessage);
+        // 처음 접속 시에만 '접속' 메시지가 뜨도록
+        if (!isReconnected) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              sender: "System",
+              text: updateMessage,
+              type: "update",
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+          ]);
+        }
+      });
+      socketIo.on("exit", (exitMessage) => {
+        // 퇴장 메시지가 뜨도록
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             sender: "System",
-            text: updateMessage,
+            text: exitMessage,
             type: "update",
             timestamp: new Date().toLocaleTimeString([], {
               hour: "2-digit",
@@ -96,9 +114,8 @@ export function ChatApp({ toggleChat }) {
           },
         ]);
       });
-
       return () => {
-        console.log("🚪 채팅 종료: 소켓 연결 해제");
+        // console.log("🚪 채팅 종료: 소켓 연결 해제");
         socketIo.disconnect();
       };
     }
@@ -119,11 +136,11 @@ export function ChatApp({ toggleChat }) {
 
   const handleJoin = () => {
     if (username.trim()) {
-      console.log(`✅ 유저 이름 입력됨: ${username}`);
+      // console.log(`✅ 유저 이름 입력됨: ${username}`);
       setIsChatting(true);
       setIsReconnected(false); // 처음 접속할 때는 재접속 상태를 false로 설정
     } else {
-      console.warn("⚠️ 유저 이름이 비어 있음!");
+      // console.warn("⚠️ 유저 이름이 비어 있음!");
     }
   };
 
@@ -148,12 +165,12 @@ export function ChatApp({ toggleChat }) {
       socket.emit("chat", messageData);
       setNewMessage("");
     } else {
-      console.warn("⚠️ 메시지가 비어 있음!");
+      // console.warn("⚠️ 메시지가 비어 있음!");
     }
   };
 
   const handleExitChat = () => {
-    console.log("🚪 채팅방 나가기:", username);
+    // console.log("🚪 채팅방 나가기:", username);
     socket.emit("exituser", username);
     setIsChatting(false);
     setMessages([]);
@@ -267,8 +284,6 @@ export function ChatApp({ toggleChat }) {
                   handleSendMessage(); // 엔터키 눌렀을 때 메시지 전송
                 }
               }}
-              onCompositionStart={() => setIsComposing(true)} // 한글 조합 시작
-              onCompositionEnd={() => setIsComposing(false)} // 한글 조합 완료
               className="w-full px-4 text-lg border-none outline-none"
               placeholder="메시지를 입력하세요..."
             />
