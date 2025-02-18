@@ -8,6 +8,7 @@ import { getStudy } from "@/api/studyApi";
 import { EarnedPointsBoxMd } from "@/common/EarnedPointsBox";
 import ShareModal from "@/components/ShareModal";
 import HabitTracker from "@/components/HabitTracker";
+import { ChatButton } from "@/components/ChatButton";
 
 function StudyDetailPage() {
   useEffect(() => {
@@ -188,6 +189,7 @@ function StudyDetailPage() {
           description={studyData.description}
         />
       )}
+      <ChatButton />
     </div>
   );
 }
