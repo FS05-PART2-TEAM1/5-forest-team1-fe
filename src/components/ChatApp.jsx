@@ -162,7 +162,7 @@ export function ChatApp({ toggleChat }) {
                   </div>
                 ) : (
                   <div
-                    className={`max-w-[80%] p-3 shadow-md rounded-lg ${
+                    className={`max-w-[400px] p-3 shadow-md rounded-lg break-words ${
                       msg.type === "my" ? "bg-lime-300" : "bg-white"
                     }`}
                   >
@@ -182,7 +182,11 @@ export function ChatApp({ toggleChat }) {
             <input
               type="text"
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 100) {
+                  setNewMessage(e.target.value);
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSendMessage(); // 엔터키 눌렀을 때 메시지 전송
