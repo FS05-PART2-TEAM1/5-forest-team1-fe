@@ -4,7 +4,7 @@ import Home from "./home";
 
 const TestPage = () => {
   return (
-    <div className="w-full bg-[#F6F4EF] pt-56">
+    <div className="w-full bg-[#F6F4EF] ">
       <Home />
       <div>
         <ChatContainer />
