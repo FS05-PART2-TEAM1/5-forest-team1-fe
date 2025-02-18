@@ -63,7 +63,7 @@ export function ChatApp({ toggleChat }) {
       });
 
       socketIo.on("chat", (message) => {
-        console.log("📩 메시지 수신:", message);
+        //  console.log("📩 메시지 수신:", message);
 
         // 메시지 데이터를 확인
         const messageData = {
