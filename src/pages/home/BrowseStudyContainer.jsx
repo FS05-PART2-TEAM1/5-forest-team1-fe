@@ -65,7 +65,7 @@ const BrowseStudyContainer = () => {
   };
 
   return (
-    <div className="relative z-[10]">
+    <div className="relative z-0">
       <BrowseStudySection>
         <BrowseStudySection.Filter
           {...{
